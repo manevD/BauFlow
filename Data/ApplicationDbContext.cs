@@ -1,0 +1,90 @@
+﻿using BauFlow.Entities;
+using BauFlow.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace BauFlow.Data
+{
+    //✔ Kunden anlegen
+    //✔ Projekte erstellen
+    //✔ Angebote bauen
+    //✔ PDF generieren
+    //✔ Angebote annehmen
+    //✔ Rechnung erzeugen
+    //✔ Status tracken
+    //✔ Multi-Tenant SaaS betreiben
+    public class ApplicationDbContext
+     : IdentityDbContext<ApplicationUser>
+    {
+        private readonly ITenantProvider _tenantProvider;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ITenantProvider tenantProvider) : base(options)
+        {
+            _tenantProvider = tenantProvider;
+        }
+
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
+        public DbSet<QuoteItem> QuoteItems { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceItem> InvoiceItems { get; set; }
+        public DbSet<RunningNumber> RunningNumbers { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+
+        public override int SaveChanges()
+        {
+            ApplyMultiTenantRules();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyMultiTenantRules();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyMultiTenantRules()
+        {
+            var companyId = _tenantProvider.GetCompanyId();
+
+            var entries = ChangeTracker
+                .Entries<BaseEntity>();
+
+            foreach (var entry in entries)
+            {
+                // 🔹 Neue Entities → CompanyId automatisch setzen
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CompanyId = companyId;
+                }
+
+                // 🔹 Bei Updates → CompanyId darf niemals geändert werden
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(nameof(BaseEntity.CompanyId)).IsModified = false;
+                }
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Customer>()
+                .HasQueryFilter(c => c.CompanyId == _tenantProvider.GetCompanyId());
+
+            builder.Entity<Project>()
+                .HasQueryFilter(p => p.CompanyId == _tenantProvider.GetCompanyId());
+
+            builder.Entity<Quote>()
+                .HasQueryFilter(q => q.CompanyId == _tenantProvider.GetCompanyId());
+
+            builder.Entity<Invoice>()
+                .HasQueryFilter(i => i.CompanyId == _tenantProvider.GetCompanyId());
+        }
+
+    }
+
+}
