@@ -75,6 +75,10 @@ namespace BauFlow.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            // ========================
+            // ACCOUNT
+            // ========================
+
             [Required(ErrorMessage = "Bitte geben Sie einen Firmennamen ein.")]
             [Display(Name = "Firmenname")]
             public string CompanyName { get; set; }
@@ -97,7 +101,58 @@ namespace BauFlow.Areas.Identity.Pages.Account
             [Display(Name = "Passwort bestätigen")]
             [Compare("Password", ErrorMessage = "Die Passwörter stimmen nicht überein.")]
             public string ConfirmPassword { get; set; }
+
+
+            // ========================
+            // COMPANY ADDRESS
+            // ========================
+
+            [Required(ErrorMessage = "Bitte Adresse eingeben.")]
+            [Display(Name = "Adresse")]
+            public string Address { get; set; }
+
+            [Required(ErrorMessage = "Bitte Postleitzahl eingeben.")]
+            [Display(Name = "PLZ")]
+            public string PostalCode { get; set; }
+
+            [Required(ErrorMessage = "Bitte Stadt eingeben.")]
+            [Display(Name = "Stadt")]
+            public string City { get; set; }
+
+            [Required(ErrorMessage = "Bitte Land eingeben.")]
+            [Display(Name = "Land")]
+            public string Country { get; set; }
+
+
+            // ========================
+            // TAX
+            // ========================
+
+            [Display(Name = "Steuernummer")]
+            public string? TaxNumber { get; set; }
+
+            [Display(Name = "USt-ID")]
+            public string? VatId { get; set; }
+
+            [Display(Name = "Kleinunternehmer")]
+            public bool IsSmallBusiness { get; set; }
+
+
+            // ========================
+            // BRANDING
+            // ========================
+
+            [Display(Name = "Logo")]
+            public IFormFile? Logo { get; set; }
+
+
+            // ========================
+            // SUBSCRIPTION (hidden/system)
+            // ========================
+
+            public string? Plan { get; set; }
         }
+
 
 
 
@@ -125,10 +180,16 @@ namespace BauFlow.Areas.Identity.Pages.Account
                     {
                         Id = Guid.NewGuid(),
                         Name = Input.CompanyName,
-                        Plan = "Starter",
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow
+                        Address = Input.Address,
+                        PostalCode = Input.PostalCode,
+                        City = Input.City,
+                        Country = Input.Country,
+                        TaxNumber = Input.TaxNumber,
+                        VatId = Input.VatId,
+                        IsSmallBusiness = Input.IsSmallBusiness,
+                        Plan = Input.Plan ?? "Free"
                     };
+
 
                     _context.Companies.Add(company);
                     await _context.SaveChangesAsync();

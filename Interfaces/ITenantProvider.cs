@@ -2,6 +2,6 @@
 {
     public interface ITenantProvider
     {
-        Guid GetCompanyId();
+        Guid? GetCompanyId();
     }
 }

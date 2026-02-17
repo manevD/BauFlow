@@ -19,11 +19,15 @@
         {
             var identity = await base.GenerateClaimsAsync(user);
 
+            // 🔥 Role Claim
+            identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+
+            // 🔥 CompanyId Claim
             identity.AddClaim(new Claim("CompanyId", user.CompanyId.ToString()));
-            identity.AddClaim(new Claim("Role", user.Role.ToString()));
 
             return identity;
         }
     }
+
 
 }

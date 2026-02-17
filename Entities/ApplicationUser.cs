@@ -6,14 +6,14 @@ namespace BauFlow.Entities
     {
         public Guid CompanyId { get; set; }
 
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
-        public UserRole Role { get; set; }
+        public UserRole Role { get; set; } = UserRole.Member;
     }
     public enum UserRole
     {
-        Owner,
-        Admin,
-        Member
+        Owner = 1,
+        Admin = 2,
+        Member = 3
     }
 }

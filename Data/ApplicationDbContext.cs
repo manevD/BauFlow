@@ -17,11 +17,16 @@ namespace BauFlow.Data
      : IdentityDbContext<ApplicationUser>
     {
         private readonly ITenantProvider _tenantProvider;
+        public Guid CurrentCompanyId { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ITenantProvider tenantProvider) : base(options)
+        public ApplicationDbContext(
+            DbContextOptions<ApplicationDbContext> options,
+            ITenantProvider tenantProvider)
+            : base(options)
         {
-            _tenantProvider = tenantProvider;
+            CurrentCompanyId = _tenantProvider?.GetCompanyId() ?? Guid.Empty;
         }
+
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -47,7 +52,7 @@ namespace BauFlow.Data
 
         private void ApplyMultiTenantRules()
         {
-            var companyId = _tenantProvider.GetCompanyId();
+            var companyId = CurrentCompanyId;
 
             var entries = ChangeTracker
                 .Entries<BaseEntity>();
@@ -73,7 +78,7 @@ namespace BauFlow.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Customer>()
-                .HasQueryFilter(c => c.CompanyId == _tenantProvider.GetCompanyId());
+      .HasQueryFilter(e => e.CompanyId == CurrentCompanyId);
 
             builder.Entity<Project>()
                 .HasQueryFilter(p => p.CompanyId == _tenantProvider.GetCompanyId());

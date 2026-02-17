@@ -16,19 +16,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddDefaultIdentity<ApplicationUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomClaimsPrincipalFactory>();
-
+builder.Services.AddScoped<
+    IUserClaimsPrincipalFactory<ApplicationUser>,
+    CustomClaimsPrincipalFactory>(); 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("OwnerOnly", p => p.RequireRole("Owner"));
+    options.AddPolicy("AdminOrOwner", p => p.RequireRole("Admin", "Owner"));
+    options.AddPolicy("MemberAccess", p => p.RequireRole("Member", "Admin", "Owner"));
+});
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

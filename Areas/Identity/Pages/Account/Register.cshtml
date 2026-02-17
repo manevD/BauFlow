@@ -4,76 +4,252 @@
     ViewData["Title"] = "Registrieren";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container py-5">
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Neues Konto erstellen</h2>
-            <hr />
-
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.CompanyName" class="form-control" />
-                <label asp-for="Input.CompanyName"></label>
-                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" />
-                <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
-                <label asp-for="Input.Password"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
-                <label asp-for="Input.ConfirmPassword"></label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="w-100 btn btn-lg btn-primary">
-                Registrieren
-            </button>
-        </form>
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-6">Registrieren</h1>
+        <p class="text-muted fs-5">Erstellen Sie Ihre Firma und wählen Sie Ihren Plan</p>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Mit einem externen Dienst registrieren</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            Es sind keine externen Anmeldedienste konfiguriert.
-                        </p>
+
+    <form method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-4"></div>
+
+        <div class="row g-5">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-lg-5">
+
+                <div class="card border-0 shadow-lg p-4">
+
+                    <h5 class="mb-3 fw-semibold">Account</h5>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control" />
+                        <label asp-for="Input.Email"></label>
                     </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
-    </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Password" class="form-control" />
+                        <label asp-for="Input.Password"></label>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Input.ConfirmPassword" class="form-control" />
+                        <label asp-for="Input.ConfirmPassword"></label>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <h5 class="mb-3 fw-semibold">Firmendaten</h5>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.CompanyName" class="form-control" />
+                        <label asp-for="Input.CompanyName"></label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Address" class="form-control" />
+                        <label asp-for="Input.Address"></label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.PostalCode" class="form-control" />
+                                <label asp-for="Input.PostalCode"></label>
+                            </div>
+                        </div>
+
+                        <div class="col-8">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.City" class="form-control" />
+                                <label asp-for="Input.City"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Input.Country" class="form-control" />
+                        <label asp-for="Input.Country"></label>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <h5 class="mb-3 fw-semibold">Steuerdaten</h5>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.TaxNumber" class="form-control" />
+                        <label asp-for="Input.TaxNumber"></label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.VatId" class="form-control" />
+                        <label asp-for="Input.VatId"></label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input asp-for="Input.IsSmallBusiness" class="form-check-input" />
+                        <label asp-for="Input.IsSmallBusiness" class="form-check-label"></label>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-lg-7">
+
+                <h4 class="text-center mb-4 fw-semibold">Plan auswählen</h4>
+
+                <div class="row g-4 align-items-stretch">
+
+                    <!-- STARTER -->
+                    <div class="col-md-4 d-flex">
+                        <label class="plan-wrapper w-100">
+                            <input type="radio" asp-for="Input.Plan" value="Starter" hidden>
+
+                                <div class="pricing-card h-100 p-4">
+
+                                    <h6 class="text-success fw-bold">Starter</h6>
+
+                                    <h2 class="fw-bold mb-1">19€</h2>
+                                    <p class="text-muted small">für Einzelunternehmer</p>
+
+                                    <hr>
+
+                                    <ul class="small">
+                                        <li>1 Benutzer</li>
+                                        <li>Angebote</li>
+                                        <li>Rechnungen</li>
+                                        <li>PDF Export</li>
+                                        <li>Kundenverwaltung</li>
+                                        <li>Dashboard</li>
+                                    </ul>
+
+                                    <hr>
+
+                                    <p class="small text-danger">max 50 Angebote / Monat</p>
+
+                                </div>
+                            </label>
+                        </div>
+
+
+
+                        <!-- TEAM -->
+                        <div class="col-md-4 d-flex">
+                            <label class="plan-wrapper w-100">
+                                <input type="radio" asp-for="Input.Plan" value="Team" checked hidden>
+
+                                    <div class="pricing-card best h-100 p-4">
+
+                                        <div class="badge bg-primary position-absolute top-0 start-50 translate-middle">
+                                            BESTSELLER
+                                        </div>
+
+                                        <h6 class="text-primary fw-bold">Team</h6>
+
+                                        <h2 class="fw-bold mb-1">39€</h2>
+                                        <p class="text-muted small">für kleine Teams</p>
+
+                                        <hr>
+
+                                        <ul class="small">
+                                            <li>5 Benutzer</li>
+                                            <li>Unbegrenzt Angebote</li>
+                                            <li>Teamverwaltung</li>
+                                            <li>Rollen</li>
+                                            <li>Status Tracking</li>
+                                            <li>Priority Support</li>
+                                        </ul>
+
+                                    </div>
+                                </label>
+                            </div>
+
+
+                            <!-- BUSINESS -->
+<div class="col-md-4 d-flex">
+                                <label class="plan-wrapper w-100">
+                                    <input type="radio" asp-for="Input.Plan" value="Business" hidden>
+
+                                        <div class="pricing-card h-100 p-4">
+
+                                            <h6 class="fw-bold text-dark">Business</h6>
+
+                                            <h2 class="fw-bold mb-1">79€</h2>
+                                            <p class="text-muted small">für wachsende Firmen</p>
+
+                                            <hr>
+
+                                            <ul class="small">
+                                                <li>Unbegrenzte Benutzer</li>
+                                                <li>Alles aus Team</li>
+                                                <li>API Zugriff</li>
+                                                <li>Reports</li>
+                                                <li>Branding</li>
+                                            </ul>
+
+                                        </div>
+                                    </label>
+                                </div>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-5 shadow">
+                                Konto erstellen
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+            <style>
+
+                .pricing-card {
+                    border: 1px solid #e9ecef;
+                    border-radius: 14px;
+                    transition: .2s;
+                    cursor: pointer;
+                    position: relative;
+                    background: white;
+                }
+
+                .plan-wrapper input:checked + .pricing-card {
+                    border: 2px solid #0d6efd;
+                    transform: scale(1.04);
+                    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+                }
+
+                .pricing-card:hover {
+                    transform: scale(1.02);
+                }
+
+                .best {
+                    border: 2px solid #0d6efd;
+                }
+
+                ul {
+                    padding-left: 18px;
+                }
+                .plan-wrapper{
+    width:100%;
+    display:flex;
 }
+
+.pricing-card{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+}
+
+.pricing-card ul{
+    flex-grow:1;
+}
+
+            </style>

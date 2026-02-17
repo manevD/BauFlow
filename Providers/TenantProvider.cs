@@ -13,19 +13,18 @@
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Guid GetCompanyId()
+        public Guid? GetCompanyId()
         {
             var user = _httpContextAccessor.HttpContext?.User;
 
-            if (user == null || !user.Identity.IsAuthenticated)
-                throw new Exception("User nicht authentifiziert.");
+            if (user?.Identity?.IsAuthenticated != true)
+                return null;
 
-            var companyIdClaim = user.FindFirst("CompanyId");
+            var claim = user.FindFirst("CompanyId");
+            if (claim == null)
+                return null;
 
-            if (companyIdClaim == null)
-                throw new Exception("CompanyId Claim fehlt.");
-
-            return Guid.Parse(companyIdClaim.Value);
+            return Guid.Parse(claim.Value);
         }
     }
 
