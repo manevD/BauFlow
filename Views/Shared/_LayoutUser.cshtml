@@ -1,0 +1,174 @@
+﻿@using BauFlow.Areas.Identity.Pages.Account.Manage
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BauFlow</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<body>
+
+    <div class="d-flex">
+
+        <!-- DESKTOP SIDEBAR -->
+        <aside class="d-none d-lg-flex flex-column border-end bg-white sidebar">
+
+            <div class="p-3 fw-bold fs-5 border-bottom">
+                BauFlow
+            </div>
+
+            <div class="flex-grow-1 overflow-auto p-3">
+
+                <nav class="nav flex-column">
+
+                    <a asp-controller="Home" asp-action="Index" class="nav-link">Dashboard</a>
+                    <a asp-controller="Projects" asp-action="Index" class="nav-link">Projekte</a>
+                    <a asp-controller="Invoices" asp-action="Index" class="nav-link">Rechnungen</a>
+                    <a asp-controller="Customers" asp-action="Index" class="nav-link">Kunden</a>
+
+                    <!-- SETTINGS -->
+                    <button class="btn text-start mt-3"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#settingsMenu">
+                        Einstellungen
+                    </button>
+
+                    <div class="collapse ms-2" id="settingsMenu">
+
+                        <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)"
+                           asp-area="Identity"
+                           asp-page="/Account/Manage/Index">Profil</a>
+
+                        <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)"
+                           asp-area="Identity"
+                           asp-page="/Account/Manage/Email">Email</a>
+
+                        <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)"
+                           asp-area="Identity"
+                           asp-page="/Account/Manage/ChangePassword">Passwort</a>
+
+                        <a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"
+                           asp-area="Identity"
+                           asp-page="/Account/Manage/TwoFactorAuthentication">2FA</a>
+
+                        <a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)"
+                           asp-area="Identity"
+                           asp-page="/Account/Manage/PersonalData">Daten</a>
+
+                    </div>
+
+                </nav>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="p-3 border-top">
+                <partial name="_LoginPartial" />
+            </div>
+
+        </aside>
+
+
+
+        <!-- MOBILE OFFCANVAS -->
+        <div class="offcanvas offcanvas-start d-lg-none" id="mobileSidebar">
+
+            <div class="offcanvas-header">
+                <h5 class="fw-bold">BauFlow</h5>
+                <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+
+            <div class="offcanvas-body d-flex flex-column p-0">
+
+                <div class="flex-grow-1 overflow-auto p-3">
+
+                    <nav class="nav flex-column">
+
+                        <a asp-controller="Home" asp-action="Index" class="nav-link">Dashboard</a>
+                        <a asp-controller="Projects" asp-action="Index" class="nav-link">Projekte</a>
+                        <a asp-controller="Invoices" asp-action="Index" class="nav-link">Rechnungen</a>
+                        <a asp-controller="Customers" asp-action="Index" class="nav-link">Kunden</a>
+                        <button class="btn text-start mt-3"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#settingsMenuMobile">
+                            Einstellungen
+                        </button>
+                        <div class="collapse ms-2" id="settingsMenuMobile">
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">Profil</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Email">Email</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Passwort</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/PersonalData">Daten</a>
+                        </div>
+                    </nav>
+                </div>
+
+                <div class="p-3 border-top">
+                    <partial name="_LoginPartial" />
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-grow-1">
+
+            <!-- TOPBAR -->
+            <header class="border-bottom p-3 d-flex align-items-center bg-white">
+
+                <button class="btn btn-outline-secondary d-lg-none me-3"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#mobileSidebar">
+                    ☰
+                </button>
+
+                <span class="fw-semibold fs-5">@ViewData["Title"]</span>
+
+            </header>
+
+
+            <!-- PAGE -->
+            <main class="p-4 bg-light min-vh-100">
+                @RenderBody()
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <style>
+
+            .sidebar {
+                width: 260px;
+                height: 100vh;
+            }
+
+            .nav-link {
+                border-radius: 8px;
+                margin-bottom: 4px;
+                color: #374151;
+            }
+
+                .nav-link:hover {
+                    background: #f1f5f9;
+                }
+
+                .nav-link.active {
+                    background: #2563eb;
+                    color: white !important;
+                }
+
+    </style>
+
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

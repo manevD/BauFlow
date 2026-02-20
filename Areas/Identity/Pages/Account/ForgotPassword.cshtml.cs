@@ -1,6 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿#nullable disable
 
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -28,58 +26,52 @@ namespace BauFlow.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Bitte E-Mail eingeben")]
+            [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse")]
+            [Display(Name = "E-Mail")]
             public string Email { get; set; }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
-                }
+            if (!ModelState.IsValid)
+                return Page();
 
-                // For more information on how to enable account confirmation and password reset please
-                // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page(
-                    "/Account/ResetPassword",
-                    pageHandler: null,
-                    values: new { area = "Identity", code },
-                    protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
-                    Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            var user = await _userManager.FindByEmailAsync(Input.Email);
 
+            // Sicherheitsmaßnahme:
+            // Nicht verraten ob User existiert oder bestätigt ist
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 return RedirectToPage("./ForgotPasswordConfirmation");
-            }
 
-            return Page();
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            var callbackUrl = Url.Page(
+                "/Account/ResetPassword",
+                null,
+                new { area = "Identity", code },
+                Request.Scheme);
+
+
+            await _emailSender.SendEmailAsync(
+                Input.Email,
+                "Passwort zurücksetzen",
+                $"<p>Hallo,</p>" +
+                $"<p>Sie haben angefordert, Ihr Passwort zurückzusetzen.</p>" +
+                $"<p>Klicken Sie auf den folgenden Link:</p>" +
+                $"<p><a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Passwort zurücksetzen</a></p>" +
+                $"<p>Falls Sie diese Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.</p>"
+            );
+
+            return RedirectToPage("./ForgotPasswordConfirmation");
         }
     }
 }

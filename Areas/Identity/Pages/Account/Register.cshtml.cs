@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BauFlow.Areas.Identity.Pages.Account
 {
@@ -199,6 +200,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
                     user.Role = UserRole.Owner;
 
                     await _userManager.UpdateAsync(user);
+                    return RedirectToPage("/");
                 }
                 foreach (var error in result.Errors)
                 {

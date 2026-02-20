@@ -1,3 +1,9 @@
-﻿@{
-    Layout = "_Layout";
+﻿@using BauFlow.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    Layout = SignInManager.IsSignedIn(User)
+        ? "/Views/Shared/_LayoutUser.cshtml"
+        : "/Views/Shared/_Layout.cshtml";
 }
