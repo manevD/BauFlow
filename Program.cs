@@ -2,12 +2,17 @@ using BauFlow.Data;
 using BauFlow.Entities;
 using BauFlow.Factories;
 using BauFlow.Interfaces;
+using BauFlow.Middleware;
 using BauFlow.Providers;
+using BauFlow.Services;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-
+SerilogConfig.Configure(builder);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string not found.");
 
@@ -18,10 +23,13 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddHealthChecks();
+
+
 
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddScoped<PlanService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<
@@ -34,6 +42,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("MemberAccess", p => p.RequireRole("Member", "Admin", "Owner"));
 });
 var app = builder.Build();
+
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
@@ -50,7 +63,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();  // 🔥 wichtig
+app.UseAuthentication();
+app.UseMiddleware<BillingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -58,5 +72,25 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+
+        var result = JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                error = e.Value.Exception?.Message
+            })
+        });
+
+        await context.Response.WriteAsync(result);
+    }
+});
 
 app.Run();

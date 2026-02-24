@@ -126,6 +126,12 @@ namespace BauFlow.Data.Migrations
                     b.Property<bool>("IsSmallBusiness")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTrial")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LogoPath")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -135,10 +141,8 @@ namespace BauFlow.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Plan")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("Plan")
+                        .HasColumnType("int");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -146,16 +150,20 @@ namespace BauFlow.Data.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("StripeCustomerId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripeSubscriptionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubscriptionEndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("TaxNumber")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("TrialEndsAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("VatId")
                         .HasMaxLength(50)

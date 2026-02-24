@@ -4,6 +4,7 @@
 
 using BauFlow.Data;
 using BauFlow.Entities;
+using BauFlow.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
@@ -151,7 +153,8 @@ namespace BauFlow.Areas.Identity.Pages.Account
             // SUBSCRIPTION (hidden/system)
             // ========================
 
-            public string? Plan { get; set; }
+            [Required]
+            public Plan Plan { get; set; }
         }
 
 
@@ -167,6 +170,12 @@ namespace BauFlow.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+           
+            if (!PlanConfig.Plans.ContainsKey(Input.Plan))
+            {
+                ModelState.AddModelError("", "Ungültiger Plan.");
+                return Page();
+            }
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -188,7 +197,11 @@ namespace BauFlow.Areas.Identity.Pages.Account
                         TaxNumber = Input.TaxNumber,
                         VatId = Input.VatId,
                         IsSmallBusiness = Input.IsSmallBusiness,
-                        Plan = Input.Plan ?? "Free"
+
+                        Plan = Input.Plan, // 🔥 HIER wird Plan gesetzt
+
+                        CreatedAt = DateTime.UtcNow,
+                        IsActive = true
                     };
 
 

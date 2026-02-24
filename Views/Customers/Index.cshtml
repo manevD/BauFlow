@@ -1,0 +1,98 @@
+﻿@model IEnumerable<BauFlow.Entities.Customer>
+
+@{
+    ViewData["Title"] = "Kunden";
+}
+<style>
+    .hover-row:hover {
+        background: #f8f9fb;
+        transition: .15s;
+    }
+
+    .card {
+        border-radius: 14px;
+    }
+
+    .btn {
+        border-radius: 10px;
+    }
+</style>
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Kunden</h2>
+
+        <a asp-action="Create" class="btn btn-primary">
+            + Neuer Kunde
+        </a>
+    </div>
+
+
+    <!-- Search -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <input type="text" class="form-control"
+                   placeholder="Kunden suchen..." />
+        </div>
+    </div>
+
+
+    <!-- Table -->
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Ansprechpartner</th>
+                        <th>Ort</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var c in Model)
+                    {
+                        <tr class="hover-row">
+
+                            <td class="fw-semibold">@c.Name</td>
+
+                            <td>@c.ContactPerson</td>
+
+                            <td>@c.City</td>
+
+                            <td>
+                                <a href="mailto:@c.Email">@c.Email</a>
+                            </td>
+
+                            <td>@c.Phone</td>
+
+                            <td class="text-end">
+
+                                <a asp-action="Edit" asp-route-id="@c.Id"
+                                       class="btn btn-sm btn-outline-secondary">
+                                    Bearbeiten
+                                </a>
+
+                                <a asp-action="Details" asp-route-id="@c.Id"
+                                       class="btn btn-sm btn-outline-dark">
+                                    Details
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>

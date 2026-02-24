@@ -6,41 +6,24 @@ namespace BauFlow.Entities
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-
-        // =========================
-        // BASIC INFO
-        // =========================
-
-        [Required]
-        [MaxLength(200)]
+        // BASIC
+        [Required, MaxLength(200)]
         public string Name { get; set; }
 
-
-        // =========================
         // ADDRESS
-        // =========================
-
-        [Required]
-        [MaxLength(300)]
+        [Required, MaxLength(300)]
         public string Address { get; set; }
 
-        [Required]
-        [MaxLength(20)]
+        [Required, MaxLength(20)]
         public string PostalCode { get; set; }
 
-        [Required]
-        [MaxLength(150)]
+        [Required, MaxLength(150)]
         public string City { get; set; }
 
-        [Required]
-        [MaxLength(150)]
+        [Required, MaxLength(150)]
         public string Country { get; set; }
 
-
-        // =========================
-        // TAX INFO
-        // =========================
-
+        // TAX
         [MaxLength(50)]
         public string? TaxNumber { get; set; }
 
@@ -49,36 +32,23 @@ namespace BauFlow.Entities
 
         public bool IsSmallBusiness { get; set; }
 
-
-        // =========================
         // BRANDING
-        // =========================
-
         [MaxLength(500)]
         public string? LogoPath { get; set; }
 
-
-        // =========================
         // SUBSCRIPTION
-        // =========================
+        public Plan Plan { get; set; }
 
-        [MaxLength(100)]
         public string? StripeCustomerId { get; set; }
-
-        [MaxLength(100)]
         public string? StripeSubscriptionId { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Plan { get; set; } 
-
         public bool IsActive { get; set; } = true;
+        public DateTime? SubscriptionEndDate { get; set; }
+        public bool IsTrial { get; set; }
+        public DateTime? TrialEndsAt { get; set; }
+        public bool IsSuspended { get; set; }
 
-
-        // =========================
         // AUDIT
-        // =========================
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
     public enum Plan

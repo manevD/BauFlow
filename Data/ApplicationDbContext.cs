@@ -63,6 +63,7 @@ namespace BauFlow.Data
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CompanyId = companyId;
+                    entry.Entity.CreatedAt = DateTime.UtcNow; 
                 }
 
                 // 🔹 Bei Updates → CompanyId darf niemals geändert werden
@@ -78,8 +79,8 @@ namespace BauFlow.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Customer>()
-      .HasQueryFilter(e => e.CompanyId == CurrentCompanyId);
-
+                .HasQueryFilter(e => e.CompanyId == CurrentCompanyId);
+         
             builder.Entity<Project>()
                 .HasQueryFilter(p => p.CompanyId == _tenantProvider.GetCompanyId());
 

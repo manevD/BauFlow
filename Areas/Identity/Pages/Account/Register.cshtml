@@ -29,17 +29,17 @@
                 <h5 class="mb-4 fw-semibold text-center">Account</h5>
 
                 <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" />
-                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" autofocus class="form-control" />
+                      <label asp-for="Input.Email"></label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" />
+<input asp-for="Input.Password" type="password" class="form-control" />
                     <label asp-for="Input.Password"></label>
                 </div>
 
                 <div class="form-floating">
-                    <input asp-for="Input.ConfirmPassword" class="form-control" />
+<input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
                     <label asp-for="Input.ConfirmPassword"></label>
                 </div>
             </div>
@@ -77,8 +77,8 @@
                 </div>
 
                 <div class="form-floating">
-                    <input asp-for="Input.Country" class="form-control" />
-                    <label asp-for="Input.Country"></label>
+<input asp-for="Input.Country" value="Deutschland" class="form-control" />
+<label asp-for="Input.Country"></label>
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@
                 <!-- TEAM -->
                 <div class="col-md-4">
                     <label class="plan-wrapper">
-                        <input type="radio" asp-for="Input.Plan" value="Team" checked hidden>
+                        <input type="radio" asp-for="Input.Plan" value="Pro" checked hidden>
 
                         <div class="modern-card featured">
                             <div class="badge-modern">BELIEBT</div>
@@ -165,8 +165,7 @@
                 <!-- BUSINESS -->
                 <div class="col-md-4">
                     <label class="plan-wrapper">
-                        <input type="radio" asp-for="Input.Plan" value="Business" hidden>
-
+                        <input type="radio" asp-for="Input.Plan" value="Starter" hidden>
                         <div class="modern-card">
                             <div class="plan-header">
                                 <span class="plan-name text-dark">Business</span>
@@ -199,9 +198,10 @@
                 Weiter
             </button>
 
-            <button type="submit" id="submitBtn" class="btn btn-success d-none">
-                Konto erstellen
-            </button>
+       <button type="submit" id="submitBtn" class="btn btn-success d-none">
+    <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+    Konto erstellen
+</button>
 
         </div>
 
@@ -327,6 +327,12 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        document.addEventListener("keydown", e=>{
+    if(e.key==="Enter" && currentStep<totalSteps){
+        e.preventDefault();
+        nextStep(1);
+    }
+});
 let currentStep = 1;
 const totalSteps = 4;
 
