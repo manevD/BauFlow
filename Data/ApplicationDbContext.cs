@@ -17,16 +17,15 @@ namespace BauFlow.Data
      : IdentityDbContext<ApplicationUser>
     {
         private readonly ITenantProvider _tenantProvider;
-        public Guid CurrentCompanyId { get; set; }
 
         public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options,
-            ITenantProvider tenantProvider)
-            : base(options)
+     DbContextOptions<ApplicationDbContext> options,
+     ITenantProvider tenantProvider)
+     : base(options)
         {
-            CurrentCompanyId = _tenantProvider?.GetCompanyId() ?? Guid.Empty;
+            _tenantProvider = tenantProvider; // ❗ FEHLTE
         }
-
+        public Guid CurrentCompanyId => _tenantProvider.GetCompanyId().Value;
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Customer> Customers { get; set; }

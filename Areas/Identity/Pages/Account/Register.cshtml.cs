@@ -158,18 +158,16 @@ namespace BauFlow.Areas.Identity.Pages.Account
         }
 
 
-
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = [.. (await _signInManager.GetExternalAuthenticationSchemesAsync())];
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            _ = returnUrl ?? Url.Content("~/");
+            ExternalLogins = [.. (await _signInManager.GetExternalAuthenticationSchemesAsync())];
            
             if (!PlanConfig.Plans.ContainsKey(Input.Plan))
             {
@@ -197,13 +195,13 @@ namespace BauFlow.Areas.Identity.Pages.Account
                         TaxNumber = Input.TaxNumber,
                         VatId = Input.VatId,
                         IsSmallBusiness = Input.IsSmallBusiness,
-
-                        Plan = Input.Plan, // 🔥 HIER wird Plan gesetzt
-
+                        IsTrial = false,
+                        Plan = Input.Plan,
+                        SubscriptionEndDate = DateTime.UtcNow.AddYears(1),
+                        IsSuspended = false,
                         CreatedAt = DateTime.UtcNow,
                         IsActive = true
                     };
-
 
                     _context.Companies.Add(company);
                     await _context.SaveChangesAsync();
