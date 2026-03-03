@@ -1,0 +1,79 @@
+﻿@using BauFlow.Entities
+@using BauFlow.ViewModels
+@model UserCreateViewModel
+
+<style>
+
+    .profile-card {
+        background: #ffffff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .form-control {
+        background: #ffffff;
+        border: 1px solid #e2e5ea;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+        }
+
+</style>
+
+<div class="d-flex justify-content-center">
+
+    <div class="profile-card">
+
+        <h4 class="mb-4 text-center">Benutzer erstellen</h4>
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3 text-center"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Email"
+                       class="form-control"
+                       placeholder="E-Mail" />
+                <label asp-for="Email"></label>
+                <span asp-validation-for="Email"
+                      class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-4">
+                <input asp-for="FullName"
+                       class="form-control"
+                       placeholder="Vollständiger Name" />
+                <label asp-for="FullName"></label>
+            </div>
+
+            <input type="hidden" asp-for="CompanyId" />
+
+            <button type="submit"
+                    class="btn btn-primary w-100 btn-lg">
+                Benutzer anlegen
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

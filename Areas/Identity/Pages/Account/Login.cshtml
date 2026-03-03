@@ -5,101 +5,149 @@
     ViewData["Title"] = "Anmelden";
 }
 
+<style>
+    body {
+        background: #f6f7f9;
+        color: #111;
+    }
+
+    h1 {
+        font-weight: 600;
+        color: #111;
+    }
+
+    .text-muted {
+        color: #6b7280 !important;
+    }
+
+    .card {
+        background: #ffffff !important;
+        border: 1px solid #eceef2 !important;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04) !important;
+    }
+
+    .form-control {
+        background: #ffffff;
+        border: 1px solid #e2e5ea;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.15);
+        }
+
+    .auth-link {
+        color: #111;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
 <div class="container py-5">
 
-    <div class="text-center mb-5">
+    <div class="text-center mb-4">
         <h1 class="fw-bold display-6">Willkommen zurück</h1>
         <p class="text-muted fs-5">Melden Sie sich in Ihr Konto an</p>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="card border-0 shadow-lg p-4 mx-auto" style="max-width:600px">
 
-        <div class="col-lg-5">
+        <form method="post">
 
-            <div class="card border-0 shadow-lg p-4">
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger text-center mb-4"></div>
 
-                <form method="post">
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email"
+                       class="form-control"
+                       placeholder="email@beispiel.de" />
+                <label asp-for="Input.Email">E-Mail</label>
+            </div>
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password"
+                       type="password"
+                       class="form-control"
+                       placeholder="Passwort" />
+                <label asp-for="Input.Password">Passwort</label>
+            </div>
 
-                    <!-- EMAIL -->
-                    <div class="form-floating mb-3">
-                        <input asp-for="Input.Email"
-                               class="form-control"
-                               placeholder="name@example.com" />
-                        <label asp-for="Input.Email">E-Mail</label>
-                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
-                    </div>
+            <div class="form-check mb-4">
+                <input class="form-check-input" asp-for="Input.RememberMe" />
+                <label class="form-check-label" asp-for="Input.RememberMe">
+                    Angemeldet bleiben
+                </label>
+            </div>
 
-                    <!-- PASSWORD -->
-                    <div class="form-floating mb-3">
-                        <input asp-for="Input.Password"
-                               class="form-control"
-                               placeholder="Passwort" />
-                        <label asp-for="Input.Password">Passwort</label>
-                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
-                    </div>
+            <button type="submit"
+                    class="btn btn-primary w-100 btn-lg mb-3">
+                Anmelden
+            </button>
 
-                    <!-- REMEMBER -->
-                    <div class="form-check mb-4">
-                        <input class="form-check-input" asp-for="Input.RememberMe" />
-                        <label class="form-check-label" asp-for="Input.RememberMe">
-                            Angemeldet bleiben
-                        </label>
-                    </div>
+            <div class="text-center small">
+                <a asp-page="./ForgotPassword" class="auth-link d-block mb-2">
+                    Passwort vergessen?
+                </a>
 
-                    <!-- LOGIN BUTTON -->
-                    <button type="submit" class="btn btn-primary w-100 btn-lg shadow-sm">
-                        Anmelden
-                    </button>
+                <a asp-page="./Register"
+                   asp-route-returnUrl="@Model.ReturnUrl"
+                   class="auth-link d-block">
+                    Neues Konto erstellen
+                </a>
+            </div>
 
-                    <!-- LINKS -->
-                    <div class="text-center mt-4 small">
+        </form>
 
-                        <a asp-page="./ForgotPassword" class="d-block mb-2">
-                            Passwort vergessen?
-                        </a>
+    </div>
 
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="d-block mb-2">
-                            Neues Konto erstellen
-                        </a>
+    @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+    {
+        <div class="card border-0 shadow-lg p-4 mx-auto mt-4" style="max-width:600px">
 
-                    </div>
+            <div class="text-center mb-3 small text-muted">
+                Oder anmelden mit
+            </div>
 
-                </form>
+            <form asp-page="./ExternalLogin"
+                  asp-route-returnUrl="@Model.ReturnUrl"
+                  method="post"
+                  class="d-grid gap-2">
 
-                <!-- EXTERNAL LOGIN -->
-                @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                @foreach (var provider in Model.ExternalLogins!)
                 {
-                    <hr class="my-4" />
-
-                    <div class="text-center mb-3 text-muted small">
-                        Oder anmelden mit
-                    </div>
-
-                    <form asp-page="./ExternalLogin"
-                          asp-route-returnUrl="@Model.ReturnUrl"
-                          method="post"
-                          class="d-grid gap-2">
-
-                        @foreach (var provider in Model.ExternalLogins!)
-                        {
-                            <button type="submit"
-                                    class="btn btn-outline-dark"
-                                    name="provider"
-                                    value="@provider.Name">
-                                @provider.DisplayName
-                            </button>
-                        }
-
-                    </form>
+                    <button type="submit"
+                            class="btn btn-outline-secondary"
+                            name="provider"
+                            value="@provider.Name">
+                        @provider.DisplayName
+                    </button>
                 }
 
-            </div>
-        </div>
-    </div>
-</div>
+            </form>
 
+        </div>
+    }
+
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

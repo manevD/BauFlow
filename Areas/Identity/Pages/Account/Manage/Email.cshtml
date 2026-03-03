@@ -1,44 +1,158 @@
 ﻿@page
 @model EmailModel
 @{
-    ViewData["Title"] = "Email";
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 
-<h3>@ViewData["Title"]</h3>
+<style>
+
+    body {
+        background: #f6f7f9;
+        color: #111;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+    }
+
+    .form-control {
+        background: #ffffff;
+        border: 1px solid #e2e5ea;
+        color: #111;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .form-floating label {
+        color: #6b7280;
+    }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        color: #fff !important;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.15);
+        }
+
+    .btn-link {
+        color: #111;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+    .validation-summary-errors,
+    .field-validation-error {
+        color: #dc3545;
+    }
+    /* MOBILE FIX */
+    @@media (max-width: 576px) {
+
+        .content-wrapper {
+            padding: 20px 18px;
+        }
+
+        .profile-card {
+            padding: 22px;
+            border-radius: 18px;
+        }
+
+        .form-floating {
+            margin-bottom: 16px !important;
+        }
+
+        .form-control {
+            height: 52px;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            padding: 14px;
+            font-size: 15px;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+    }
+</style>
+
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="email-form" method="post">
-            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
-            @if (Model.IsEmailConfirmed)
-            {
-                <div class="form-floating mb-3 input-group">
-                    <input asp-for="Email" class="form-control" placeholder="Bitte geben Sie Ihre E-Mail-Adresse ein." disabled />
-                        <div class="input-group-append">
-                            <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                        </div>
-                    <label asp-for="Email" class="form-label"></label>
-                </div>
-            }
-            else
-            {
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control" placeholder="Bitte geben Sie Ihre E-Mail-Adresse ein." disabled />
-                    <label asp-for="Email" class="form-label"></label>
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">
-                        Bestätigungs-E-Mail senden
-                    </button>
-                </div>
-            }
-            <div class="form-floating mb-3">
-                <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Bitte geben Sie eine neue E-Mail-Adresse ein." />
-                <label asp-for="Input.NewEmail" class="form-label"></label>
-                <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+
+<div class="profile-card" style="max-width:800px;">
+
+    <form id="email-form" method="post">
+
+        <div asp-validation-summary="All"
+             class="text-danger mb-3"
+             role="alert"></div>
+
+        @if (Model.IsEmailConfirmed)
+        {
+            <div class="form-floating mb-4">
+                <input asp-for="Email"
+                       class="form-control"
+                       disabled />
+                <label asp-for="Email"></label>
             </div>
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">Email ändern</button>
-        </form>
-    </div>
+        }
+        else
+        {
+            <div class="form-floating mb-2">
+                <input asp-for="Email"
+                       class="form-control"
+                       disabled />
+                <label asp-for="Email"></label>
+            </div>
+
+            <button id="email-verification"
+                    type="submit"
+                    asp-page-handler="SendVerificationEmail"
+                    class="btn btn-link mb-4 p-0">
+                Bestätigungs-E-Mail senden
+            </button>
+        }
+
+        <div class="form-floating mb-4">
+            <input asp-for="Input.NewEmail"
+                   class="form-control"
+                   autocomplete="email"
+                   aria-required="true"
+                   placeholder="Neue E-Mail-Adresse" />
+            <label asp-for="Input.NewEmail"></label>
+            <span asp-validation-for="Input.NewEmail"
+                  class="small text-danger"></span>
+        </div>
+
+        <button id="change-email-button"
+                type="submit"
+                asp-page-handler="ChangeEmail"
+                class="w-100 btn btn-lg btn-primary">
+            Email ändern
+        </button>
+
+    </form>
+
 </div>
 
 @section Scripts {

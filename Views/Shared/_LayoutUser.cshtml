@@ -1,231 +1,269 @@
 ﻿@using BauFlow.Areas.Identity.Pages.Account.Manage
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>BauFlow </title>
-    <link rel="icon" type="image/x-icon" href="~/src/assets/img/favicon.ico" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BauFlow</title>
 
-    <link href="~/modern-light-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
-    <link href="~/modern-light-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
-    <script src="~/modern-light-menu/loader.js"></script>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="~/modern-light-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
-    <link href="~/modern-light-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-    <link href="~/plugins/src/apex/apexcharts.css" rel="stylesheet" type="text/css">
-        <link href="~/assets/css/light/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
-        <link href="~/assets/css/dark/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
-        <link href="~/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
-            <link href="~/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            background: #f6f7f9;
+            color: #111;
+            min-height: 100vh;
+        }
 
-            <link href="~/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
-                <link href="~/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
-        <style>
-            a{
-                text-decoration:none;
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid #eceef2;
+            box-shadow: 4px 0 20px rgba(0,0,0,.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1030;
+        }
+
+            .sidebar .nav-link {
+                color: #444;
+                border-radius: 12px;
+                padding: 10px 14px;
+                font-weight: 500;
+                transition: all .2s ease;
             }
-        </style>
-        <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-    </head>
-    <body class="layout-boxed">
-        <!-- BEGIN LOADER -->
-        <div id="load_screen">
-            <div class="loader">
-                <div class="loader-content">
-                    <div class="spinner-grow align-self-center"></div>
-                </div>
-            </div>
-        </div>
-        <!--  END LOADER -->
-        <!--  BEGIN NAVBAR  -->
-        <div class="header-container container-xxl">
-            <header class="header navbar navbar-expand-sm expand-header">
-                <div class="header-center-title" style="position: absolute;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    font-weight: 600;
-                    font-size: 20px;">
-                    Willkomen beim BauFlow
-                </div>
 
-                <a href="javascript:void(0);" class="sidebarCollapse">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </a>
+                .sidebar .nav-link:hover {
+                    background: #f1f3f5;
+                    color: #000;
+                }
 
+                .sidebar .nav-link.active {
+                    background: #111;
+                    color: #fff !important;
+                }
 
-                <ul class="navbar-item flex-row ms-lg-auto ms-0">
+        /* MAIN AREA */
+        .main-area {
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-                    <li class="nav-item theme-toggle-item">
-                        <a href="javascript:void(0);" class="nav-link theme-toggle">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon dark-mode"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun light-mode"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        /* TOPBAR */
+        .topbar {
+            background: #ffffff;
+            border-bottom: 1px solid #eceef2;
+        }
+
+        /* CONTENT */
+        main {
+            flex: 1;
+            background: #f6f7f9;
+        }
+
+        .content-wrapper {
+            padding: 40px 60px;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #eceef2;
+            color: #6b7280;
+        }
+
+        /* MOBILE */
+        #sidebarToggle {
+            display: none;
+        }
+
+        @@media (max-width: 991.98px) {
+
+            .sidebar {
+                left: -280px;
+                transition: all .3s ease;
+            }
+
+                .sidebar.show {
+                    left: 0;
+                }
+
+            .main-area {
+                margin-left: 0;
+            }
+
+            #sidebarToggle {
+                display: inline-block;
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,.4);
+                z-index: 1025;
+            }
+
+                .overlay.show {
+                    display: block;
+                }
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex">
+
+        <!-- SIDEBAR -->
+        <nav class="sidebar p-4" id="sidebar">
+
+            <div>
+                <div class="fs-4 fw-bold mb-4">BauFlow</div>
+
+                <ul class="nav nav-pills flex-column gap-2">
+
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="Projects" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projects" ? "active" : "")">
+                            Projekte
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="Invoices" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
+                            Rechnungen
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="Customers" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")">
+                            Kunden
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="Users" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+                            Benutzer
+                        </a>
+                    </li>
+
+                    <li class="mt-4 text-uppercase small text-muted">Einstellungen</li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Manage/Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Manage/Index") == true ? "active" : "")">
+                            Profil
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Manage/ChangePassword"
+                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("ChangePassword") == true ? "active" : "")">
+                            Passwort
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Manage/Email"
+                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Email") == true ? "active" : "")">
+                            Email
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Manage/PersonalData"
+                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("PersonalData") == true ? "active" : "")">
+                            Daten
                         </a>
                     </li>
 
                 </ul>
+            </div>
+
+            <div class="mt-4">
+                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                    <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
+                        Abmelden
+                    </button>
+                </form>
+
+                <div class="footer text-center small py-3">
+                    © @DateTime.Now.Year BauFlow – Alle Rechte vorbehalten
+                </div>
+            </div>
+
+        </nav>
+
+        <!-- MOBILE OVERLAY -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area flex-fill">
+
+            <!-- TOPBAR -->
+            <header class="topbar px-4 py-3 d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle">☰</button>
+                <h5 class="mb-0">Willkommen bei BauFlow</h5>
+                <div class="text-muted small">@User.Identity?.Name</div>
             </header>
-        </div>
-        <!--  END NAVBAR  -->
-        <!--  BEGIN MAIN CONTAINER  -->
-        <div class="main-container" id="container">
 
-            <div class="overlay"></div>
-            <div class="search-overlay"></div>
-
-            <!--  BEGIN SIDEBAR  -->
-            <div class="sidebar-wrapper sidebar-theme">
-
-                <nav id="sidebar">
-
-
-                    <div class="navbar-nav theme-brand flex-row  text-center">
-                        <div class="nav-logo">
-                            <div class="nav-item theme-logo">
-                                <a href="./index.html">
-                                    <img src="../src/assets/img/logo.svg" class="navbar-logo" alt="logo">
-                                </a>
-                            </div>
-                            <div class="nav-item theme-text">
-                                <a href="./index.html" class="nav-link"> CORK </a>
-                            </div>
-                        </div>
-                        <div class="nav-item sidebar-toggle">
-                            <div class="btn-toggle sidebarCollapse">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
-                            </div>
-                        </div>
-                    </div>
-                      
-  
-                   
-                                
-                    <div class="shadow-bottom"></div>
-                    <ul class="list-unstyled menu-categories" id="accordionExample">
-                        <li class="menu active">
-                            <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                                <div class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                    <span>Dashboard</span>
-                                </div>
-                            </a>
-                        </li>
-                        <!-- PROJEKTE -->
-                        <li class="menu">
-                            <a asp-controller="Projects" asp-action="Index" class="dropdown-toggle" data-bs-toggle="collapse">
-                                <div class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect x="3" y="3" width="18" height="18" /></svg>
-                                    <span>Projekte</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <!-- RECHNUNGEN -->
-                        <li class="menu">
-                            <a asp-controller="Invoices" asp-action="Index" class="dropdown-toggle" data-bs-toggle="collapse" >
-                                <div class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 1v22" /></svg>
-                                    <span>Rechnungen</span>
-                                </div>
-                            </a>
-                        </li>
-
-                        <!-- KUNDEN -->
-                        <li class="menu">
-                            <a asp-controller="Customers" asp-action="Index" class="dropdown-toggle">
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="7" r="4" /></svg>
-                                    <span>Kunden</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="menu menu-heading">
-                            <div class="heading">
-                                <span>Einstellungen</span>
-                            </div>
-                        </li>
-
-
-                        <li class="menu">
-                            <a href="#settings" data-bs-toggle="collapse" class="dropdown-toggle">
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="3" /></svg>
-                                    <span>Account</span>
-                                </div>
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                                        <polyline points="9 18 15 12 9 6"></polyline>
-                                    </svg>
-                                </div>
-                            </a>
-                            <ul class="collapse submenu list-unstyled" id="invoice" data-bs-parent="#accordionExample">
-                                <li>
-                                    <a asp-area="Identity" asp-page="/Account/Manage/Index">Profil</a>
-                                </li>
-
-                                <li>
-                                    <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Passwort</a>
-                                </li>
-
-                                <li>
-                                    <a asp-area="Identity" asp-page="/Account/Manage/Email">Email</a>
-                                </li>
-
-                                <li>
-                                    <a asp-area="Identity" asp-page="/Account/Manage/PersonalData">Daten</a>
-                                </li>
-                              
-                            </ul>
-                        </li>
-
-                       
-                       
-                    </ul>
-                </nav>
-            </div>
-            <!--  END SIDEBAR  -->
-            <!--  BEGIN CONTENT AREA  -->
-                    <div id="content" class="main-content">
-                        <div class="layout-px-spacing">
-
-                            <div class="middle-content container-xxl p-0">
-
-                                <div class="row layout-spacing layout-top-spacing" id="cancel-row">
-                            @RenderBody()
-                        </div>
-                    </div>
-
+            <!-- CONTENT -->
+            <main>
+                <div class="content-wrapper">
+                    @RenderBody()
                 </div>
-                <!--  BEGIN FOOTER  -->
-                <div class="footer-wrapper">
-                    <div class="footer-section f-section-1">
-                        <p class="">Copyright © <span class="dynamic-year">2022</span> <a target="_blank" href="https://designreset.com/cork-admin/">DesignReset</a>, All rights reserved.</p>
-                    </div>
-                </div>
-                <!--  END FOOTER  -->
-            </div>
-            <!--  END CONTENT AREA  -->
-        </div>
-        <!-- SCRIPTS (REIHENFOLGE KRITISCH) -->
-                <script src="~/plugins/src/global/vendors.min.js"></script>
-                <script src="~/js/bootstrap.bundle.min.js"></script>
-                <script src="~/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-                <script src="~/plugins/src/mousetrap/mousetrap.min.js"></script>
-                <script src="~/plugins/src/waves/waves.min.js"></script>
-                <script src="~/modern-light-menu/app.js"></script>
-                <script src="~/assets/js/custom.js"></script>
-                <script src="~/plugins/src/jquery-ui/jquery-ui.min.js"></script>
-                <script src="~/assets/js/apps/contact.js"></script>
+            </main>
 
-    </body>
+        </div>
+
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const toggle = document.getElementById('sidebarToggle');
+
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
 </html>
-
-
-           

@@ -26,6 +26,7 @@ namespace BauFlow.Data
             _tenantProvider = tenantProvider; // ❗ FEHLTE
         }
         public Guid CurrentCompanyId => _tenantProvider.GetCompanyId().Value;
+        public DbSet<ApplicationUser> AspNetUsers { get; set; }
 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Customer> Customers { get; set; }

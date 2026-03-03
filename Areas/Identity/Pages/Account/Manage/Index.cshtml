@@ -1,27 +1,142 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
+<style>
+
+    /* GLOBAL */
+    body {
+        background: #f6f7f9;
+        color: #111;
+    }
+
+    h3 {
+        font-weight: 600;
+        color: #111;
+        margin-bottom: 25px;
+    }
+
+    /* CARD STYLE wie Login */
+    .profile-card {
+        background: #ffffff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+    }
+
+    /* INPUTS */
+    .form-control {
+        background: #ffffff;
+        border: 1px solid #e2e5ea;
+        color: #111;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .form-floating label {
+        color: #6b7280;
+    }
+
+    /* BUTTON */
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        color: #fff !important;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.15);
+        }
+
+    .validation-summary-errors,
+    .field-validation-error {
+        color: #dc3545;
+    }
+    /* MOBILE FIX */
+    @@media (max-width: 576px) {
+
+        .content-wrapper {
+            padding: 20px 18px;
+        }
+
+        .profile-card {
+            padding: 22px;
+            border-radius: 18px;
+        }
+
+        .form-floating {
+            margin-bottom: 16px !important;
+        }
+
+        .form-control {
+            height: 52px;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            padding: 14px;
+            font-size: 15px;
+        }
+
+        h3 {
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+    }
+</style>
+
 <partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="row">
     <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Bitte wählen Sie Ihren Benutzernamen." disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Bitte geben Sie Ihre Telefonnummer ein."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Speichern</button>
-        </form>
+
+        <div class="profile-card">
+
+            <form id="profile-form" method="post">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-4"
+                     role="alert"></div>
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Username"
+                           class="form-control"
+                           placeholder="Benutzername"
+                           disabled />
+                    <label asp-for="Username"></label>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input asp-for="Input.PhoneNumber"
+                           class="form-control"
+                           placeholder="Telefonnummer" />
+                    <label asp-for="Input.PhoneNumber"></label>
+                    <span asp-validation-for="Input.PhoneNumber"
+                          class="small text-danger"></span>
+                </div>
+
+                <button id="update-profile-button"
+                        type="submit"
+                        class="w-100 btn btn-lg btn-primary">
+                    Speichern
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
 </div>
 

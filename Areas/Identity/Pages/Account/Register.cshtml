@@ -190,11 +190,11 @@
         <!-- NAV BUTTONS -->
         <div class="d-flex justify-content-between mt-5">
 
-            <button type="button" id="prevBtn" class="btn btn-outline-secondary" onclick="nextStep(-1)">
+            <button type="button" id="prevBtn" style="background-color:black; color:white;" class="btn" onclick="nextStep(-1)">
                 Zurück
             </button>
 
-            <button type="button" id="nextBtn" class="btn btn-primary" onclick="nextStep(1)">
+            <button type="button" id="nextBtn" style="background-color:black;color:white;" class="btn" onclick="nextStep(1)">
                 Weiter
             </button>
 
@@ -208,120 +208,127 @@
     </form>
 </div>
 
-
 <style>
+/* PRICING CARDS - CLEAN MODERN */
 
-/* STEPPER */
-.stepper{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:45px;
-}
-.step-item{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    border:2px solid #dee2e6;
-    position:relative;
-    transition:.3s;
-}
-.step-item::after{
-    content:attr(data-label);
-    position:absolute;
-    top:48px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:.8rem;
-    color:#6c757d;
-}
-.step-item.active{
-    background:#0d6efd;
-    border-color:#0d6efd;
-}
-.step-item.active::after{
-    color:#0d6efd;
-    font-weight:600;
-}
-.step-item.done{
-    background:#198754;
-    border-color:#198754;
-}
-.step-item.done::after{
-    color:#198754;
+.plan-wrapper {
+    cursor: pointer;
+    display: block;
 }
 
-/* PRICING */
-.plan-wrapper{ display:flex; width:100%; cursor:pointer; }
-
-.modern-card{
-    display:flex;
-    flex-direction:column;
-    width:100%;
-    height:100%;
-    position:relative;
-    background:white;
-    border-radius:20px;
-    padding:32px 26px;
-    border:1px solid #edf0f3;
-    transition:.35s cubic-bezier(.21,1.02,.73,1);
-    box-shadow:0 6px 18px rgba(0,0,0,.05);
-}
-.modern-card:hover{
-    transform:translateY(-8px);
-    box-shadow:0 18px 40px rgba(0,0,0,.12);
-}
-.plan-wrapper input:checked + .modern-card{
-    border:2px solid #0d6efd;
-    box-shadow:0 0 0 4px rgba(13,110,253,.15);
+.modern-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px 32px;
+    border: 1px solid #e9ecef;
+    transition: all .35s ease;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.featured{
-    border:2px solid #0d6efd;
-    background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+/* Hover */
+.modern-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08);
+    border-color: #111;
 }
 
-.plan-header{text-align:center;margin-bottom:25px;}
-.price{
-    font-size:2.3rem;
-    font-weight:700;
-    background:linear-gradient(90deg,#0d6efd,#4dabf7);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+/* Selected */
+.plan-wrapper input:checked + .modern-card {
+    border: 2px solid #111;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
-.modern-card ul{
-    list-style:none;
-    padding:0;
-    margin:0 0 20px 0;
-    flex-grow:1;
-}
-.modern-card ul li{
-    padding:7px 0;
-    padding-left:24px;
-    position:relative;
-}
-.modern-card ul li:before{
-    content:"✓";
-    position:absolute;
-    left:0;
-    color:#0d6efd;
-    font-weight:700;
+/* Featured Card */
+.featured {
+    border: 2px solid #111;
+    transform: scale(1.05);
 }
 
-.plan-limit{ margin-top:auto; text-align:center; font-size:.85rem; color:#dc3545; }
+.featured:hover {
+    transform: scale(1.05) translateY(-8px);
+}
 
-.badge-modern{
-    position:absolute;
-    top:-12px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#0d6efd;
-    color:white;
-    font-size:.7rem;
-    padding:5px 12px;
-    border-radius:30px;
-    font-weight:600;
+/* Plan Header */
+.plan-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.plan-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.price::after {
+    content: " / Monat";
+    font-size: .9rem;
+    font-weight: 400;
+    color: #777;
+}
+
+/* Features */
+.modern-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+}
+
+.modern-card ul li {
+    padding: 10px 0;
+    font-size: .95rem;
+    color: #444;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.modern-card ul li:last-child {
+    border-bottom: none;
+}
+
+/* Popular badge */
+.badge-modern {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: .7rem;
+    letter-spacing: .8px;
+    font-weight: 600;
+}
+    /* EXTERNAL BUTTON */
+    .btn-outline-secondary {
+        border: 1px solid #d1d5db !important;
+        color: #444 !important;
+        border-radius: 14px;
+    }
+
+        .btn-outline-secondary:hover {
+            background: #f3f4f6 !important;
+            color: #000 !important;
+        }
+/* Limit */
+.plan-limit {
+    text-align: center;
+    font-size: .8rem;
+    color: #888;
+    margin-top: auto;
 }
 </style>
 @section Scripts {

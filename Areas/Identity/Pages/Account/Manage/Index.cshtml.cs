@@ -2,17 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using BauFlow.Entities;
+using BauFlow.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 
 namespace BauFlow.Areas.Identity.Pages.Account.Manage
 {
+    [RequireTenant]
     public class IndexModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
