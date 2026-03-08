@@ -25,7 +25,7 @@ namespace BauFlow.Data
         {
             _tenantProvider = tenantProvider; // ❗ FEHLTE
         }
-        public Guid CurrentCompanyId => _tenantProvider.GetCompanyId().Value;
+        public Guid? CurrentCompanyId => _tenantProvider.GetCompanyId();
         public DbSet<ApplicationUser> AspNetUsers { get; set; }
 
         public DbSet<Company> Companies { get; set; }
@@ -54,19 +54,20 @@ namespace BauFlow.Data
         {
             var companyId = CurrentCompanyId;
 
+            if (companyId == null)
+                return;
+
             var entries = ChangeTracker
                 .Entries<BaseEntity>();
 
             foreach (var entry in entries)
             {
-                // 🔹 Neue Entities → CompanyId automatisch setzen
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CompanyId = companyId;
-                    entry.Entity.CreatedAt = DateTime.UtcNow; 
+                    entry.Entity.CompanyId = companyId.Value;
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
                 }
 
-                // 🔹 Bei Updates → CompanyId darf niemals geändert werden
                 if (entry.State == EntityState.Modified)
                 {
                     entry.Property(nameof(BaseEntity.CompanyId)).IsModified = false;
@@ -79,16 +80,16 @@ namespace BauFlow.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Customer>()
-                .HasQueryFilter(e => e.CompanyId == CurrentCompanyId);
-         
+       .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
+
             builder.Entity<Project>()
-                .HasQueryFilter(p => p.CompanyId == _tenantProvider.GetCompanyId());
+                .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
 
             builder.Entity<Quote>()
-                .HasQueryFilter(q => q.CompanyId == _tenantProvider.GetCompanyId());
+                .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
 
             builder.Entity<Invoice>()
-                .HasQueryFilter(i => i.CompanyId == _tenantProvider.GetCompanyId());
+                .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
         }
 
     }

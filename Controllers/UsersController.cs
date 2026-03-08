@@ -3,72 +3,201 @@ using BauFlow.Entities;
 using BauFlow.Security;
 using BauFlow.Services;
 using BauFlow.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace BauFlow.Controllers
 {
     [RequireTenant]
-
-    public class UsersController(ApplicationDbContext context, PlanService planService) : Controller
+    public class UsersController : Controller
     {
-        private readonly PlanService _planService = planService;
-        private readonly ApplicationDbContext _context = context;
+        private readonly PlanService _planService;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly EmailService _emailService;
+
+        public UsersController(
+            ApplicationDbContext context,
+            PlanService planService,
+            UserManager<ApplicationUser> userManager,
+            EmailService emailService)
+        {
+            _context = context;
+            _planService = planService;
+            _userManager = userManager;
+            _emailService = emailService;
+        }
+
+        // =============================
+        // USER LIST
+        // =============================
+
         public IActionResult Index()
         {
-            var users = _context.AspNetUsers.Where(u => u.CompanyId == _context.CurrentCompanyId && u.Role != UserRole.Owner).ToList();
+            var users = _context.AspNetUsers
+                .Where(u => u.CompanyId == _context.CurrentCompanyId &&
+                            u.Role != UserRole.Owner)
+                .ToList();
+
             return View(users);
         }
 
+        // =============================
+        // CREATE USER + INVITE
+        // =============================
+
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View(new UserCreateViewModel());
         }
-     
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserCreateViewModel model)
         {
             var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
             if (!_planService.CanCreateUser())
             {
-                ModelState.AddModelError("",
-                    "Ihr Plan erlaubt keine weiteren Benutzer. Bitte upgraden Sie.");
+                ModelState.AddModelError("", "Ihr Plan erlaubt keine weiteren Benutzer.");
                 return View(model);
             }
 
+            if (!ModelState.IsValid)
+                return View(model);
+
             var user = new ApplicationUser
             {
+                UserName = model.Email,
                 Email = model.Email,
                 FullName = model.FullName,
                 Role = model.Role,
-                CompanyId = companyId
+                CompanyId = companyId,
+                IsInviteAccepted = false,
+                InviteSentAt = DateTime.UtcNow
             };
-            await _context.AspNetUsers.AddAsync(user);
-            await _context.SaveChangesAsync();
-            // User erstellen
-            return RedirectToAction(nameof(Index));
-        }
-      
-        // POST: Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string? id)
-        {
-            var customer = await _context.AspNetUsers.FindAsync(id);
-            if (customer != null)
+
+            var result = await _userManager.CreateAsync(user);
+
+            if (!result.Succeeded)
             {
-                _context.AspNetUsers.Remove(customer);
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                return View(model);
             }
 
-            await _context.SaveChangesAsync();
+            await SendInvite(user);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerExists(Guid id)
+        // =============================
+        // RESEND INVITE
+        // =============================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendInvite(string id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+
+            await SendInvite(user);
+
+            user.InviteSentAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =============================
+        // SET PASSWORD (INVITE)
+        // =============================
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult SetPassword(string userId, string token)
+        {
+            var model = new SetPasswordViewModel
+            {
+                UserId = userId,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+                return NotFound();
+
+            var decodedToken = Encoding.UTF8.GetString(
+                WebEncoders.Base64UrlDecode(model.Token));
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                decodedToken,
+                model.Password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                return View(model);
+            }
+
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
+        }
+
+        // =============================
+        // DELETE USER
+        // =============================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user != null)
+                await _userManager.DeleteAsync(user);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // =============================
+        // INVITE HELPER
+        // =============================
+
+        private async Task SendInvite(ApplicationUser user)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var encodedToken = WebEncoders.Base64UrlEncode(
+                Encoding.UTF8.GetBytes(token));
+
+            var link = Url.Action(
+                "SetPassword",
+                "Users",
+                new { userId = user.Id, token = encodedToken },
+                Request.Scheme);
+
+            await _emailService.SendInvite(user.Email, user.FullName, link);
         }
     }
 }
