@@ -1,4 +1,100 @@
 ﻿@using BauFlow.ViewModels;
-@model BauFlow.ViewModels.UserCreateViewModel
-@{
-}
+@model BauFlow.Entities.ApplicationUser
+
+<style>
+
+    .profile-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .form-control {
+        background: #fff;
+        border: 1px solid #e2e5ea;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+        }
+
+    .btn-secondary-custom {
+        background: #f1f3f5;
+        border: none;
+        border-radius: 14px;
+        font-weight: 500;
+    }
+
+        .btn-secondary-custom:hover {
+            background: #e9ecef;
+        }
+
+</style>
+
+
+<div class="d-flex justify-content-center">
+
+    <div class="profile-card">
+
+        <h4 class="mb-4 text-center">Benutzer bearbeiten</h4>
+
+        <form asp-action="Edit" method="post">
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CompanyId" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3 text-center"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Email"
+                       class="form-control"
+                       placeholder="E-Mail" />
+                <label asp-for="Email"></label>
+                <span asp-validation-for="Email"
+                      class="text-danger small"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="FullName"
+                       class="form-control"
+                       placeholder="Vollständiger Name" />
+                <label asp-for="FullName">Vollständiger Name</label>
+            </div>
+
+            <div class="d-flex gap-3">
+
+                <button type="submit"
+                        class="btn btn-primary flex-fill">
+                    Änderungen speichern
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary-custom flex-fill">
+                    Abbrechen
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

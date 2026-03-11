@@ -1,0 +1,142 @@
+﻿@model BauFlow.Entities.Project
+
+<style>
+
+    .profile-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .form-control {
+        background: #fff;
+        border: 1px solid #e2e5ea;
+        border-radius: 14px;
+    }
+
+        .form-control:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+        }
+
+    .info-box {
+        background: #f6f7f9;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .btn-secondary-custom {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 14px;
+    }
+
+        .btn-secondary-custom:hover {
+            background: #eceef2;
+        }
+
+</style>
+
+
+<div class="d-flex justify-content-center">
+
+    <div class="profile-card">
+
+        <h4 class="mb-4 text-center">Projekt erstellen</h4>
+
+        <div class="info-box">
+            Ein Projekt gehört zu einem Kunden und kann Angebote und Rechnungen enthalten.
+        </div>
+
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3 text-center"></div>
+
+
+            <!-- Kunde -->
+            <div class="form-floating mb-3">
+                <select asp-for="CustomerId"
+                        class="form-control"
+                        asp-items="ViewBag.CustomerId">
+                </select>
+                <label asp-for="CustomerId">Kunde</label>
+            </div>
+
+
+            <!-- Titel -->
+            <div class="form-floating mb-3">
+                <input asp-for="Title"
+                       class="form-control"
+                       placeholder="Projektname" />
+                <label asp-for="Title">Projektname</label>
+                <span asp-validation-for="Title"
+                      class="text-danger small"></span>
+            </div>
+
+
+            <!-- Beschreibung -->
+            <div class="form-floating mb-3">
+                <textarea asp-for="Description"
+                          class="form-control"
+                          style="height:100px"
+                          placeholder="Beschreibung"></textarea>
+                <label asp-for="Description">Beschreibung</label>
+            </div>
+
+
+            <!-- Status -->
+            <div class="form-floating mb-4">
+                <select asp-for="Status" class="form-control">
+                    <option value="Open">Offen</option>
+                    <option value="InProgress">In Arbeit</option>
+                    <option value="Completed">Abgeschlossen</option>
+                </select>
+                <label asp-for="Status">Status</label>
+            </div>
+
+
+            <div class="d-flex gap-3">
+
+                <button type="submit"
+                        class="btn btn-primary flex-fill">
+                    Projekt erstellen
+                </button>
+
+                <a asp-action="Index"
+                       class="btn btn-secondary-custom flex-fill">
+                    Abbrechen
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -16,22 +16,31 @@ namespace BauFlow.Controllers
         {
             return View(await _context.Customers.ToListAsync());
         }
-
-        // GET: Customers/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(c => c.Id == id);
 
+            if (customer == null)
+                return NotFound();
+
+            ViewBag.ProjectCount = await _context.Projects
+                .CountAsync(p => p.CustomerId == id);
+
+            ViewBag.InvoiceCount = await _context.Invoices
+                .CountAsync(i => i.CustomerId == id);
+
+            ViewBag.TotalRevenue = await _context.Invoices
+                .Where(i => i.CustomerId == id)
+                .SumAsync(i => (decimal?)i.GrossAmount) ?? 0;
+
+            ViewBag.OpenInvoices = await _context.Invoices
+                .CountAsync(i => i.CustomerId == id && i.Status == InvoiceStatus.Open);
+            ViewBag.LastInvoices = await _context.Invoices
+                .Where(i => i.CustomerId == id)
+                .OrderByDescending(i => i.InvoiceDate)
+                .Take(5)
+                .ToListAsync();
             return View(customer);
         }
 
@@ -51,6 +60,7 @@ namespace BauFlow.Controllers
             if (ModelState.IsValid)
             {
                 customer.Id = Guid.NewGuid();
+                customer.CompanyId = _context.CurrentCompanyId.Value;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

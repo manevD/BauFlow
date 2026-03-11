@@ -2,10 +2,8 @@
 
 namespace BauFlow.Entities
 {
-    public class Project
+    public class Project : BaseEntity
     {
-        public Guid Id { get; set; }
-        public Guid CompanyId { get; set; }
         public Guid CustomerId { get; set; }
 
         public string Title { get; set; }
@@ -13,7 +11,6 @@ namespace BauFlow.Entities
 
         public string Status { get; set; } // Open, InProgress, Completed
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Customer Customer { get; set; }
         public ICollection<Quote> Quotes { get; set; }

@@ -1,7 +1,7 @@
-﻿@model IEnumerable<BauFlow.Entities.Customer>
+﻿@model IEnumerable<BauFlow.Entities.Project>
 
 @{
-    ViewData["Title"] = "Kunden";
+    ViewData["Title"] = "Projekte";
 }
 
 <style>
@@ -39,27 +39,13 @@
         .btn-ghost:hover {
             background: #eceef2;
         }
-        
-    .btn-ghost {
+
+    .status-pill {
         background: #f6f7f9;
-        border: none;
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 13px;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
     }
-
-
-    .btn-danger-ghost {
-        background: #fafafa;
-        border: none;
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-
-        .btn-danger-ghost:hover {
-            background: #f1f1f1;
-        }
 
     thead {
         background: #fafafa;
@@ -103,79 +89,88 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Kunden</h4>
+        <h4 class="mb-0">Projekte</h4>
 
         <a asp-action="Create" class="btn btn-primary-custom">
-            + Kunde hinzufügen
+            + Projekt erstellen
         </a>
 
     </div>
-    
+
+
     <div class="mb-4">
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Kunde durchsuchen..." />
+               placeholder="Projekte durchsuchen..." />
     </div>
+
 
     <table class="table align-middle">
 
         <thead>
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Standort</th>
-                <th>Telefon</th>
+                <th>Projekt</th>
+                <th>Kunde</th>
+                <th>Status</th>
+                <th>Erstellt</th>
                 <th class="text-end">Aktionen</th>
             </tr>
         </thead>
 
-        <tbody id="kundeTable">
+        <tbody id="projectTable">
 
-            @foreach (var customer in Model)
+            @foreach (var project in Model)
             {
                 <tr>
 
                     <td>
                         <div class="avatar">
-                            @customer.Name.Substring(0, 1).ToUpper()
+                            @project.Title.Substring(0, 1).ToUpper()
                         </div>
                     </td>
 
-                    <td>@customer.Name</td>
-
                     <td>
-                        @(string.IsNullOrWhiteSpace(customer.Email) ? "-" : customer.Email)
+                        <strong>@project.Title</strong>
+                        <br />
+                        <small class="text-muted">@project.Description</small>
                     </td>
 
                     <td>
-                        @(string.IsNullOrWhiteSpace(customer.City) ? "-" : customer.City),
-                        @(string.IsNullOrWhiteSpace(customer.Country) ? "" : customer.Country)
+                        @project.Customer?.Name
                     </td>
 
                     <td>
-                        @(string.IsNullOrWhiteSpace(customer.Phone) ? "-" : customer.Phone)
+                        <span class="status-pill">
+                            @project.Status
+                        </span>
+                    </td>
+
+                    <td>
+                        @project.CreatedAt.ToString("dd.MM.yyyy")
                     </td>
 
                     <td class="text-end">
 
                         <a asp-action="Edit"
-                               asp-route-id="@customer.Id"
+                               asp-route-id="@project.Id"
                                class="btn btn-ghost me-2">
                             Bearbeiten
                         </a>
 
                         <a asp-action="Details"
-                               asp-route-id="@customer.Id"
-                               class="btn btn-ghost">
+                               asp-route-id="@project.Id"
+                               class="btn btn-ghost me-2">
                             Details
                         </a>
+
                         <a asp-action="Delete"
-                               asp-route-id="@customer.Id"
+                               asp-route-id="@project.Id"
                                class="btn btn-ghost">
                             Löschen
                         </a>
+
                     </td>
 
                 </tr>
@@ -192,20 +187,20 @@
 
     <script>
 
-        const searchInput = document.getElementById("searchInput");
-        const rows = document.querySelectorAll("#kundeTable tr");
+        const searchInput=document.getElementById("searchInput");
+        const rows=document.querySelectorAll("#projectTable tr");
 
-        searchInput.addEventListener("keyup", function () {
+        searchInput.addEventListener("keyup",function(){
 
-            const value = this.value.toLowerCase();
+        const value=this.value.toLowerCase();
 
-            rows.forEach(row => {
+        rows.forEach(row=>{
 
-                const text = row.innerText.toLowerCase();
+        const text=row.innerText.toLowerCase();
 
-                row.style.display = text.includes(value) ? "" : "none";
+        row.style.display=text.includes(value)? "":"none";
 
-            });
+        });
 
         });
 

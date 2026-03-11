@@ -1,84 +1,327 @@
 ﻿@model BauFlow.Entities.Customer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Kunde";
+    var invoices = ViewBag.LastInvoices as List<BauFlow.Entities.Invoice>;
 }
 
-<h1>Details</h1>
+<style>
 
-<div>
-    <h4>Customer</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ContactPerson)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ContactPerson)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostalCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostalCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CompanyId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CompanyId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    .page-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 28px;
+    }
+
+    .avatar-lg {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #111;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .stat-card {
+        background: #f6f7f9;
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .info-row {
+        border-bottom: 1px solid #f1f1f1;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+
+    .label {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .value {
+        color: #111;
+    }
+
+    .btn-dark-custom {
+        background: #111;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        padding: 8px 14px;
+    }
+
+        .btn-dark-custom:hover {
+            background: #000;
+        }
+
+    .btn-light-custom {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 12px;
+        padding: 8px 14px;
+    }
+
+        .btn-light-custom:hover {
+            background: #eceef2;
+        }
+
+    .table thead {
+        background: #fafafa;
+    }
+
+    .table td {
+        font-size: 14px;
+    }
+
+    .status-pill {
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    .status-paid {
+        background: #111;
+        color: #fff;
+    }
+
+    .status-open {
+        background: #f6f7f9;
+    }
+
+</style>
+
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+    <div class="page-card mb-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="avatar-lg">
+                    @Model.Name.Substring(0, 1).ToUpper()
+                </div>
+
+                <div>
+                    <h4 class="mb-0">@Model.Name</h4>
+                    <small class="text-muted">@Model.Email</small>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-dark-custom">
+                    Bearbeiten
+                </a>
+
+                <a asp-controller="Projects"
+                       asp-action="Create"
+                       asp-route-customerId="@Model.Id"
+                       class="btn btn-light-custom">
+                    Projekt erstellen
+                </a>
+
+                <a asp-controller="Invoices"
+                       asp-action="Create"
+                       asp-route-customerId="@Model.Id"
+                       class="btn btn-light-custom">
+                    Rechnung erstellen
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value">@ViewBag.ProjectCount</div>
+                <div class="stat-label">Projekte</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value">@ViewBag.InvoiceCount</div>
+                <div class="stat-label">Rechnungen</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value">@ViewBag.OpenInvoices</div>
+                <div class="stat-label">Offene Rechnungen</div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-value">@ViewBag.TotalRevenue €</div>
+                <div class="stat-label">Umsatz</div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <!-- CONTACT -->
+        <div class="col-lg-4">
+
+            <div class="page-card">
+
+                <h6 class="mb-3">Kontakt</h6>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Ansprechpartner</div>
+                    <div class="col-7 value">@Model.ContactPerson</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Telefon</div>
+                    <div class="col-7 value">@Model.Phone</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Email</div>
+                    <div class="col-7 value">@Model.Email</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Adresse</div>
+                    <div class="col-7 value">@Model.Address</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Ort</div>
+                    <div class="col-7 value">@Model.PostalCode @Model.City</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Land</div>
+                    <div class="col-7 value">@Model.Country</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-5 label">Kunde seit</div>
+                    <div class="col-7 value">@Model.CreatedAt.ToString("dd.MM.yyyy")</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="col-lg-8">
+
+            <!-- NOTES -->
+            <div class="page-card mb-4">
+
+                <h6 class="mb-3">Notizen</h6>
+
+                <p class="text-muted">
+                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "Keine Notizen vorhanden." : Model.Notes)
+                </p>
+
+            </div>
+
+
+            <!-- LAST INVOICES -->
+            <div class="page-card">
+
+                <h6 class="mb-3">Letzte Rechnungen</h6>
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Nummer</th>
+                            <th>Datum</th>
+                            <th>Status</th>
+                            <th class="text-end">Betrag</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (invoices != null && invoices.Any())
+                        {
+                            foreach (var invoice in invoices)
+                            {
+                                <tr>
+
+                                    <td>@invoice.InvoiceNumber</td>
+
+                                    <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
+
+                                    <td>
+
+                                        @if (invoice.Status == BauFlow.Entities.InvoiceStatus.Paid)
+                                        {
+                                            <span class="status-pill status-paid">Bezahlt</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-pill status-open">Offen</span>
+                                        }
+
+                                    </td>
+
+                                    <td class="text-end">
+                                        @invoice.GrossAmount €
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    Keine Rechnungen vorhanden
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

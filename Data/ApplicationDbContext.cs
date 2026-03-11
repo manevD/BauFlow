@@ -80,7 +80,7 @@ namespace BauFlow.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Customer>()
-       .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
+                .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);
 
             builder.Entity<Project>()
                 .HasQueryFilter(e => CurrentCompanyId != null && e.CompanyId == CurrentCompanyId);

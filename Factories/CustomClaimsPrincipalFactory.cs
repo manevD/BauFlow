@@ -19,7 +19,10 @@
         {
             var identity = await base.GenerateClaimsAsync(user);
 
-            identity.AddClaim(new Claim("CompanyId", user.CompanyId.ToString()));
+            if (user.CompanyId != Guid.Empty)
+            {
+                identity.AddClaim(new Claim("CompanyId", user.CompanyId.ToString()));
+            }
             identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
 
             return identity;

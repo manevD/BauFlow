@@ -1,4 +1,4 @@
-﻿@model BauFlow.Entities.Customer
+﻿@model BauFlow.Entities.ApplicationUser
 
 <style>
 
@@ -8,7 +8,7 @@
         border-radius: 20px;
         box-shadow: 0 8px 24px rgba(0,0,0,.04);
         padding: 30px;
-        max-width: 750px;
+        max-width: 700px;
         margin: auto;
     }
 
@@ -59,6 +59,22 @@
             background: #eceef2;
         }
 
+    .status-pill {
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .status-active {
+        background: #111;
+        color: #fff;
+    }
+
+    .status-pending {
+        background: #f6f7f9;
+        color: #555;
+    }
+
 </style>
 
 
@@ -66,48 +82,42 @@
 
     <div class="page-card">
 
-        <h4 class="mb-4">Kunde löschen</h4>
+        <h4 class="mb-4">Benutzer löschen</h4>
 
         <div class="warning-box">
-            Dieser Kunde wird dauerhaft gelöscht. Projekte, Angebote oder Rechnungen können davon betroffen sein.
+            Dieser Benutzer wird dauerhaft gelöscht und verliert sofort den Zugriff auf BauFlow.
         </div>
+
 
         <div class="info-row row">
             <div class="col-4 label">Name</div>
-            <div class="col-8 value">@Model.Name</div>
-        </div>
-
-        <div class="info-row row">
-            <div class="col-4 label">Kontaktperson</div>
-            <div class="col-8 value">@Model.ContactPerson</div>
-        </div>
-
-        <div class="info-row row">
-            <div class="col-4 label">Adresse</div>
             <div class="col-8 value">
-                @Model.Address<br />
-                @Model.PostalCode @Model.City<br />
-                @Model.Country
+                @(string.IsNullOrWhiteSpace(Model.FullName) ? "-" : Model.FullName)
             </div>
         </div>
+
 
         <div class="info-row row">
             <div class="col-4 label">Email</div>
             <div class="col-8 value">@Model.Email</div>
         </div>
 
-        <div class="info-row row">
-            <div class="col-4 label">Telefon</div>
-            <div class="col-8 value">@Model.Phone</div>
-        </div>
 
-        @if (!string.IsNullOrWhiteSpace(Model.Notes))
-        {
-            <div class="info-row row">
-                <div class="col-4 label">Notizen</div>
-                <div class="col-8 value">@Model.Notes</div>
+        <div class="info-row row">
+            <div class="col-4 label">Status</div>
+            <div class="col-8 value">
+
+                @if (Model.IsInviteAccepted)
+                {
+                    <span class="status-pill status-active">Aktiv</span>
+                }
+                else
+                {
+                    <span class="status-pill status-pending">Einladung offen</span>
+                }
+
             </div>
-        }
+        </div>
 
 
         <form asp-action="Delete" method="post" class="mt-4">
@@ -117,14 +127,17 @@
             <div class="d-flex gap-3">
 
                 <button type="submit" class="btn btn-danger-custom">
-                    Kunde löschen
+                    Benutzer löschen
                 </button>
 
                 <a asp-action="Index" class="btn btn-light-custom">
                     Abbrechen
                 </a>
+
             </div>
+
         </form>
+
     </div>
 
 </div>

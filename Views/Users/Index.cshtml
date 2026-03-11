@@ -107,6 +107,9 @@
         font-size: 13px;
         font-weight: 600;
     }
+    .search-box {
+        max-width: 320px;
+    }
 
 </style>
 
@@ -122,7 +125,13 @@
         </a>
 
     </div>
-
+    
+    <div class="mb-4">
+        <input type="text"
+               id="searchInput"
+               class="form-control search-box"
+               placeholder="Benutzer durchsuchen..." />
+    </div>
     <table class="table align-middle">
 
         <thead>
@@ -136,7 +145,7 @@
             </tr>
         </thead>
 
-        <tbody>
+        <tbody id="customerTable">
 
             @foreach (var user in Model)
             {
@@ -180,8 +189,8 @@
                     <td class="text-end">
 
                         <a asp-action="Edit"
-                           asp-route-id="@user.Id"
-                           class="btn btn-ghost me-2">
+                               asp-route-id="@user.Id"
+                               class="btn btn-ghost me-2">
                             Bearbeiten
                         </a>
 
@@ -202,19 +211,11 @@
                             </form>
                         }
 
-                        <form asp-action="Delete"
-                              method="post"
-                              class="d-inline">
-
-                            <input type="hidden"
-                                   name="id"
-                                   value="@user.Id" />
-
-                            <button class="btn btn-danger-ghost">
-                                Löschen
-                            </button>
-
-                        </form>
+                        <a asp-action="Delete"
+                               asp-route-id="@user.Id"
+                               class="btn btn-ghost">
+                            Löschen
+                        </a>
 
                     </td>
 
@@ -226,3 +227,28 @@
     </table>
 
 </div>
+
+@section Scripts {
+
+    <script>
+
+        const searchInput = document.getElementById("searchInput");
+        const rows = document.querySelectorAll("#customerTable tr");
+
+        searchInput.addEventListener("keyup", function () {
+
+            const value = this.value.toLowerCase();
+
+            rows.forEach(row => {
+
+                const text = row.innerText.toLowerCase();
+
+                row.style.display = text.includes(value) ? "" : "none";
+
+            });
+
+        });
+
+    </script>
+
+}

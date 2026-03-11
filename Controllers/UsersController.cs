@@ -12,6 +12,8 @@ using System.Text;
 namespace BauFlow.Controllers
 {
     [RequireTenant]
+
+    [Authorize(Policy= "OwnerOnly")]
     public class UsersController : Controller
     {
         private readonly PlanService _planService;
@@ -135,7 +137,6 @@ namespace BauFlow.Controllers
         }
 
         [HttpPost]
-        [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
@@ -160,7 +161,8 @@ namespace BauFlow.Controllers
 
                 return View(model);
             }
-
+            user.IsInviteAccepted = true;
+            await _userManager.UpdateAsync(user);
             return RedirectToPage("/Account/Login", new { area = "Identity" });
         }
 
@@ -180,6 +182,40 @@ namespace BauFlow.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // =============================
+        // Edit 
+        // =============================
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+                return NotFound();
+            return View(user);
+        }
+   
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ApplicationUser model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+
+            if (user == null)
+                return NotFound();
+
+            user.Email = model.Email;
+            user.UserName = model.Email;
+            user.FullName = model.FullName;
+            user.Role = model.Role;
+
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction(nameof(Index));
+        }
         // =============================
         // INVITE HELPER
         // =============================

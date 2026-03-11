@@ -98,61 +98,61 @@
 </style>
 
 <partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
 
-<div class="profile-card" style="max-width:800px;">
+        <div class="profile-card">
+            <form id="email-form" method="post">
 
-    <form id="email-form" method="post">
+                <div asp-validation-summary="All"
+                     class="text-danger mb-3"
+                     role="alert"></div>
 
-        <div asp-validation-summary="All"
-             class="text-danger mb-3"
-             role="alert"></div>
+                @if (Model.IsEmailConfirmed)
+                {
+                    <div class="form-floating mb-4">
+                        <input asp-for="Email"
+                               class="form-control"
+                               disabled />
+                        <label asp-for="Email"></label>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-floating mb-2">
+                        <input asp-for="Email"
+                               class="form-control"
+                               disabled />
+                        <label asp-for="Email"></label>
+                    </div>
 
-        @if (Model.IsEmailConfirmed)
-        {
-            <div class="form-floating mb-4">
-                <input asp-for="Email"
-                       class="form-control"
-                       disabled />
-                <label asp-for="Email"></label>
-            </div>
-        }
-        else
-        {
-            <div class="form-floating mb-2">
-                <input asp-for="Email"
-                       class="form-control"
-                       disabled />
-                <label asp-for="Email"></label>
-            </div>
+                    <button id="email-verification"
+                            type="submit"
+                            asp-page-handler="SendVerificationEmail"
+                            class="btn btn-link mb-4 p-0">
+                        Bestätigungs-E-Mail senden
+                    </button>
+                }
 
-            <button id="email-verification"
-                    type="submit"
-                    asp-page-handler="SendVerificationEmail"
-                    class="btn btn-link mb-4 p-0">
-                Bestätigungs-E-Mail senden
-            </button>
-        }
-
-        <div class="form-floating mb-4">
-            <input asp-for="Input.NewEmail"
-                   class="form-control"
-                   autocomplete="email"
-                   aria-required="true"
-                   placeholder="Neue E-Mail-Adresse" />
-            <label asp-for="Input.NewEmail"></label>
-            <span asp-validation-for="Input.NewEmail"
-                  class="small text-danger"></span>
+                <div class="form-floating mb-4">
+                    <input asp-for="Input.NewEmail"
+                           class="form-control"
+                           autocomplete="email"
+                           aria-required="true"
+                           placeholder="Neue E-Mail-Adresse" />
+                    <label asp-for="Input.NewEmail"></label>
+                    <span asp-validation-for="Input.NewEmail"
+                          class="small text-danger"></span>
+                </div>
+                <button id="change-email-button"
+                        type="submit"
+                        asp-page-handler="ChangeEmail"
+                        class="w-100 btn btn-lg btn-primary">
+                    Email ändern
+                </button>
+            </form>
         </div>
-
-        <button id="change-email-button"
-                type="submit"
-                asp-page-handler="ChangeEmail"
-                class="w-100 btn btn-lg btn-primary">
-            Email ändern
-        </button>
-
-    </form>
-
+    </div>
 </div>
 
 @section Scripts {

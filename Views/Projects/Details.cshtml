@@ -1,0 +1,163 @@
+﻿@model BauFlow.Entities.Project
+
+<style>
+
+    .page-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 30px;
+    }
+
+    .avatar-lg {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: #111;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .info-row {
+        border-bottom: 1px solid #f1f1f1;
+        padding: 12px 0;
+        font-size: 14px;
+    }
+
+    .label {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .value {
+        color: #111;
+    }
+
+    .status-pill {
+        background: #f6f7f9;
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .btn-dark-custom {
+        background: #111;
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        padding: 8px 14px;
+    }
+
+        .btn-dark-custom:hover {
+            background: #000;
+        }
+
+    .btn-light-custom {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 12px;
+        padding: 8px 14px;
+    }
+
+        .btn-light-custom:hover {
+            background: #eceef2;
+        }
+
+</style>
+
+
+<div class="container-fluid py-4">
+
+    <div class="page-card">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="avatar-lg">
+                    @Model.Title.Substring(0, 1).ToUpper()
+                </div>
+
+                <div>
+                    <h4 class="mb-0">@Model.Title</h4>
+                    <small class="text-muted">
+                        Kunde: @Model.Customer?.Name
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-dark-custom">
+                    Bearbeiten
+                </a>
+
+                <a asp-action="Index"
+                       class="btn btn-light-custom">
+                    Zurück
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFO -->
+        <div class="row">
+
+            <div class="col-lg-6">
+
+                <div class="info-row row">
+                    <div class="col-4 label">Projektname</div>
+                    <div class="col-8 value">@Model.Title</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-4 label">Kunde</div>
+                    <div class="col-8 value">@Model.Customer?.Name</div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-4 label">Status</div>
+                    <div class="col-8 value">
+                        <span class="status-pill">@Model.Status</span>
+                    </div>
+                </div>
+
+                <div class="info-row row">
+                    <div class="col-4 label">Erstellt</div>
+                    <div class="col-8 value">
+                        @Model.CreatedAt.ToString("dd.MM.yyyy")
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-6">
+
+                <div class="info-row">
+                    <div class="label mb-1">Beschreibung</div>
+                    <div class="value">
+                        @(string.IsNullOrWhiteSpace(Model.Description)
+                        ? "Keine Beschreibung vorhanden."
+                        : Model.Description)
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
