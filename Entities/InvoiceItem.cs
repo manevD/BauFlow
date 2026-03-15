@@ -12,5 +12,6 @@
 
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        public Invoice Invoice { get; set; }
     }
 }

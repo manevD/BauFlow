@@ -35,7 +35,7 @@ namespace BauFlow.Controllers
                 .SumAsync(i => (decimal?)i.GrossAmount) ?? 0;
 
             ViewBag.OpenInvoices = await _context.Invoices
-                .CountAsync(i => i.CustomerId == id && i.Status == InvoiceStatus.Open);
+                .CountAsync(i => i.CustomerId == id && i.Status == InvoiceStatus.Draft);
             ViewBag.LastInvoices = await _context.Invoices
                 .Where(i => i.CustomerId == id)
                 .OrderByDescending(i => i.InvoiceDate)

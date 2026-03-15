@@ -23,7 +23,10 @@
             {
                 identity.AddClaim(new Claim("CompanyId", user.CompanyId.ToString()));
             }
-            identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+            if(!string.IsNullOrEmpty(user.Role.ToString()))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+            }
 
             return identity;
         }

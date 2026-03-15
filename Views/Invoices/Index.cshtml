@@ -1,0 +1,175 @@
+﻿@model IEnumerable<BauFlow.Entities.Invoice>
+
+@{
+    ViewData["Title"] = "Rechnungen";
+}
+
+<style>
+
+    .page-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 32px;
+    }
+
+    .btn-primary-custom {
+        background: #111;
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+        .btn-primary-custom:hover {
+            background: #000;
+        }
+
+    .btn-ghost {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 10px;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+        .btn-ghost:hover {
+            background: #eceef2;
+        }
+
+    .status-pill {
+        background: #f6f7f9;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    thead {
+        background: #fafafa;
+    }
+
+    th {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    tbody tr:hover {
+        background: #f9f9fb;
+    }
+
+    td {
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #111;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .search-box {
+        max-width: 320px;
+    }
+
+</style>
+
+
+<div class="page-card">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <h4>Rechnungen</h4>
+
+        <a asp-action="Create" class="btn btn-dark">
+            + Rechnung
+        </a>
+
+    </div>
+
+    <table class="table">
+
+        <thead>
+
+            <tr>
+                <th>Nr</th>
+                <th>Kunde</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th>Betrag</th>
+                <th></th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var invoice in Model)
+            {
+
+                <tr>
+
+                    <td>@invoice.InvoiceNumber</td>
+
+                    <td>@invoice.Customer?.Name</td>
+
+                    <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
+
+                    <td>@invoice.Status</td>
+
+                    <td>@invoice.GrossAmount.ToString("C")</td>
+
+                    <td>
+
+                        <a asp-action="Details"
+                               asp-route-id="@invoice.Id"
+                               class="btn btn-sm btn-outline-dark">
+                            Details
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        const searchInput=document.getElementById("searchInput");
+        const rows=document.querySelectorAll("#invoiceTable tr");
+
+        searchInput.addEventListener("keyup",function(){
+
+        const value=this.value.toLowerCase();
+
+        rows.forEach(row=>{
+
+        const text=row.innerText.toLowerCase();
+
+        row.style.display=text.includes(value)? "":"none";
+
+        });
+
+        });
+
+    </script>
+
+}

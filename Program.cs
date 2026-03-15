@@ -81,6 +81,7 @@ builder.Services.AddHttpContextAccessor();
 // -----------------------------
 builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<NumberService>();
 
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));

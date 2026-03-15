@@ -16,13 +16,17 @@
         public decimal TaxAmount { get; set; }
         public decimal GrossAmount { get; set; }
 
+        public Customer Customer { get; set; }
+        public ICollection<QuoteItem> Items { get; set; }
+
     }
 
     public enum InvoiceStatus
     {
-        Open,
-        Paid,
-        Overdue,
-        Cancelled
+        Draft = 1,
+        Sent = 2,
+        Paid = 3,
+        Overdue = 4,
+        Cancelled = 5
     }
 }

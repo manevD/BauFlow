@@ -15,6 +15,9 @@
         public decimal TaxAmount { get; set; }
         public decimal GrossAmount { get; set; }
 
+        public Customer Customer { get; set; }
+        public ICollection<QuoteItem> Items { get; set; }
+
     }
     public enum QuoteStatus
     {

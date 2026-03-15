@@ -1,0 +1,41 @@
+﻿@model BauFlow.Entities.Quote
+
+<div class="page-card">
+
+    <h4 class="mb-4">Angebot löschen</h4>
+
+    <div class="warning-box">
+
+        Dieses Angebot wird dauerhaft gelöscht.
+
+    </div>
+
+    <div class="info-row row">
+
+        <div class="col-4">Nr</div>
+
+        <div class="col-8">@Model.QuoteNumber</div>
+
+    </div>
+
+    <div class="info-row row">
+
+        <div class="col-4">Kunde</div>
+
+        <div class="col-8">@Model.Customer?.Name</div>
+
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <button class="btn btn-primary-custom">
+
+            Löschen
+
+        </button>
+
+    </form>
+
+</div>
