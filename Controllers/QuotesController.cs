@@ -21,6 +21,7 @@ namespace BauFlow.Controllers
 
         // LIST
 
+        [Route("Angebote")]
         public async Task<IActionResult> Index()
         {
             var quotes = await _context.Quotes
@@ -46,18 +47,49 @@ namespace BauFlow.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Quote quote)
         {
+            ModelState.Remove("Customer");
+            ModelState.Remove("QuoteNumber");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "Name", quote.CustomerId);
+                return View(quote);
+            }
+
             quote.Id = Guid.NewGuid();
             quote.QuoteDate = DateTime.UtcNow;
+            quote.Status = QuoteStatus.Draft;
+
+            // QuoteNumber vergeben
+            quote.QuoteNumber = $"ANG-{DateTime.UtcNow:yyyyMMddHHmmss}";
+
+            // Falls keine Items gesendet wurden
+            if (quote.Items == null)
+                quote.Items = new List<QuoteItem>();
+
+            decimal net = 0;
+
+            foreach (var item in quote.Items)
+            {
+                item.Id = Guid.NewGuid();
+                item.QuoteId = quote.Id;
+
+                item.TotalPrice = item.Quantity * item.UnitPrice;
+                net += item.TotalPrice;
+            }
+
+            quote.NetAmount = net;
+            quote.TaxAmount = net * 0.19m;
+            quote.GrossAmount = quote.NetAmount + quote.TaxAmount;
 
             _context.Quotes.Add(quote);
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
-
         // DETAILS
 
         public async Task<IActionResult> Details(Guid id)
@@ -77,7 +109,9 @@ namespace BauFlow.Controllers
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            var quote = await _context.Quotes.FindAsync(id);
+            var quote = await _context.Quotes
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             ViewBag.CustomerId = _context.Customers
                 .Select(c => new SelectListItem
@@ -90,9 +124,37 @@ namespace BauFlow.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Quote quote)
         {
-            _context.Update(quote);
+            var existingQuote = await _context.Quotes
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == quote.Id);
+
+            if (existingQuote == null)
+                return NotFound();
+
+            existingQuote.CustomerId = quote.CustomerId;
+            existingQuote.ValidUntil = quote.ValidUntil;
+            existingQuote.Status = quote.Status;
+
+            existingQuote.Items.Clear();
+
+            if (quote.Items != null)
+            {
+                foreach (var item in quote.Items)
+                {
+                    existingQuote.Items.Add(new QuoteItem
+                    {
+                        Description = item.Description,
+                        Quantity = item.Quantity,
+                        Unit = item.Unit,
+                        UnitPrice = item.UnitPrice,
+                        TotalPrice = item.TotalPrice
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));

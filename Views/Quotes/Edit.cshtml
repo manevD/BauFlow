@@ -1,0 +1,284 @@
+﻿@model BauFlow.Entities.Quote
+
+@{
+    var items = Model?.Items?.ToList() ?? new List<BauFlow.Entities.QuoteItem>();
+}
+<style>
+
+    .page-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 32px;
+    }
+
+    .btn-primary-custom {
+        background: #111;
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+        .btn-primary-custom:hover {
+            background: #000;
+        }
+
+    .btn-ghost {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 10px;
+        padding: 6px 12px;
+    }
+
+        .btn-ghost:hover {
+            background: #eceef2;
+        }
+
+    thead {
+        background: #fafafa;
+    }
+
+    .total-box {
+        background: #fafafa;
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+</style>
+
+
+<div class="page-card">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <h4>Neues Angebot</h4>
+
+        <a asp-action="Index" class="btn btn-ghost">
+            Zurück
+        </a>
+
+    </div>
+
+    <form asp-action="Edit" method="post">
+
+        <div class="form-floating mb-3">
+
+            <select asp-for="CustomerId"
+                    asp-items="ViewBag.CustomerId"
+                    class="form-control">
+            </select>
+
+            <label>Kunde</label>
+
+        </div>
+
+        <div class="form-floating mb-4">
+
+            <input asp-for="ValidUntil"
+                   type="date"
+                   class="form-control" />
+
+            <label>Gültig bis</label>
+
+        </div>
+
+        <hr class="mb-4" />
+
+        <h5 class="mb-3">Positionen</h5>
+
+        <table class="table align-middle" id="itemsTable">
+
+            <thead>
+
+                <tr>
+                    <th>Beschreibung</th>
+                    <th width="120">Menge</th>
+                    <th width="120">Einheit</th>
+                    <th width="140">Preis</th>
+                    <th width="140">Total</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+                @if (items.Any())
+                {
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        <tr>
+                            <td>
+                                <input name="Items[@i].Id" type="hidden" value="@items[i].Id" />
+                                <input name="Items[@i].Description" class="form-control" value="@items[i].Description" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Quantity" class="form-control qty" value="@items[i].Quantity" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].Unit" class="form-control" value="@items[i].Unit" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].UnitPrice" class="form-control price" value="@items[i].UnitPrice" />
+                            </td>
+
+                            <td>
+                                <input name="Items[@i].TotalPrice" class="form-control total" value="@items[i].TotalPrice" readonly />
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn btn-ghost removeRow">x</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td><input name="Items[0].Description" class="form-control" /></td>
+                        <td><input name="Items[0].Quantity" class="form-control qty" /></td>
+                        <td><input name="Items[0].Unit" class="form-control" /></td>
+                        <td><input name="Items[0].UnitPrice" class="form-control price" /></td>
+                        <td><input name="Items[0].TotalPrice" class="form-control total" readonly /></td>
+                        <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <button type="button" id="addRow" class="btn btn-ghost mb-4">
+            + Position hinzufügen
+        </button>
+
+
+        <div class="row justify-content-end">
+
+            <div class="col-md-4">
+
+                <div class="total-box">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span>Netto</span>
+                        <strong id="netTotal">0 €</strong>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span>MwSt (19%)</span>
+                        <strong id="taxTotal">0 €</strong>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+
+                        <h5>Gesamt</h5>
+                        <h5 id="grossTotal">0 €</h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary-custom w-100 mt-4">
+
+            Angebot speichern
+
+        </button>
+
+    </form>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+        let rowIndex = @items.Count;
+        if (rowIndex === 0) rowIndex = 1;
+
+        document.getElementById("addRow").addEventListener("click", function () {
+            let table = document.querySelector("#itemsTable tbody");
+
+            let row = `
+            <tr>
+                <td>
+                    <input name="Items[${rowIndex}].Description" class="form-control"/>
+                </td>
+                <td>
+                    <input name="Items[${rowIndex}].Quantity" class="form-control qty"/>
+                </td>
+                <td>
+                    <input name="Items[${rowIndex}].Unit" class="form-control"/>
+                </td>
+                <td>
+                    <input name="Items[${rowIndex}].UnitPrice" class="form-control price"/>
+                </td>
+                <td>
+                    <input name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-ghost removeRow">x</button>
+                </td>
+            </tr>`;
+
+            table.insertAdjacentHTML("beforeend", row);
+            rowIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeRow")) {
+                e.target.closest("tr").remove();
+                calculateTotals();
+            }
+        });
+
+        document.addEventListener("input", function (e) {
+            if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
+                calculateTotals();
+            }
+        });
+
+        function calculateTotals() {
+            let net = 0;
+
+            document.querySelectorAll("#itemsTable tbody tr").forEach(row => {
+                let qty = parseFloat((row.querySelector(".qty")?.value || "0").replace(",", ".")) || 0;
+                let price = parseFloat((row.querySelector(".price")?.value || "0").replace(",", ".")) || 0;
+
+                let total = qty * price;
+
+                let totalInput = row.querySelector(".total");
+                if (totalInput) {
+                    totalInput.value = total.toFixed(2);
+                }
+
+                net += total;
+            });
+
+            let tax = net * 0.19;
+            let gross = net + tax;
+
+            document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
+            document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
+            document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            calculateTotals();
+        });
+    </script>
+
+}

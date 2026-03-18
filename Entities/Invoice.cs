@@ -1,4 +1,7 @@
-﻿namespace BauFlow.Entities
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace BauFlow.Entities
 {
     public class Invoice : BaseEntity
     {
@@ -17,16 +20,25 @@
         public decimal GrossAmount { get; set; }
 
         public Customer Customer { get; set; }
-        public ICollection<QuoteItem> Items { get; set; }
+        public ICollection<InvoiceItem> Items { get; set; } = new List<InvoiceItem>();
 
     }
 
     public enum InvoiceStatus
     {
+        [Display(Name = "Entwurf")]
         Draft = 1,
+
+        [Display(Name = "Gesendet")]
         Sent = 2,
+
+        [Display(Name = "Bezahlt")]
         Paid = 3,
+
+        [Display(Name = "Überfällig")]
         Overdue = 4,
+
+        [Display(Name = "Storniert")]
         Cancelled = 5
     }
 }

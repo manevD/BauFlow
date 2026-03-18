@@ -148,7 +148,12 @@
                             Projekte
                         </a>
                     </li>
-
+                     <li class="nav-item">
+                        <a asp-controller="Quotes" asp-action="Index"
+                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Quotes" ? "active" : "")">
+                            Angebote
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a asp-controller="Invoices" asp-action="Index"
                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
@@ -267,7 +272,8 @@
         });
 
         overlay.addEventListener('click', () => {
-            sidebar.classList.remove('show');
+            sidebar.classList.
+            ('show');
             overlay.classList.remove('show');
         });
     </script>

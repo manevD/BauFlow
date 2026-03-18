@@ -74,9 +74,10 @@ namespace BauFlow.Controllers
                 Status = InvoiceStatus.Draft
             };
 
-            invoice.Items = (ICollection<QuoteItem>)quote.Items.Select(x => new InvoiceItem
+            invoice.Items = quote.Items.Select(x => new InvoiceItem
             {
                 Id = Guid.NewGuid(),
+                InvoiceId = invoice.Id,
                 Description = x.Description,
                 Quantity = x.Quantity,
                 Unit = x.Unit,
@@ -176,7 +177,7 @@ namespace BauFlow.Controllers
             {
                 return NotFound();
             }
-
+            ModelState.Remove("Customer");
             if (ModelState.IsValid)
             {
                 try

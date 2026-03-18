@@ -1,84 +1,219 @@
 ﻿@model BauFlow.Entities.Invoice
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Rechnung bearbeiten";
 }
 
-<h1>Edit</h1>
+<style>
+    .profile-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 35px;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-<h4>Invoice</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
-                <span asp-validation-for="CustomerId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuoteId" class="control-label"></label>
-                <input asp-for="QuoteId" class="form-control" />
-                <span asp-validation-for="QuoteId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InvoiceNumber" class="control-label"></label>
-                <input asp-for="InvoiceNumber" class="form-control" />
-                <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InvoiceDate" class="control-label"></label>
-                <input asp-for="InvoiceDate" class="form-control" />
-                <span asp-validation-for="InvoiceDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DueDate" class="control-label"></label>
-                <input asp-for="DueDate" class="form-control" />
-                <span asp-validation-for="DueDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NetAmount" class="control-label"></label>
-                <input asp-for="NetAmount" class="form-control" />
-                <span asp-validation-for="NetAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TaxAmount" class="control-label"></label>
-                <input asp-for="TaxAmount" class="form-control" />
-                <span asp-validation-for="TaxAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GrossAmount" class="control-label"></label>
-                <input asp-for="GrossAmount" class="form-control" />
-                <span asp-validation-for="GrossAmount" class="text-danger"></span>
-            </div>
+    .form-control,
+    .form-select {
+        background: #fff;
+        border: 1px solid #e2e5ea;
+        border-radius: 14px;
+        min-height: 56px;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #111;
+            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+        }
+
+    .btn-primary {
+        background: #111 !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 600;
+        min-height: 52px;
+    }
+
+        .btn-primary:hover {
+            background: #000 !important;
+        }
+
+    .btn-light-custom {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        min-height: 52px;
+        color: #111;
+    }
+
+        .btn-light-custom:hover {
+            background: #eceef2;
+            color: #111;
+        }
+
+    .info-box {
+        background: #f6f7f9;
+        border-radius: 12px;
+        padding: 14px;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 14px;
+    }
+</style>
+
+<div class="d-flex justify-content-center">
+    <div class="profile-card">
+
+        <h4 class="mb-4 text-center">Rechnung bearbeiten</h4>
+
+        <div class="info-box">
+            Bearbeite hier die Stammdaten der Rechnung. Positionen kannst du separat im Rechnungseditor pflegen.
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center"></div>
+
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="CompanyId" class="control-label"></label>
-                <input asp-for="CompanyId" class="form-control" />
-                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            <input type="hidden" asp-for="CompanyId" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <div class="section-title">Allgemein</div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select asp-for="CustomerId"
+                                class="form-select"
+                                asp-items="ViewBag.CustomerId">
+                        </select>
+                        <label asp-for="CustomerId">Kunde</label>
+                    </div>
+                    <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="QuoteId" class="form-control" placeholder="Angebot" />
+                        <label asp-for="QuoteId">Angebot-ID (optional)</label>
+                    </div>
+                    <span asp-validation-for="QuoteId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="InvoiceNumber" class="form-control" placeholder="Rechnungsnummer" />
+                        <label asp-for="InvoiceNumber">Rechnungsnummer</label>
+                    </div>
+                    <span asp-validation-for="InvoiceNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select asp-for="Status"
+                                class="form-select"
+                                asp-items="Html.GetEnumSelectList<BauFlow.Entities.InvoiceStatus>()">
+                        </select>
+                        <label asp-for="Status">Status</label>
+                    </div>
+                    <span asp-validation-for="Status" class="text-danger small"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+
+            <div class="section-title">Zeitraum</div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="InvoiceDate"
+                               type="date"
+                               class="form-control"
+                               placeholder="Rechnungsdatum" />
+                        <label asp-for="InvoiceDate">Rechnungsdatum</label>
+                    </div>
+                    <span asp-validation-for="InvoiceDate" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input asp-for="DueDate"
+                               type="date"
+                               class="form-control"
+                               placeholder="Fälligkeitsdatum" />
+                        <label asp-for="DueDate">Fälligkeitsdatum</label>
+                    </div>
+                    <span asp-validation-for="DueDate" class="text-danger small"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="section-title">Beträge</div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="NetAmount"
+                               class="form-control"
+                               type="number"
+                               step="0.01"
+                               placeholder="Nettobetrag" />
+                        <label asp-for="NetAmount">Nettobetrag</label>
+                    </div>
+                    <span asp-validation-for="NetAmount" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="TaxAmount"
+                               class="form-control"
+                               type="number"
+                               step="0.01"
+                               placeholder="Steuerbetrag" />
+                        <label asp-for="TaxAmount">Steuerbetrag</label>
+                    </div>
+                    <span asp-validation-for="TaxAmount" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating">
+                        <input asp-for="GrossAmount"
+                               class="form-control"
+                               type="number"
+                               step="0.01"
+                               placeholder="Gesamtbetrag" />
+                        <label asp-for="GrossAmount">Gesamtbetrag</label>
+                    </div>
+                    <span asp-validation-for="GrossAmount" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    Änderungen speichern
+                </button>
+
+                <a asp-action="Index" class="btn btn-light-custom w-100 d-flex align-items-center justify-content-center">
+                    Abbrechen
+                </a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

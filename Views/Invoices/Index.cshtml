@@ -81,7 +81,9 @@
     .search-box {
         max-width: 320px;
     }
-
+     .search-box {
+        max-width: 320px;
+    }
 </style>
 
 
@@ -96,7 +98,12 @@
         </a>
 
     </div>
-
+    <div class="mb-4">
+        <input type="text"
+               id="searchInput"
+               class="form-control search-box"
+               placeholder="Rechnungen durchsuchen..." />
+    </div>
     <table class="table">
 
         <thead>
@@ -112,7 +119,7 @@
 
         </thead>
 
-        <tbody>
+        <tbody id="invoiceTable">
 
             @foreach (var invoice in Model)
             {
@@ -125,16 +132,16 @@
 
                     <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
 
-                    <td>@invoice.Status</td>
-
+                    <td>@invoice.Status.GetDisplayName()</td>
                     <td>@invoice.GrossAmount.ToString("C")</td>
 
                     <td>
 
                         <a asp-action="Details"
                                asp-route-id="@invoice.Id"
-                               class="btn btn-sm btn-outline-dark">
+                               class="btn btn-ghost">
                             Details
+
                         </a>
 
                     </td>

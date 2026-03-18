@@ -1,4 +1,6 @@
-﻿namespace BauFlow.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BauFlow.Entities
 {
     public class Quote : BaseEntity
     {
@@ -16,14 +18,21 @@
         public decimal GrossAmount { get; set; }
 
         public Customer Customer { get; set; }
-        public ICollection<QuoteItem> Items { get; set; }
+        public ICollection<QuoteItem> Items { get; set; } = new List<QuoteItem>();
 
     }
     public enum QuoteStatus
     {
-        Draft,
-        Sent,
-        Accepted,
-        Rejected
+        [Display(Name = "Entwurf")]
+        Draft = 0,
+
+        [Display(Name = "Gesendet")]
+        Sent = 1,
+
+        [Display(Name = "Angenommen")]
+        Accepted = 2,
+
+        [Display(Name = "Abgelehnt")]
+        Rejected = 3
     }
 }

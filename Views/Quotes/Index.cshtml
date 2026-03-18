@@ -41,7 +41,9 @@
     tbody tr:hover {
         background: #f9f9fb;
     }
-
+       .search-box {
+        max-width: 320px;
+    }
 </style>
 
 
@@ -56,7 +58,12 @@
         </a>
 
     </div>
-
+    <div class="mb-4">
+        <input type="text"
+               id="searchInput"
+               class="form-control search-box"
+               placeholder="Angebote durchsuchen..." />
+    </div>
     <table class="table align-middle">
 
         <thead>
@@ -72,7 +79,7 @@
 
         </thead>
 
-        <tbody>
+        <tbody id="angeboteTable">
 
             @foreach (var quote in Model)
             {
@@ -85,7 +92,7 @@
 
                     <td>@quote.QuoteDate.ToString("dd.MM.yyyy")</td>
 
-                    <td>@quote.Status</td>
+                    <td>@quote.Status.GetDisplayName()</td>
 
                     <td>@quote.GrossAmount.ToString("0.00") €</td>
 
@@ -118,3 +125,29 @@
     </table>
 
 </div>
+
+                               
+@section Scripts {
+
+    <script>
+
+        const searchInput=document.getElementById("searchInput");
+        const rows=document.querySelectorAll("#angeboteTable tr");
+
+        searchInput.addEventListener("keyup",function(){
+
+        const value=this.value.toLowerCase();
+
+        rows.forEach(row=>{
+
+        const text=row.innerText.toLowerCase();
+
+        row.style.display=text.includes(value)? "":"none";
+
+        });
+
+        });
+
+    </script>
+
+}

@@ -12,5 +12,7 @@
 
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        public Quote Quote { get; set; }
+
     }
 }

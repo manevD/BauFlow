@@ -15,6 +15,7 @@ namespace BauFlow.Services
 
         public InvoiceDocument(Invoice invoice)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
             _invoice = invoice;
         }
 

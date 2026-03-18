@@ -285,18 +285,7 @@
 
                                     <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
 
-                                    <td>
-
-                                        @if (invoice.Status == BauFlow.Entities.InvoiceStatus.Paid)
-                                        {
-                                            <span class="status-pill status-paid">Bezahlt</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="status-pill status-open">Offen</span>
-                                        }
-
-                                    </td>
+                                    <td>@invoice.Status.GetDisplayName()</td>
 
                                     <td class="text-end">
                                         @invoice.GrossAmount €
