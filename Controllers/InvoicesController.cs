@@ -53,6 +53,8 @@ namespace BauFlow.Controllers
                 Value = c.Id.ToString(),
                 Text = c.Name
             }).ToList();
+            ViewBag.TaxRates = GetTaxRates(); // 🔥 NEU
+
             return View();
         }
         public async Task<IActionResult> CreateFromQuote(Guid quoteId)
@@ -85,9 +87,12 @@ namespace BauFlow.Controllers
                 TotalPrice = x.TotalPrice
             }).ToList();
 
+            invoice.TaxRate = quote.TaxRate; // oder default
+
             invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
-            invoice.TaxAmount = invoice.NetAmount * 0.19m;
+            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
             invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
+       
 
             invoice.InvoiceNumber =
                 await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
@@ -116,12 +121,13 @@ namespace BauFlow.Controllers
             }
 
             invoice.Id = Guid.NewGuid();
-      
+
             invoice.InvoiceNumber = await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
+            invoice.TaxRate = invoice.TaxRate;
 
             invoice.InvoiceDate = DateTime.UtcNow;
             invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
-            invoice.TaxAmount = invoice.NetAmount * 0.19m;
+            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
             invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
 
             _context.Invoices.Add(invoice);
@@ -129,7 +135,7 @@ namespace BauFlow.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-        
+
         }
         public async Task<IActionResult> Pdf(Guid id)
         {
@@ -152,12 +158,19 @@ namespace BauFlow.Controllers
             {
                 return NotFound();
             }
-
-            var invoice = await _context.Invoices.FindAsync(id);
+            ModelState.Clear(); // 💥 DAS IST DER FIX
+            var invoice = await _context.Invoices
+                .Include(i => i.Items)
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync(i => i.Id == id);
             if (invoice == null)
             {
                 return NotFound();
             }
+            invoice.TaxRate = invoice.TaxRate;
+
+            ViewBag.TaxRates = GetTaxRates();
+
             ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
@@ -171,41 +184,50 @@ namespace BauFlow.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Invoice invoice)
+        public async Task<IActionResult> Edit(Guid id, Invoice model)
         {
-            if (id != invoice.Id)
-            {
-                return NotFound();
-            }
-            ModelState.Remove("Customer");
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Invoices.Update(invoice);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InvoiceExists(invoice.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
+            var invoice = await _context.Invoices
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            ViewBag.CustomerId = _context.Customers
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                }).ToList();
-            return View(invoice);
+            if (invoice == null)
+                return NotFound();
+
+            // ========= Stammdaten =========
+            invoice.CustomerId = model.CustomerId;
+            invoice.InvoiceNumber = model.InvoiceNumber;
+            invoice.InvoiceDate = model.InvoiceDate;
+            invoice.DueDate = model.DueDate;
+            invoice.Status = model.Status;
+            invoice.TaxRate = model.TaxRate;
+
+            // ========= Items SAFE =========
+            var existingItems = await _context.InvoiceItems
+                .Where(x => x.InvoiceId == invoice.Id)
+                .ToListAsync();
+
+            _context.InvoiceItems.RemoveRange(existingItems);
+
+            var newItems = model.Items.Select(x => new InvoiceItem
+            {
+                Id = Guid.NewGuid(),
+                InvoiceId = invoice.Id,
+                Description = x.Description,
+                Quantity = x.Quantity,
+                Unit = x.Unit,
+                UnitPrice = x.UnitPrice,
+                TotalPrice = x.TotalPrice
+            }).ToList();
+
+            await _context.InvoiceItems.AddRangeAsync(newItems);
+
+            // ========= Totals =========
+            invoice.NetAmount = newItems.Sum(x => x.TotalPrice);
+            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
+            invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Invoices/Delete/5
@@ -245,6 +267,15 @@ namespace BauFlow.Controllers
         private bool InvoiceExists(Guid id)
         {
             return _context.Invoices.Any(e => e.Id == id);
+        }
+        private List<SelectListItem> GetTaxRates()
+        {
+            return new List<SelectListItem>
+            {
+                new SelectListItem { Value = "0", Text = "0%" },
+                new SelectListItem { Value = "7", Text = "7%" },
+                new SelectListItem { Value = "19", Text = "19%" }
+            };
         }
     }
 }

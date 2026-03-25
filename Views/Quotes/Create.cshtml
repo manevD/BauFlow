@@ -61,24 +61,26 @@
 
     <form asp-action="Create" method="post">
 
-        <div class="form-floating mb-3">
+        <div class="row">
 
-            <select asp-for="CustomerId"
-                    asp-items="ViewBag.CustomerId"
-                    class="form-control">
-            </select>
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <select asp-for="CustomerId"
+                            asp-items="ViewBag.CustomerId"
+                            class="form-control">
+                    </select>
+                    <label>Kunde</label>
+                </div>
+            </div>
 
-            <label>Kunde</label>
-
-        </div>
-
-        <div class="form-floating mb-4">
-
-            <input asp-for="ValidUntil"
-                   type="date"
-                   class="form-control" />
-
-            <label>Gültig bis</label>
+            <div class="col-md-6">
+                <div class="form-floating mb-4">
+                    <input asp-for="ValidUntil"
+                           type="date"
+                           class="form-control" />
+                    <label>Gültig bis</label>
+                </div>
+            </div>
 
         </div>
 

@@ -1,7 +1,6 @@
 ﻿@model BauFlow.Entities.Invoice
 
 <style>
-
     .page-card {
         background: #fff;
         border: 1px solid #eceef2;
@@ -43,41 +42,44 @@
         padding: 18px;
         border-radius: 14px;
     }
-
 </style>
-
 
 <div class="page-card">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <h4 class="mb-0">Neue Rechnung</h4>
 
         <a asp-action="Index" class="btn btn-ghost">
             Zurück
         </a>
-
     </div>
 
     <form asp-action="Create" method="post">
 
-        <div class="form-floating mb-4">
-
+        <!-- Kunde -->
+        <div class="form-floating mb-3">
             <select asp-for="CustomerId"
                     asp-items="ViewBag.CustomerId"
-                    class="form-control">
-            </select>
-
+                    class="form-control"></select>
             <label>Kunde</label>
+        </div>
 
+        <!-- Steuer -->
+        <div class="form-floating mb-4">
+            <select asp-for="TaxAmount" id="taxRate" class="form-select">
+                <option value="0">0%</option>
+                <option value="7">7%</option>
+                <option value="19" selected>19%</option>
+            </select>
+            <label>Steuersatz</label>
         </div>
 
         <hr class="mb-4" />
 
+        <!-- Positionen -->
         <h5 class="mb-3">Positionen</h5>
 
         <table class="table align-middle" id="itemsTable">
-
             <thead>
                 <tr>
                     <th>Beschreibung</th>
@@ -89,26 +91,26 @@
             </thead>
 
             <tbody>
-
                 <tr>
-
                     <td>
-                        <input name="Items[0].Description"
-                               class="form-control" />
+                        <input name="Items[0].Description" class="form-control" />
                     </td>
 
                     <td>
-                        <input name="Items[0].Quantity"
+                        <input type="number" step="0.01"
+                               name="Items[0].Quantity"
                                class="form-control qty" />
                     </td>
 
                     <td>
-                        <input name="Items[0].UnitPrice"
+                        <input type="number" step="0.01"
+                               name="Items[0].UnitPrice"
                                class="form-control price" />
                     </td>
 
                     <td>
-                        <input name="Items[0].TotalPrice"
+                        <input type="number" step="0.01"
+                               name="Items[0].TotalPrice"
                                class="form-control total"
                                readonly />
                     </td>
@@ -119,158 +121,126 @@
                             x
                         </button>
                     </td>
-
                 </tr>
-
             </tbody>
-
         </table>
 
-        <button type="button"
-                id="addRow"
-                class="btn btn-ghost mb-4">
-
+        <button type="button" id="addRow" class="btn btn-ghost mb-4">
             + Position hinzufügen
-
         </button>
 
+        <!-- Summary -->
         <div class="row justify-content-end">
-
             <div class="col-md-4">
-
                 <div class="total-box">
 
                     <div class="d-flex justify-content-between mb-2">
-
                         <span>Netto</span>
-                        <strong id="netTotal">0 €</strong>
-
+                        <strong id="netTotal">0.00 €</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-
-                        <span>MwSt (19%)</span>
-                        <strong id="taxTotal">0 €</strong>
-
+                        <span>MwSt</span>
+                        <strong id="taxTotal">0.00 €</strong>
                     </div>
 
                     <hr>
 
                     <div class="d-flex justify-content-between">
-
                         <h5>Gesamt</h5>
-                        <h5 id="grossTotal">0 €</h5>
-
+                        <h5 id="grossTotal">0.00 €</h5>
                     </div>
 
                 </div>
-
             </div>
-
         </div>
 
         <button class="btn btn-primary-custom w-100 mt-4">
-
             Rechnung speichern
-
         </button>
 
     </form>
+   
 
 </div>
 
-@section Scripts{
+@section Scripts {
 
     <script>
 
-        let rowIndex = 1;
+        document.addEventListener("DOMContentLoaded", function () {
 
-        document.getElementById("addRow").addEventListener("click",function(){
+            let rowIndex = document.querySelectorAll("#itemsTable tbody tr").length;
 
-        let table=document.querySelector("#itemsTable tbody");
+            // ➕ Zeile hinzufügen
+            document.getElementById("addRow").addEventListener("click", function () {
 
-        let row=`
-        <tr>
+                let table = document.querySelector("#itemsTable tbody");
 
-        <td>
-        <input name="Items[${rowIndex}].Description"
-        class="form-control"/>
-        </td>
+                let row = `
+                <tr>
+                    <td><input name="Items[${rowIndex}].Description" class="form-control"/></td>
+                    <td><input type="number" step="0.01" name="Items[${rowIndex}].Quantity" class="form-control qty"/></td>
+                    <td><input type="number" step="0.01" name="Items[${rowIndex}].UnitPrice" class="form-control price"/></td>
+                    <td><input type="number" step="0.01" name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/></td>
+                    <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
+                </tr>
+                `;
 
-        <td>
-        <input name="Items[${rowIndex}].Quantity"
-        class="form-control qty"/>
-        </td>
+                table.insertAdjacentHTML("beforeend", row);
+                rowIndex++;
+            });
 
-        <td>
-        <input name="Items[${rowIndex}].UnitPrice"
-        class="form-control price"/>
-        </td>
+            // ❌ Entfernen
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("removeRow")) {
+                    e.target.closest("tr").remove();
+                    calculate();
+                }
+            });
 
-        <td>
-        <input name="Items[${rowIndex}].TotalPrice"
-        class="form-control total"
-        readonly/>
-        </td>
+            // ✍️ Input
+            document.addEventListener("input", function (e) {
+                if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
+                    calculate();
+                }
+            });
 
-        <td>
-        <button type="button"
-        class="btn btn-ghost removeRow">x</button>
-        </td>
+            // 🔄 Steuer ändern
+            document.getElementById("taxRate").addEventListener("change", calculate);
 
-        </tr>
-        `;
+            // 🧮 Berechnung
+            function calculate() {
 
-        table.insertAdjacentHTML("beforeend",row);
+                let net = 0;
 
-        rowIndex++;
+                document.querySelectorAll("#itemsTable tbody tr").forEach(row => {
 
-        });
+                    let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
+                    let price = parseFloat(row.querySelector(".price")?.value) || 0;
 
-        document.addEventListener("click",function(e){
+                    let total = qty * price;
 
-        if(e.target.classList.contains("removeRow")){
+                    let totalInput = row.querySelector(".total");
+                    if (totalInput) totalInput.value = total.toFixed(2);
 
-        e.target.closest("tr").remove();
+                    net += total;
+                });
 
-        calculateTotals();
+                let taxRate = parseFloat(document.getElementById("taxRate").value) || 0;
 
-        }
+                let tax = net * (taxRate / 100);
+                let gross = net + tax;
 
-        });
+                document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
+                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
+                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+            }
 
-        document.addEventListener("input",calculateTotals);
-
-        function calculateTotals(){
-
-        let net=0;
-
-        document.querySelectorAll("#itemsTable tbody tr").forEach(row=>{
-
-        let qty=parseFloat(row.querySelector(".qty")?.value)||0;
-
-        let price=parseFloat(row.querySelector(".price")?.value)||0;
-
-        let total=qty*price;
-
-        if(row.querySelector(".total"))
-        row.querySelector(".total").value=total.toFixed(2);
-
-        net+=total;
+            // Initial
+            calculate();
 
         });
-
-        let tax=net*0.19;
-
-        let gross=net+tax;
-
-        document.getElementById("netTotal").innerText=net.toFixed(2)+" €";
-
-        document.getElementById("taxTotal").innerText=tax.toFixed(2)+" €";
-
-        document.getElementById("grossTotal").innerText=gross.toFixed(2)+" €";
-
-        }
 
     </script>
 

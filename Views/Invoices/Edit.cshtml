@@ -5,215 +5,304 @@
 }
 
 <style>
-    .profile-card {
+    .page-card {
         background: #fff;
         border: 1px solid #eceef2;
         border-radius: 20px;
         box-shadow: 0 8px 24px rgba(0,0,0,.04);
-        padding: 35px;
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .form-control,
-    .form-select {
-        background: #fff;
-        border: 1px solid #e2e5ea;
-        border-radius: 14px;
-        min-height: 56px;
-    }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #111;
-            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
-        }
-
-    .btn-primary {
-        background: #111 !important;
-        border: none !important;
-        border-radius: 14px;
-        font-weight: 600;
-        min-height: 52px;
-    }
-
-        .btn-primary:hover {
-            background: #000 !important;
-        }
-
-    .btn-light-custom {
-        background: #f6f7f9;
-        border: none;
-        border-radius: 14px;
-        font-weight: 600;
-        min-height: 52px;
-        color: #111;
-    }
-
-        .btn-light-custom:hover {
-            background: #eceef2;
-            color: #111;
-        }
-
-    .info-box {
-        background: #f6f7f9;
-        border-radius: 12px;
-        padding: 14px;
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 24px;
+        padding: 32px;
     }
 
     .section-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         color: #666;
         text-transform: uppercase;
-        letter-spacing: .04em;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 14px;
+        border: 1px solid #e2e5ea;
+        min-height: 52px;
+    }
+
+    .table-editor th {
+        background: #fafafa;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .summary-box {
+        background: #f6f7f9;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .summary-total {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+
+    .btn-primary-custom {
+        background: #111;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-weight: 600;
+    }
+
+    .btn-ghost {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 10px;
+        padding: 6px 12px;
     }
 </style>
 
-<div class="d-flex justify-content-center">
-    <div class="profile-card">
+<div class="page-card">
 
-        <h4 class="mb-4 text-center">Rechnung bearbeiten</h4>
+    <h4 class="mb-4">Rechnung bearbeiten</h4>
 
-        <div class="info-box">
-            Bearbeite hier die Stammdaten der Rechnung. Positionen kannst du separat im Rechnungseditor pflegen.
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <!-- ================== Allgemein ================== -->
+        <div class="section-title">Allgemein</div>
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select asp-for="CustomerId"
+                            asp-items="ViewBag.CustomerId"
+                            class="form-select"></select>
+                    <label>Kunde</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input asp-for="InvoiceNumber" class="form-control" />
+                    <label>Rechnungsnummer</label>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input asp-for="InvoiceDate" type="date" class="form-control" />
+                    <label>Rechnungsdatum</label>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <label>Fälligkeitsdatum</label>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select asp-for="Status"
+                            asp-items="Html.GetEnumSelectList<BauFlow.Entities.InvoiceStatus>()"
+                            class="form-select"></select>
+                    <label>Status</label>
+                </div>
+            </div>
+
         </div>
 
-        <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 text-center"></div>
+        <!-- ================== Positionen ================== -->
+        <div class="section-title">Positionen</div>
 
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CompanyId" />
-            <input type="hidden" asp-for="CreatedAt" />
+        <table class="table table-editor align-middle" id="itemsTable">
+            <thead>
+                <tr>
+                    <th>Beschreibung</th>
+                    <th>Menge</th>
+                    <th>Einheit</th>
+                    <th>Preis</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
 
-            <div class="section-title">Allgemein</div>
+            <tbody>
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input name="Items[@i].Description"
+                                   value="@Model.Items.ElementAt(i).Description"
+                                   class="form-control" />
+                        </td>
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <select asp-for="CustomerId"
+                        <td>
+                            <input type="number" step="0.01"
+                                   name="Items[@i].Quantity"
+                                   value="@Model.Items.ElementAt(i).Quantity.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                   class="form-control qty" />
+                        </td>
+
+                        <td>
+                            <input name="Items[@i].Unit"
+                                   value="@Model.Items.ElementAt(i).Unit"
+                                   class="form-control" />
+                        </td>
+
+                        <td>
+                            <input type="number" step="0.01"
+                                   name="Items[@i].UnitPrice"
+                                   value="@Model.Items.ElementAt(i).UnitPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                   class="form-control price" />
+                        </td>
+
+                        <td>
+                            <input type="number" step="0.01"
+                                   name="Items[@i].TotalPrice"
+                                   value="@Model.Items.ElementAt(i).TotalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                   class="form-control total" readonly />
+                        </td>
+
+                        <td>
+                            <button type="button" class="btn btn-ghost removeRow">x</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="button" id="addRow" class="btn btn-ghost mb-4">
+            + Position hinzufügen
+        </button>
+
+        <!-- ================== SUMMARY ================== -->
+        <div class="row justify-content-end">
+
+            <div class="col-md-4">
+
+                <div class="summary-box">
+
+                    <!-- Steuersatz -->
+                    <div class="form-floating mb-3">
+                        <select asp-for="TaxRate"
+                                asp-items="ViewBag.TaxRates"
                                 class="form-select"
-                                asp-items="ViewBag.CustomerId">
+                                id="taxRate">
                         </select>
-                        <label asp-for="CustomerId">Kunde</label>
+                        <label>Steuersatz</label>
                     </div>
-                    <span asp-validation-for="CustomerId" class="text-danger small"></span>
+
+                    <div class="summary-row">
+                        <span>Netto</span>
+                        <strong id="netTotal">@Model.NetAmount.ToString("0.00") €</strong>
+                    </div>
+
+                    <div class="summary-row">
+                        <span id="taxLabel">MwSt (@Model.TaxRate%)</span>
+                        <strong id="taxTotal">@Model.TaxAmount.ToString("0.00") €</strong>
+                    </div>
+
+                    <div class="summary-total d-flex justify-content-between">
+                        <span>Gesamt</span>
+                        <span id="grossTotal">@Model.GrossAmount.ToString("0.00") €</span>
+                    </div>
+
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="QuoteId" class="form-control" placeholder="Angebot" />
-                        <label asp-for="QuoteId">Angebot-ID (optional)</label>
-                    </div>
-                    <span asp-validation-for="QuoteId" class="text-danger small"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="InvoiceNumber" class="form-control" placeholder="Rechnungsnummer" />
-                        <label asp-for="InvoiceNumber">Rechnungsnummer</label>
-                    </div>
-                    <span asp-validation-for="InvoiceNumber" class="text-danger small"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <select asp-for="Status"
-                                class="form-select"
-                                asp-items="Html.GetEnumSelectList<BauFlow.Entities.InvoiceStatus>()">
-                        </select>
-                        <label asp-for="Status">Status</label>
-                    </div>
-                    <span asp-validation-for="Status" class="text-danger small"></span>
-                </div>
             </div>
 
-            <div class="section-title">Zeitraum</div>
+        </div>
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="InvoiceDate"
-                               type="date"
-                               class="form-control"
-                               placeholder="Rechnungsdatum" />
-                        <label asp-for="InvoiceDate">Rechnungsdatum</label>
-                    </div>
-                    <span asp-validation-for="InvoiceDate" class="text-danger small"></span>
-                </div>
+        <button class="btn btn-primary-custom w-100 mt-4">
+            Speichern
+        </button>
 
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input asp-for="DueDate"
-                               type="date"
-                               class="form-control"
-                               placeholder="Fälligkeitsdatum" />
-                        <label asp-for="DueDate">Fälligkeitsdatum</label>
-                    </div>
-                    <span asp-validation-for="DueDate" class="text-danger small"></span>
-                </div>
-            </div>
+    </form>
 
-            <div class="section-title">Beträge</div>
-
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <div class="form-floating">
-                        <input asp-for="NetAmount"
-                               class="form-control"
-                               type="number"
-                               step="0.01"
-                               placeholder="Nettobetrag" />
-                        <label asp-for="NetAmount">Nettobetrag</label>
-                    </div>
-                    <span asp-validation-for="NetAmount" class="text-danger small"></span>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="form-floating">
-                        <input asp-for="TaxAmount"
-                               class="form-control"
-                               type="number"
-                               step="0.01"
-                               placeholder="Steuerbetrag" />
-                        <label asp-for="TaxAmount">Steuerbetrag</label>
-                    </div>
-                    <span asp-validation-for="TaxAmount" class="text-danger small"></span>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="form-floating">
-                        <input asp-for="GrossAmount"
-                               class="form-control"
-                               type="number"
-                               step="0.01"
-                               placeholder="Gesamtbetrag" />
-                        <label asp-for="GrossAmount">Gesamtbetrag</label>
-                    </div>
-                    <span asp-validation-for="GrossAmount" class="text-danger small"></span>
-                </div>
-            </div>
-
-            <div class="d-flex gap-3 mt-4">
-                <button type="submit" class="btn btn-primary w-100">
-                    Änderungen speichern
-                </button>
-
-                <a asp-action="Index" class="btn btn-light-custom w-100 d-flex align-items-center justify-content-center">
-                    Abbrechen
-                </a>
-            </div>
-        </form>
-    </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            let index = document.querySelectorAll("#itemsTable tbody tr").length;
+
+            document.getElementById("addRow").addEventListener("click", function () {
+
+                let row = `
+                <tr>
+                <td><input name="Items[${index}].Description" class="form-control"/></td>
+                <td><input type="number" step="0.01" name="Items[${index}].Quantity" class="form-control qty"/></td>
+                <td><input name="Items[${index}].Unit" class="form-control"/></td>
+                <td><input type="number" step="0.01" name="Items[${index}].UnitPrice" class="form-control price"/></td>
+                <td><input type="number" step="0.01" name="Items[${index}].TotalPrice" class="form-control total" readonly/></td>
+                <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
+                </tr>
+                `;
+
+                document.querySelector("#itemsTable tbody").insertAdjacentHTML("beforeend", row);
+                index++;
+            });
+
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("removeRow")) {
+                    e.target.closest("tr").remove();
+                    calculate();
+                }
+            });
+
+            document.addEventListener("input", function (e) {
+                if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
+                    calculate();
+                }
+            });
+
+            document.getElementById("taxRate").addEventListener("change", calculate);
+
+            function calculate() {
+
+                let net = 0;
+
+                document.querySelectorAll("#itemsTable tbody tr").forEach(row => {
+
+                    let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
+                    let price = parseFloat(row.querySelector(".price")?.value) || 0;
+
+                    let total = qty * price;
+
+                    row.querySelector(".total").value = total.toFixed(2);
+
+                    net += total;
+                });
+
+                let taxRate = parseFloat(document.getElementById("taxRate").value) || 0;
+
+                let tax = net * (taxRate / 100);
+                let gross = net + tax;
+
+                document.getElementById("taxLabel").innerText = `MwSt (${taxRate}%)`;
+
+                document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
+                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
+                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+            }
+
+            calculate();
+        });
+    </script>
+
 }

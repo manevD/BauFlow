@@ -1,26 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BauFlow.Data;
+using BauFlow.Entities;
+using BauFlow.Security;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace BauFlow.Controllers
 {
-    using BauFlow.Data;
-    using BauFlow.Entities;
-    using BauFlow.Security;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.EntityFrameworkCore;
-
     [RequireTenant]
-    public class QuotesController : Controller
+    public class QuotesController(ApplicationDbContext _context) : Controller
     {
-        private readonly ApplicationDbContext _context;
 
-        public QuotesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        // LIST
-
+        // ===================== LIST =====================
         [Route("Angebote")]
         public async Task<IActionResult> Index()
         {
@@ -32,30 +23,26 @@ namespace BauFlow.Controllers
             return View(quotes);
         }
 
-        // CREATE
-
+        // ===================== CREATE =====================
         public IActionResult Create()
         {
-            ViewBag.CustomerId = _context.Customers
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                }).ToList();
+            ViewBag.CustomerId = GetCustomers();
+            ViewBag.TaxRates = GetTaxRates();
 
             return View();
         }
 
-        [HttpPost]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Quote quote)
         {
             ModelState.Remove("Customer");
             ModelState.Remove("QuoteNumber");
+
             if (!ModelState.IsValid)
             {
-                ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "Name", quote.CustomerId);
+                ViewBag.CustomerId = GetCustomers();
+                ViewBag.TaxRates = GetTaxRates();
                 return View(quote);
             }
 
@@ -63,26 +50,24 @@ namespace BauFlow.Controllers
             quote.QuoteDate = DateTime.UtcNow;
             quote.Status = QuoteStatus.Draft;
 
-            // QuoteNumber vergeben
+            // 🔥 WICHTIG: TaxRate normalisieren
+            quote.TaxRate = (int)quote.TaxRate;
+
             quote.QuoteNumber = $"ANG-{DateTime.UtcNow:yyyyMMddHHmmss}";
 
-            // Falls keine Items gesendet wurden
             if (quote.Items == null)
                 quote.Items = new List<QuoteItem>();
-
-            decimal net = 0;
 
             foreach (var item in quote.Items)
             {
                 item.Id = Guid.NewGuid();
                 item.QuoteId = quote.Id;
-
                 item.TotalPrice = item.Quantity * item.UnitPrice;
-                net += item.TotalPrice;
             }
 
-            quote.NetAmount = net;
-            quote.TaxAmount = net * 0.19m;
+            // 🔥 Totals IMMER serverseitig
+            quote.NetAmount = quote.Items.Sum(x => x.TotalPrice);
+            quote.TaxAmount = quote.NetAmount * (quote.TaxRate / 100m);
             quote.GrossAmount = quote.NetAmount + quote.TaxAmount;
 
             _context.Quotes.Add(quote);
@@ -90,8 +75,8 @@ namespace BauFlow.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // DETAILS
 
+        // ===================== DETAILS =====================
         public async Task<IActionResult> Details(Guid id)
         {
             var quote = await _context.Quotes
@@ -105,63 +90,74 @@ namespace BauFlow.Controllers
             return View(quote);
         }
 
-        // EDIT
-
+        // ===================== EDIT =====================
         public async Task<IActionResult> Edit(Guid id)
         {
             var quote = await _context.Quotes
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            ViewBag.CustomerId = _context.Customers
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                }).ToList();
+            if (quote == null)
+                return NotFound();
+
+            // 🔥 WICHTIG
+            quote.TaxRate = (int)quote.TaxRate;
+
+            ViewBag.CustomerId = GetCustomers();
+            ViewBag.TaxRates = GetTaxRates();
 
             return View(quote);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Quote quote)
+        public async Task<IActionResult> Edit(Quote model)
         {
-            var existingQuote = await _context.Quotes
-                .Include(x => x.Items)
-                .FirstOrDefaultAsync(x => x.Id == quote.Id);
+            var quote = await _context.Quotes
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
 
-            if (existingQuote == null)
+            if (quote == null)
                 return NotFound();
 
-            existingQuote.CustomerId = quote.CustomerId;
-            existingQuote.ValidUntil = quote.ValidUntil;
-            existingQuote.Status = quote.Status;
+            // ========= Stammdaten =========
+            quote.CustomerId = model.CustomerId;
+            quote.ValidUntil = model.ValidUntil;
+            quote.Status = model.Status;
+            quote.TaxRate = model.TaxRate;
 
-            existingQuote.Items.Clear();
+            // ========= Items SAFE =========
+            var existingItems = await _context.QuoteItems
+                .Where(x => x.QuoteId == quote.Id)
+                .ToListAsync();
 
-            if (quote.Items != null)
-            {
-                foreach (var item in quote.Items)
+            _context.QuoteItems.RemoveRange(existingItems);
+
+            var newItems = (model.Items ?? new List<QuoteItem>())
+                .Select(x => new QuoteItem
                 {
-                    existingQuote.Items.Add(new QuoteItem
-                    {
-                        Description = item.Description,
-                        Quantity = item.Quantity,
-                        Unit = item.Unit,
-                        UnitPrice = item.UnitPrice,
-                        TotalPrice = item.TotalPrice
-                    });
-                }
-            }
+                    Id = Guid.NewGuid(),
+                    QuoteId = quote.Id,
+                    Description = x.Description,
+                    Quantity = x.Quantity,
+                    Unit = x.Unit,
+                    UnitPrice = x.UnitPrice,
+                    TotalPrice = x.Quantity * x.UnitPrice
+                })
+                .ToList();
+
+            await _context.QuoteItems.AddRangeAsync(newItems);
+
+            // ========= Totals =========
+            quote.NetAmount = newItems.Sum(x => x.TotalPrice);
+            quote.TaxAmount = quote.NetAmount * (quote.TaxRate / 100m);
+            quote.GrossAmount = quote.NetAmount + quote.TaxAmount;
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
-        // DELETE
-
+        // ===================== DELETE =====================
         public async Task<IActionResult> Delete(Guid id)
         {
             var quote = await _context.Quotes
@@ -176,11 +172,33 @@ namespace BauFlow.Controllers
         {
             var quote = await _context.Quotes.FindAsync(id);
 
-            _context.Quotes.Remove(quote);
+            if (quote != null)
+                _context.Quotes.Remove(quote);
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
+        // ===================== HELPERS =====================
+        private List<SelectListItem> GetCustomers()
+        {
+            return _context.Customers.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+        }
+
+        private List<SelectListItem> GetTaxRates()
+        {
+            return new List<SelectListItem>
+        {
+            new SelectListItem { Value = "0", Text = "0%" },
+            new SelectListItem { Value = "7", Text = "7%" },
+            new SelectListItem { Value = "19", Text = "19%" }
+        };
+        }
     }
+
 }

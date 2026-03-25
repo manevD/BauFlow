@@ -18,6 +18,7 @@ namespace BauFlow.Entities
         public decimal NetAmount { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal GrossAmount { get; set; }
+        public int  TaxRate { get; set; } 
 
         public Customer Customer { get; set; }
         public ICollection<InvoiceItem> Items { get; set; } = new List<InvoiceItem>();
