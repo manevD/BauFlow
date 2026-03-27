@@ -95,7 +95,16 @@
         </div>
 
         <div class="d-flex gap-2">
-
+            @if (!string.IsNullOrEmpty(Model.Customer.Email))
+            {
+                <a asp-action="SendInvoice"
+                       asp-route-invoiceId="@Model.Id"
+                       asp-route-customerId="@Model.CustomerId"
+                       class="btn btn-ghost">
+                    Send
+                </a>
+            }
+         
             <a asp-action="Pdf"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
@@ -248,7 +257,7 @@
 
                 <div class="d-flex justify-content-between mb-2">
 
-                    <span>MwSt</span>
+                    <span>MwSt (@Model.TaxRate%)</span>
 
                     <strong>
                         @Model.TaxAmount.ToString("0.00") €

@@ -1,5 +1,6 @@
 ﻿using BauFlow.Data;
 using BauFlow.Entities;
+using BauFlow.Models;
 using BauFlow.Security;
 using BauFlow.Services;
 using BauFlow.ViewModels;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BauFlow.Controllers
 {
@@ -232,7 +234,7 @@ namespace BauFlow.Controllers
                 "Users",
                 new { userId = user.Id, token = encodedToken },
                 Request.Scheme);
-
+            
             await _emailService.SendInvite(user.Email, user.FullName, link);
         }
     }

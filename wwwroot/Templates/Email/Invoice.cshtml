@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<body style="font-family: Arial;">
+
+    <h2>Rechnung {{InvoiceNumber}}</h2>
+
+    <p>Hallo {{CustomerName}},</p>
+
+    <p>
+        vielen Dank für Ihren Auftrag.<br />
+        anbei finden Sie Ihre Rechnung.
+    </p>
+
+    <table style="width:100%; border-collapse: collapse;">
+        <tr>
+            <td><strong>Rechnungsnummer:</strong></td>
+            <td>{{InvoiceNumber}}</td>
+        </tr>
+        <tr>
+            <td><strong>Datum:</strong></td>
+            <td>{{InvoiceDate}}</td>
+        </tr>
+        <tr>
+            <td><strong>Betrag:</strong></td>
+            <td>{{Total}}</td>
+        </tr>
+    </table>
+
+    <br />
+
+    <p>{{Description}}</p>
+
+    <br />
+
+    <p>Mit freundlichen Grüßen<br />Ihr Team</p>
+
+</body>
+</html>

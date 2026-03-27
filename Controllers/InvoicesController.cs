@@ -1,5 +1,6 @@
 ﻿using BauFlow.Data;
 using BauFlow.Entities;
+using BauFlow.Models;
 using BauFlow.Security;
 using BauFlow.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,14 @@ namespace BauFlow.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly NumberService _numberService;
-        public InvoicesController(ApplicationDbContext context, NumberService numberService)
+        private readonly EmailService _emailService;
+        private readonly EmailEncryptionService _encryptionService;
+        public InvoicesController(ApplicationDbContext context, NumberService numberService, EmailService emailService, EmailEncryptionService encryptionService)
         {
             _context = context;
+            _emailService = emailService;
             _numberService = numberService;
+            _encryptionService = encryptionService;
         }
 
         // GET: Invoices
@@ -137,6 +142,36 @@ namespace BauFlow.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+        public async Task<IActionResult> SendInvoice(Guid invoiceId)
+        {
+            var invoice = await _context.Invoices
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync(x => x.Id == invoiceId);
+
+            if (invoice == null)
+                return NotFound();
+
+            var company = await _context.Companies.FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
+
+            var settings = new EmailSettings
+            {
+                Host = company.EmailHost,
+                Port = company.EmailPort,
+                UserName = company.EmailUser,
+                Password = _encryptionService.Decrypt(company.EmailPassword),
+                EnableSSL = company.EmailSSL,
+                From = company.EmailFrom,
+                FromName = company.EmailFromName
+            };
+
+            await _emailService.SendInvoice(
+                invoice.Customer.Email,
+                invoice,
+                settings
+            );
+
+            return RedirectToAction("Details", new { id = invoiceId });
+        }
         public async Task<IActionResult> Pdf(Guid id)
         {
             var invoice = await _context.Invoices
@@ -167,7 +202,6 @@ namespace BauFlow.Controllers
             {
                 return NotFound();
             }
-            invoice.TaxRate = invoice.TaxRate;
 
             ViewBag.TaxRates = GetTaxRates();
 

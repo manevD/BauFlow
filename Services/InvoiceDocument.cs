@@ -1,8 +1,4 @@
-﻿using BauFlow.Entities;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-
-namespace BauFlow.Services
+﻿namespace BauFlow.Services
 {
     using BauFlow.Entities;
     using QuestPDF.Fluent;

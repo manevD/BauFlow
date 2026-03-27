@@ -122,7 +122,16 @@
             </div>
 
         </div>
+        <div class="section-title">Beschreibung</div>
 
+        <div class="mb-4">
+            <div class="form-floating">
+                <textarea asp-for="Description"
+                          class="form-control"
+                          style="height: 120px"></textarea>
+                <label>Rechnungstext / Hinweise</label>
+            </div>
+        </div>
         <!-- ================== Positionen ================== -->
         <div class="section-title">Positionen</div>
 
@@ -236,10 +245,21 @@
 @section Scripts {
 
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
 
             let index = document.querySelectorAll("#itemsTable tbody tr").length;
+
+            const taxRateEl = document.getElementById("taxRate");
+            const descriptionEl = document.querySelector("textarea[name='Description']");
+
+            const defaultTaxText = "Im ausgewiesenen Rechnungsbetrag ist gemäß § 19 UStG keine Umsatzsteuer enthalten";
+
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('de-DE', {
+                    style: 'currency',
+                    currency: 'EUR'
+                }).format(value);
+            };
 
             document.getElementById("addRow").addEventListener("click", function () {
 
@@ -271,7 +291,26 @@
                 }
             });
 
-            document.getElementById("taxRate").addEventListener("change", calculate);
+            taxRateEl.addEventListener("change", function () {
+                calculate();
+                updateDescription();
+            });
+
+            function updateDescription() {
+                let taxRate = parseFloat(taxRateEl.value) || 0;
+
+                if (!descriptionEl) return;
+
+                // Nur setzen wenn leer → User nicht überschreiben
+                if (taxRate === 0 && !descriptionEl.value.trim()) {
+                    descriptionEl.value = defaultTaxText;
+                }
+
+                // Optional entfernen wenn Steuer wieder gesetzt wird
+                if (taxRate > 0 && descriptionEl.value === defaultTaxText) {
+                    descriptionEl.value = "";
+                }
+            }
 
             function calculate() {
 
@@ -284,24 +323,26 @@
 
                     let total = qty * price;
 
-                    row.querySelector(".total").value = total.toFixed(2);
+                    row.querySelector(".total").value = total.toFixed(2); // wichtig für backend
 
                     net += total;
                 });
 
-                let taxRate = parseFloat(document.getElementById("taxRate").value) || 0;
+                let taxRate = parseFloat(taxRateEl.value) || 0;
 
                 let tax = net * (taxRate / 100);
                 let gross = net + tax;
 
                 document.getElementById("taxLabel").innerText = `MwSt (${taxRate}%)`;
 
-                document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
-                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
-                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+                document.getElementById("netTotal").innerText = formatCurrency(net);
+                document.getElementById("taxTotal").innerText = formatCurrency(tax);
+                document.getElementById("grossTotal").innerText = formatCurrency(gross);
             }
 
+            // Initial
             calculate();
+            updateDescription();
         });
     </script>
 

@@ -66,12 +66,20 @@
 
         <!-- Steuer -->
         <div class="form-floating mb-4">
-            <select asp-for="TaxAmount" id="taxRate" class="form-select">
+            <select asp-for="TaxRate" id="taxRate" class="form-select">
                 <option value="0">0%</option>
                 <option value="7">7%</option>
                 <option value="19" selected>19%</option>
             </select>
             <label>Steuersatz</label>
+        </div>
+
+        <!-- Beschreibung -->
+        <div class="form-floating mb-4">
+            <textarea asp-for="Description"
+                      class="form-control"
+                      style="height: 120px"></textarea>
+            <label>Rechnungstext / Hinweise</label>
         </div>
 
         <hr class="mb-4" />
@@ -136,19 +144,19 @@
 
                     <div class="d-flex justify-content-between mb-2">
                         <span>Netto</span>
-                        <strong id="netTotal">0.00 €</strong>
+                        <strong id="netTotal">0,00 €</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span>MwSt</span>
-                        <strong id="taxTotal">0.00 €</strong>
+                        <span id="taxLabel">MwSt (19%)</span>
+                        <strong id="taxTotal">0,00 €</strong>
                     </div>
 
                     <hr>
 
                     <div class="d-flex justify-content-between">
                         <h5>Gesamt</h5>
-                        <h5 id="grossTotal">0.00 €</h5>
+                        <h5 id="grossTotal">0,00 €</h5>
                     </div>
 
                 </div>
@@ -160,19 +168,28 @@
         </button>
 
     </form>
-   
 
 </div>
 
 @section Scripts {
 
     <script>
-
         document.addEventListener("DOMContentLoaded", function () {
 
             let rowIndex = document.querySelectorAll("#itemsTable tbody tr").length;
 
-            // ➕ Zeile hinzufügen
+            const taxRateEl = document.getElementById("taxRate");
+            const descriptionEl = document.querySelector("textarea[name='Description']");
+
+            const defaultTaxText = "Im ausgewiesenen Rechnungsbetrag ist gemäß § 19 UStG keine Umsatzsteuer enthalten";
+
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('de-DE', {
+                    style: 'currency',
+                    currency: 'EUR'
+                }).format(value);
+            };
+
             document.getElementById("addRow").addEventListener("click", function () {
 
                 let table = document.querySelector("#itemsTable tbody");
@@ -191,7 +208,6 @@
                 rowIndex++;
             });
 
-            // ❌ Entfernen
             document.addEventListener("click", function (e) {
                 if (e.target.classList.contains("removeRow")) {
                     e.target.closest("tr").remove();
@@ -199,17 +215,31 @@
                 }
             });
 
-            // ✍️ Input
             document.addEventListener("input", function (e) {
                 if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
                     calculate();
                 }
             });
 
-            // 🔄 Steuer ändern
-            document.getElementById("taxRate").addEventListener("change", calculate);
+            taxRateEl.addEventListener("change", function () {
+                calculate();
+                updateDescription();
+            });
 
-            // 🧮 Berechnung
+            function updateDescription() {
+                let taxRate = parseFloat(taxRateEl.value) || 0;
+
+                if (!descriptionEl) return;
+
+                if (taxRate === 0 && !descriptionEl.value.trim()) {
+                    descriptionEl.value = defaultTaxText;
+                }
+
+                if (taxRate > 0 && descriptionEl.value === defaultTaxText) {
+                    descriptionEl.value = "";
+                }
+            }
+
             function calculate() {
 
                 let net = 0;
@@ -227,21 +257,21 @@
                     net += total;
                 });
 
-                let taxRate = parseFloat(document.getElementById("taxRate").value) || 0;
+                let taxRate = parseFloat(taxRateEl.value) || 0;
 
                 let tax = net * (taxRate / 100);
                 let gross = net + tax;
 
-                document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
-                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
-                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+                document.getElementById("taxLabel").innerText = `MwSt (${taxRate}%)`;
+
+                document.getElementById("netTotal").innerText = formatCurrency(net);
+                document.getElementById("taxTotal").innerText = formatCurrency(tax);
+                document.getElementById("grossTotal").innerText = formatCurrency(gross);
             }
 
-            // Initial
             calculate();
-
+            updateDescription();
         });
-
     </script>
 
 }

@@ -1,39 +1,87 @@
-﻿using BauFlow.Models;
+﻿using BauFlow.Entities;
+using BauFlow.Interfaces;
+using BauFlow.Models;
+using BauFlow.Services;
 using Microsoft.Extensions.Options;
+using QuestPDF.Fluent;
 using System.Net;
 using System.Net.Mail;
 
-public class EmailService
+public class EmailService : IEmailService
 {
-    private readonly EmailSettings _settings;
+    private readonly EmailTemplateService _templateService;
+    private readonly EmailSettings _defaultSettings;
 
-    public EmailService(IOptions<EmailSettings> settings)
+    public EmailService(
+        EmailTemplateService templateService,
+        IOptions<EmailSettings> defaultSettings)
     {
-        _settings = settings.Value;
+        _templateService = templateService;
+        _defaultSettings = defaultSettings.Value;
     }
-
     public async Task SendInvite(string email, string name, string inviteLink)
     {
         var html = BuildInviteTemplate(name, inviteLink);
 
         var message = new MailMessage
         {
-            From = new MailAddress(_settings.From, _settings.FromName),
+            From = new MailAddress(_defaultSettings.From, _defaultSettings.FromName),
             Subject = "Einladung zu BauFlow",
             Body = html,
             IsBodyHtml = true
         };
 
         message.To.Add(email);
-
-        using var smtp = new SmtpClient(_settings.Host, _settings.Port)
+        using var smtp = new SmtpClient(_defaultSettings.Host, _defaultSettings.Port)
         {
-            Credentials = new NetworkCredential(_settings.UserName, _settings.Password),
-            EnableSsl = _settings.EnableSSL
+            Credentials = new NetworkCredential(_defaultSettings.UserName, _defaultSettings.Password),
+            EnableSsl = _defaultSettings.EnableSSL
         };
 
         await smtp.SendMailAsync(message);
     }
+
+    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings)
+    {
+        var template = _templateService.LoadTemplate("Invoice.cshtml");
+        var document = new InvoiceDocument(invoice);
+        var pdf = document.GeneratePdf();
+
+        var data = new Dictionary<string, string>
+        {
+            { "CustomerName", invoice.Customer?.Name ?? "" },
+            { "InvoiceNumber", invoice.InvoiceNumber },
+            { "InvoiceDate", invoice.InvoiceDate.ToString("dd.MM.yyyy") },
+            { "Total", invoice.GrossAmount.ToString("C") },
+            { "Description", invoice.Description ?? "" }
+        };
+
+        var body = _templateService.ReplacePlaceholders(template, data);
+
+        var message = new MailMessage
+        {
+            From = new MailAddress(settings.From, settings.FromName),
+            Subject = $"Rechnung {invoice.InvoiceNumber}",
+            Body = body,
+            Attachments = { new Attachment(new MemoryStream(pdf), $"Rechnung_{invoice.InvoiceNumber}.pdf") },
+            IsBodyHtml = true
+        };
+
+        message.To.Add(toEmail);
+
+        using var smtp = BuildSmtp(settings);
+        await smtp.SendMailAsync(message);
+    }
+
+    private SmtpClient BuildSmtp(EmailSettings settings)
+    {
+        return new SmtpClient(settings.Host, settings.Port)
+        {
+            Credentials = new NetworkCredential(settings.UserName, settings.Password),
+            EnableSsl = settings.EnableSSL
+        };
+    }
+
 
     private string BuildInviteTemplate(string name, string link)
     {

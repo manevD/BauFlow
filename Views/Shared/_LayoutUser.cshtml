@@ -176,7 +176,12 @@
                             </a>
                         </li>
                     }
-
+                    <li class="nav-item">
+                        <a asp-controller="Company" asp-action="EmailSettings"
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
+                            Email Einstellungen
+                        </a>
+                    </li>
 
                     <li class="mt-4 text-uppercase small text-muted">Einstellungen</li>
 

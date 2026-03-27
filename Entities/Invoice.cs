@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BauFlow.Entities
 {
@@ -7,7 +6,8 @@ namespace BauFlow.Entities
     {
         public Guid CustomerId { get; set; }
         public Guid? QuoteId { get; set; }
-
+        [MaxLength(1024)]
+        public string? Description { get; set; }
         public string InvoiceNumber { get; set; }
 
         public DateTime InvoiceDate { get; set; }

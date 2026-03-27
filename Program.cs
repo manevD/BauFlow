@@ -49,6 +49,7 @@ builder.Services
 .AddDefaultTokenProviders();
 
 var culture = new CultureInfo("en-US");
+culture.NumberFormat.CurrencySymbol = "€";
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
@@ -88,8 +89,11 @@ builder.Services.AddHttpContextAccessor();
 // -----------------------------
 builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<EmailTemplateService>();
 builder.Services.AddScoped<NumberService>();
+builder.Services.AddScoped<EmailEncryptionService>();
 
+builder.Services.AddDataProtection();
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
