@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BauFlow.Entities.Customer>
 
 @{
-    ViewData["Title"] = "Kunden";
+    ViewData["Title"] = "Клиенти";
 }
 
 <style>
@@ -39,15 +39,6 @@
         .btn-ghost:hover {
             background: #eceef2;
         }
-        
-    .btn-ghost {
-        background: #f6f7f9;
-        border: none;
-        border-radius: 10px;
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-
 
     .btn-danger-ghost {
         background: #fafafa;
@@ -103,19 +94,19 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Kunden</h4>
+        <h4 class="mb-0">Клиенти</h4>
 
         <a asp-action="Create" class="btn btn-primary-custom">
-            + Kunde hinzufügen
+            + Додади клиент
         </a>
 
     </div>
-    
+
     <div class="mb-4">
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Kunde durchsuchen..." />
+               placeholder="Пребарај клиент..." />
     </div>
 
     <table class="table align-middle">
@@ -123,11 +114,11 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Standort</th>
-                <th>Telefon</th>
-                <th class="text-end">Aktionen</th>
+                <th>Име</th>
+                <th>Е-пошта</th>
+                <th>Локација</th>
+                <th>Телефон</th>
+                <th class="text-end">Акции</th>
             </tr>
         </thead>
 
@@ -163,18 +154,19 @@
                         <a asp-action="Edit"
                                asp-route-id="@customer.Id"
                                class="btn btn-ghost me-2">
-                            Bearbeiten
+                            Измени
                         </a>
 
                         <a asp-action="Details"
                                asp-route-id="@customer.Id"
                                class="btn btn-ghost">
-                            Details
+                            Детали
                         </a>
+
                         <a asp-action="Delete"
                                asp-route-id="@customer.Id"
                                class="btn btn-ghost">
-                            Löschen
+                            Избриши
                         </a>
                     </td>
 

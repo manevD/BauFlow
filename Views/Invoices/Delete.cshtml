@@ -65,56 +65,56 @@
 
     <div class="page-card">
 
-        <h4 class="mb-4">Rechnung löschen</h4>
+        <h4 class="mb-4">Избриши фактура</h4>
 
         <div class="warning-box">
-            Diese Rechnung wird dauerhaft gelöscht. Zugehörige Daten können verloren gehen.
+            Оваа фактура ќе биде трајно избришана. Поврзаните податоци може да се изгубат.
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Rechnungsnummer</div>
+            <div class="col-4 label">Број на фактура</div>
             <div class="col-8 value">@Model.InvoiceNumber</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Datum</div>
+            <div class="col-4 label">Датум</div>
             <div class="col-8 value">@Model.InvoiceDate.ToShortDateString()</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Fällig am</div>
+            <div class="col-4 label">Рок на плаќање</div>
             <div class="col-8 value">@Model.DueDate.ToShortDateString()</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Status</div>
+            <div class="col-4 label">Статус</div>
             <div class="col-8 value">@Model.Status.GetDisplayName()</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Netto</div>
+            <div class="col-4 label">Нето</div>
             <div class="col-8 value">@Model.NetAmount €</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Steuer</div>
+            <div class="col-4 label">Данок</div>
             <div class="col-8 value">@Model.TaxAmount €</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Brutto</div>
+            <div class="col-4 label">Вкупно</div>
             <div class="col-8 value">@Model.GrossAmount €</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Kunde</div>
+            <div class="col-4 label">Клиент</div>
             <div class="col-8 value">
                 @Model.Customer?.Name
             </div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Erstellt am</div>
+            <div class="col-4 label">Креирано на</div>
             <div class="col-8 value">@Model.CreatedAt.ToShortDateString()</div>
         </div>
 
@@ -125,12 +125,13 @@
             <div class="d-flex gap-3">
 
                 <button type="submit" class="btn btn-danger-custom">
-                    Rechnung löschen
+                    Избриши фактура
                 </button>
 
                 <a asp-action="Index" class="btn btn-light-custom">
-                    Abbrechen
+                    Откажи
                 </a>
+
             </div>
         </form>
 

@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using BauFlow.Entities;
+﻿using BauFlow.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,17 +30,17 @@ namespace BauFlow.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Bitte E-Mail eingeben")]
-            [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse")]
-            [Display(Name = "E-Mail")]
+            [Required(ErrorMessage = "Внесете е-пошта")]
+            [EmailAddress(ErrorMessage = "Невалидна е-пошта")]
+            [Display(Name = "Е-пошта")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage = "Bitte Passwort eingeben")]
+            [Required(ErrorMessage = "Внесете лозинка")]
             [DataType(DataType.Password)]
-            [Display(Name = "Passwort")]
+            [Display(Name = "Лозинка")]
             public string Password { get; set; }
 
-            [Display(Name = "Angemeldet bleiben")]
+            [Display(Name = "Остани најавен")]
             public bool RememberMe { get; set; }
         }
 
@@ -79,7 +77,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("Benutzer erfolgreich angemeldet.");
+                    _logger.LogInformation("Корисникот успешно се најави.");
                     return LocalRedirect(returnUrl);
                 }
 
@@ -94,11 +92,11 @@ namespace BauFlow.Areas.Identity.Pages.Account
 
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("Benutzerkonto wurde gesperrt.");
+                    _logger.LogWarning("Корисничката сметка е заклучена.");
                     return RedirectToPage("./Lockout");
                 }
 
-                ModelState.AddModelError(string.Empty, "Ungültiger Anmeldeversuch.");
+                ModelState.AddModelError(string.Empty, "Неуспешна најава. Проверете ги податоците.");
                 return Page();
             }
 

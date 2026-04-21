@@ -47,53 +47,53 @@
 <div class="page-card">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Neue Rechnung</h4>
+        <h4 class="mb-0">Нова фактура</h4>
 
         <a asp-action="Index" class="btn btn-ghost">
-            Zurück
+            Назад
         </a>
     </div>
 
     <form asp-action="Create" method="post">
 
-        <!-- Kunde -->
+        <!-- Клиент -->
         <div class="form-floating mb-3">
             <select asp-for="CustomerId"
                     asp-items="ViewBag.CustomerId"
                     class="form-control"></select>
-            <label>Kunde</label>
+            <label>Клиент</label>
         </div>
 
-        <!-- Steuer -->
+        <!-- Данок -->
         <div class="form-floating mb-4">
             <select asp-for="TaxRate" id="taxRate" class="form-select">
                 <option value="0">0%</option>
                 <option value="7">7%</option>
                 <option value="19" selected>19%</option>
             </select>
-            <label>Steuersatz</label>
+            <label>Даночна стапка</label>
         </div>
 
-        <!-- Beschreibung -->
+        <!-- Опис -->
         <div class="form-floating mb-4">
             <textarea asp-for="Description"
                       class="form-control"
                       style="height: 120px"></textarea>
-            <label>Rechnungstext / Hinweise</label>
+            <label>Текст на фактура / напомени</label>
         </div>
 
         <hr class="mb-4" />
 
-        <!-- Positionen -->
-        <h5 class="mb-3">Positionen</h5>
+        <!-- Ставки -->
+        <h5 class="mb-3">Ставки</h5>
 
         <table class="table align-middle" id="itemsTable">
             <thead>
                 <tr>
-                    <th>Beschreibung</th>
-                    <th width="120">Menge</th>
-                    <th width="140">Preis</th>
-                    <th width="140">Total</th>
+                    <th>Опис</th>
+                    <th width="120">Количина</th>
+                    <th width="140">Цена</th>
+                    <th width="140">Вкупно</th>
                     <th width="60"></th>
                 </tr>
             </thead>
@@ -134,28 +134,28 @@
         </table>
 
         <button type="button" id="addRow" class="btn btn-ghost mb-4">
-            + Position hinzufügen
+            + Додади ставка
         </button>
 
-        <!-- Summary -->
+        <!-- Резиме -->
         <div class="row justify-content-end">
             <div class="col-md-4">
                 <div class="total-box">
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Netto</span>
+                        <span>Нето</span>
                         <strong id="netTotal">0,00 €</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span id="taxLabel">MwSt (19%)</span>
+                        <span id="taxLabel">ДДВ (19%)</span>
                         <strong id="taxTotal">0,00 €</strong>
                     </div>
 
                     <hr>
 
                     <div class="d-flex justify-content-between">
-                        <h5>Gesamt</h5>
+                        <h5>Вкупно</h5>
                         <h5 id="grossTotal">0,00 €</h5>
                     </div>
 
@@ -164,7 +164,7 @@
         </div>
 
         <button class="btn btn-primary-custom w-100 mt-4">
-            Rechnung speichern
+            Зачувај фактура
         </button>
 
     </form>
@@ -262,7 +262,7 @@
                 let tax = net * (taxRate / 100);
                 let gross = net + tax;
 
-                document.getElementById("taxLabel").innerText = `MwSt (${taxRate}%)`;
+                document.getElementById("taxLabel").innerText = `ДДВ (${taxRate}%)`;
 
                 document.getElementById("netTotal").innerText = formatCurrency(net);
                 document.getElementById("taxTotal").innerText = formatCurrency(tax);

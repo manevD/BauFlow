@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BauFlow.Entities.Invoice>
 
 @{
-    ViewData["Title"] = "Rechnungen";
+    ViewData["Title"] = "Фактури";
 }
 
 <style>
@@ -71,9 +71,7 @@
     .search-box {
         max-width: 320px;
     }
-     .search-box {
-        max-width: 320px;
-    }
+
 </style>
 
 
@@ -81,29 +79,31 @@
 
     <div class="d-flex justify-content-between mb-4">
 
-        <h4>Rechnungen</h4>
+        <h4>Фактури</h4>
 
         <a asp-action="Create" class="btn btn-dark">
-            + Rechnung
+            + Нова фактура
         </a>
 
     </div>
+
     <div class="mb-4">
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Rechnungen durchsuchen..." />
+               placeholder="Пребарај фактури..." />
     </div>
+
     <table class="table align-middle">
 
         <thead>
 
             <tr>
-                <th>Nr</th>
-                <th>Kunde</th>
-                <th>Datum</th>
-                <th>Status</th>
-                <th>Betrag</th>
+                <th>Бр.</th>
+                <th>Клиент</th>
+                <th>Датум</th>
+                <th>Статус</th>
+                <th>Износ</th>
                 <th></th>
             </tr>
 
@@ -123,6 +123,7 @@
                     <td>@invoice.InvoiceDate.ToString("dd.MM.yyyy")</td>
 
                     <td>@invoice.Status.GetDisplayName()</td>
+
                     <td>@invoice.GrossAmount.ToString("C")</td>
 
                     <td>
@@ -130,8 +131,7 @@
                         <a asp-action="Details"
                                asp-route-id="@invoice.Id"
                                class="btn btn-ghost">
-                            Details
-
+                            Детали
                         </a>
 
                     </td>
@@ -150,20 +150,20 @@
 
     <script>
 
-        const searchInput=document.getElementById("searchInput");
-        const rows=document.querySelectorAll("#invoiceTable tr");
+        const searchInput = document.getElementById("searchInput");
+        const rows = document.querySelectorAll("#invoiceTable tr");
 
-        searchInput.addEventListener("keyup",function(){
+        searchInput.addEventListener("keyup", function () {
 
-        const value=this.value.toLowerCase();
+            const value = this.value.toLowerCase();
 
-        rows.forEach(row=>{
+            rows.forEach(row => {
 
-        const text=row.innerText.toLowerCase();
+                const text = row.innerText.toLowerCase();
 
-        row.style.display=text.includes(value)? "":"none";
+                row.style.display = text.includes(value) ? "" : "none";
 
-        });
+            });
 
         });
 

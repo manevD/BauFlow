@@ -1,4 +1,4 @@
-using BauFlow.Data;
+﻿using BauFlow.Data;
 using BauFlow.Entities;
 using BauFlow.Factories;
 using BauFlow.Interfaces;
@@ -10,7 +10,9 @@ using BauFlow.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using System.Globalization;
 using System.Text.Json;
@@ -46,15 +48,28 @@ builder.Services
     options.Password.RequireNonAlphanumeric = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddErrorDescriber<MacedonianIdentityErrors>(); // 🔥 MKD errors
 
-var culture = new CultureInfo("en-US");
-culture.NumberFormat.CurrencySymbol = "�";
+// -----------------------------
+// 🔥 ONLY MKD CULTURE
+// -----------------------------
+var culture = new CultureInfo("mk-MK");
+culture.NumberFormat.CurrencySymbol = "ден";
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(culture);
+    options.SupportedCultures = new[] { culture };
+    options.SupportedUICultures = new[] { culture };
+});
 
+// -----------------------------
+// Tokens / Cookies
+// -----------------------------
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
 {
     o.TokenLifespan = TimeSpan.FromHours(24);
@@ -76,7 +91,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 // MVC
 // -----------------------------
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+
+builder.Services.AddRazorPages()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 
 // -----------------------------
 // Tenant System
@@ -130,7 +148,6 @@ builder.Services.AddScoped<IAuthorizationHandler, PlanHandler>();
 // Health Checks
 // -----------------------------
 builder.Services.AddHealthChecks();
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // -----------------------------
@@ -164,6 +181,10 @@ else
 // -----------------------------
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// 🔥 АКТИВИРАЈ MKD LOCALIZATION
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
 
 app.UseRouting();
 

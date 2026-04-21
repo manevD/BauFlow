@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BauFlow.Entities.Project>
 
 @{
-    ViewData["Title"] = "Projekte";
+    ViewData["Title"] = "Проекти";
 }
 
 <style>
@@ -89,10 +89,10 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Projekte</h4>
+        <h4 class="mb-0">Проекти</h4>
 
         <a asp-action="Create" class="btn btn-primary-custom">
-            + Projekt erstellen
+            + Креирај проект
         </a>
 
     </div>
@@ -102,7 +102,7 @@
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Projekte durchsuchen..." />
+               placeholder="Пребарај проекти..." />
     </div>
 
 
@@ -111,11 +111,11 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Projekt</th>
-                <th>Kunde</th>
-                <th>Status</th>
-                <th>Erstellt</th>
-                <th class="text-end">Aktionen</th>
+                <th>Проект</th>
+                <th>Клиент</th>
+                <th>Статус</th>
+                <th>Креирано</th>
+                <th class="text-end">Акции</th>
             </tr>
         </thead>
 
@@ -156,19 +156,19 @@
                         <a asp-action="Edit"
                                asp-route-id="@project.Id"
                                class="btn btn-ghost me-2">
-                            Bearbeiten
+                            Измени
                         </a>
 
                         <a asp-action="Details"
                                asp-route-id="@project.Id"
                                class="btn btn-ghost me-2">
-                            Details
+                            Детали
                         </a>
 
                         <a asp-action="Delete"
                                asp-route-id="@project.Id"
                                class="btn btn-ghost">
-                            Löschen
+                            Избриши
                         </a>
 
                     </td>
@@ -187,20 +187,20 @@
 
     <script>
 
-        const searchInput=document.getElementById("searchInput");
-        const rows=document.querySelectorAll("#projectTable tr");
+        const searchInput = document.getElementById("searchInput");
+        const rows = document.querySelectorAll("#projectTable tr");
 
-        searchInput.addEventListener("keyup",function(){
+        searchInput.addEventListener("keyup", function () {
 
-        const value=this.value.toLowerCase();
+            const value = this.value.toLowerCase();
 
-        rows.forEach(row=>{
+            rows.forEach(row => {
 
-        const text=row.innerText.toLowerCase();
+                const text = row.innerText.toLowerCase();
 
-        row.style.display=text.includes(value)? "":"none";
+                row.style.display = text.includes(value) ? "" : "none";
 
-        });
+            });
 
         });
 

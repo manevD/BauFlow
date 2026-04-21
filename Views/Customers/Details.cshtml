@@ -1,7 +1,7 @@
 ﻿@model BauFlow.Entities.Customer
 
 @{
-    ViewData["Title"] = "Kunde";
+    ViewData["Title"] = "Клиент";
     var invoices = ViewBag.LastInvoices as List<BauFlow.Entities.Invoice>;
 }
 
@@ -135,21 +135,21 @@
                 <a asp-action="Edit"
                        asp-route-id="@Model.Id"
                        class="btn btn-dark-custom">
-                    Bearbeiten
+                    Измени
                 </a>
 
                 <a asp-controller="Projects"
                        asp-action="Create"
                        asp-route-customerId="@Model.Id"
                        class="btn btn-light-custom">
-                    Projekt erstellen
+                    Креирај проект
                 </a>
 
                 <a asp-controller="Invoices"
                        asp-action="Create"
                        asp-route-customerId="@Model.Id"
                        class="btn btn-light-custom">
-                    Rechnung erstellen
+                    Креирај фактура
                 </a>
 
             </div>
@@ -165,28 +165,28 @@
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-value">@ViewBag.ProjectCount</div>
-                <div class="stat-label">Projekte</div>
+                <div class="stat-label">Проекти</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-value">@ViewBag.InvoiceCount</div>
-                <div class="stat-label">Rechnungen</div>
+                <div class="stat-label">Фактури</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-value">@ViewBag.OpenInvoices</div>
-                <div class="stat-label">Offene Rechnungen</div>
+                <div class="stat-label">Отворени фактури</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-value">@ViewBag.TotalRevenue €</div>
-                <div class="stat-label">Umsatz</div>
+                <div class="stat-label">Приход</div>
             </div>
         </div>
 
@@ -200,40 +200,40 @@
 
             <div class="page-card">
 
-                <h6 class="mb-3">Kontakt</h6>
+                <h6 class="mb-3">Контакт</h6>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Ansprechpartner</div>
+                    <div class="col-5 label">Контакт лице</div>
                     <div class="col-7 value">@Model.ContactPerson</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Telefon</div>
+                    <div class="col-5 label">Телефон</div>
                     <div class="col-7 value">@Model.Phone</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Email</div>
+                    <div class="col-5 label">Е-пошта</div>
                     <div class="col-7 value">@Model.Email</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Adresse</div>
+                    <div class="col-5 label">Адреса</div>
                     <div class="col-7 value">@Model.Address</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Ort</div>
+                    <div class="col-5 label">Град</div>
                     <div class="col-7 value">@Model.PostalCode @Model.City</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Land</div>
+                    <div class="col-5 label">Држава</div>
                     <div class="col-7 value">@Model.Country</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-5 label">Kunde seit</div>
+                    <div class="col-5 label">Клиент од</div>
                     <div class="col-7 value">@Model.CreatedAt.ToString("dd.MM.yyyy")</div>
                 </div>
 
@@ -248,10 +248,10 @@
             <!-- NOTES -->
             <div class="page-card mb-4">
 
-                <h6 class="mb-3">Notizen</h6>
+                <h6 class="mb-3">Белешки</h6>
 
                 <p class="text-muted">
-                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "Keine Notizen vorhanden." : Model.Notes)
+                    @(string.IsNullOrWhiteSpace(Model.Notes) ? "Нема белешки." : Model.Notes)
                 </p>
 
             </div>
@@ -260,16 +260,16 @@
             <!-- LAST INVOICES -->
             <div class="page-card">
 
-                <h6 class="mb-3">Letzte Rechnungen</h6>
+                <h6 class="mb-3">Последни фактури</h6>
 
                 <table class="table align-middle">
 
                     <thead>
                         <tr>
-                            <th>Nummer</th>
-                            <th>Datum</th>
-                            <th>Status</th>
-                            <th class="text-end">Betrag</th>
+                            <th>Број</th>
+                            <th>Датум</th>
+                            <th>Статус</th>
+                            <th class="text-end">Износ</th>
                         </tr>
                     </thead>
 
@@ -298,7 +298,7 @@
                         {
                             <tr>
                                 <td colspan="4" class="text-center text-muted">
-                                    Keine Rechnungen vorhanden
+                                    Нема фактури
                                 </td>
                             </tr>
                         }

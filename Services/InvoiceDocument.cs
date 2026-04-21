@@ -8,11 +8,12 @@
     public class InvoiceDocument : IDocument
     {
         private readonly Invoice _invoice;
-
-        public InvoiceDocument(Invoice invoice)
+        private string _companyName;
+        public InvoiceDocument(Invoice invoice, string companyName)
         {
             QuestPDF.Settings.License = LicenseType.Community;
             _invoice = invoice;
+            _companyName = companyName;
         }
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
@@ -29,7 +30,7 @@
 
                 page.Footer().AlignCenter().Text(x =>
                 {
-                    x.Span("BauFlow Rechnungssystem • ");
+                    x.Span(_companyName);
                     x.Span($"Rechnung {_invoice.InvoiceNumber}");
                 });
             });
@@ -41,25 +42,31 @@
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Item().Text("BauFlow")
-                        .FontSize(20)
-                        .Bold();
+                    column.Spacing(5);
 
-                    column.Item().Text("Digitale Bauverwaltung");
+                    column.Item().Text(_companyName)
+                        .FontSize(24)
+                        .Bold()
+                        .FontColor(Colors.Blue.Darken2);
+
+                    column.Item().Text("Digitale Bauverwaltung")
+                        .FontSize(10)
+                        .FontColor(Colors.Grey.Darken1);
                 });
 
-                row.ConstantItem(200).AlignRight().Column(column =>
-                {
-                    column.Item().Text("Rechnung")
-                        .FontSize(18)
-                        .Bold();
+                row.ConstantItem(220)
+                    .Background(Colors.Grey.Lighten3)
+                    .Padding(10)
+                    .Column(column =>
+                    {
+                        column.Item().Text("RECHNUNG")
+                            .Bold()
+                            .FontSize(16);
 
-                    column.Item().Text($"Nr: {_invoice.InvoiceNumber}");
-
-                    column.Item().Text($"Datum: {_invoice.InvoiceDate:dd.MM.yyyy}");
-
-                    column.Item().Text($"Fällig: {_invoice.DueDate:dd.MM.yyyy}");
-                });
+                        column.Item().Text($"Nr: {_invoice.InvoiceNumber}");
+                        column.Item().Text($"Datum: {_invoice.InvoiceDate:dd.MM.yyyy}");
+                        column.Item().Text($"Fällig: {_invoice.DueDate:dd.MM.yyyy}");
+                    });
             });
         }
 
@@ -79,17 +86,21 @@
 
         void ComposeCustomer(IContainer container)
         {
-            container.Column(column =>
-            {
-                column.Item().Text("Rechnung an:")
-                    .Bold();
+            container
+                .Background(Colors.Grey.Lighten4)
+                .Padding(10)
+                .Column(column =>
+                {
+                    column.Spacing(3);
 
-                column.Item().Text(_invoice.Customer?.Name);
+                    column.Item().Text("Rechnung an")
+                        .Bold()
+                        .FontSize(12);
 
-                column.Item().Text(_invoice.Customer?.Address);
-
-                column.Item().Text($"{_invoice.Customer?.PostalCode} {_invoice.Customer?.City}");
-            });
+                    column.Item().Text(_invoice.Customer?.Name);
+                    column.Item().Text(_invoice.Customer?.Address);
+                    column.Item().Text($"{_invoice.Customer?.PostalCode} {_invoice.Customer?.City}");
+                });
         }
 
         void ComposeTable(IContainer container)
@@ -106,10 +117,10 @@
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("Beschreibung").Bold();
-                    header.Cell().Element(CellStyle).Text("Menge").Bold();
-                    header.Cell().Element(CellStyle).Text("Preis").Bold();
-                    header.Cell().Element(CellStyle).Text("Total").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Beschreibung").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Menge").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Preis").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Total").Bold();
                 });
 
                 foreach (var item in _invoice.Items)
@@ -118,12 +129,10 @@
 
                     table.Cell().Element(CellStyle).Text($"{item.Quantity} {item.Unit}");
 
-                    table.Cell().Element(CellStyle)
-                        .AlignRight()
+                    table.Cell().Element(CellStyle).AlignRight()
                         .Text($"{item.UnitPrice:0.00} €");
 
-                    table.Cell().Element(CellStyle)
-                        .AlignRight()
+                    table.Cell().Element(CellStyle).AlignRight()
                         .Text($"{item.TotalPrice:0.00} €");
                 }
             });
@@ -131,38 +140,48 @@
 
         void ComposeTotals(IContainer container)
         {
-            container.Column(column =>
-            {
-                column.Item().Row(row =>
+            container
+                .Background(Colors.Grey.Lighten4)
+                .Padding(10)
+                .Column(column =>
                 {
-                    row.RelativeItem().Text("Netto");
-                    row.ConstantItem(100).AlignRight()
-                        .Text($"{_invoice.NetAmount:0.00} €");
-                });
+                    column.Spacing(5);
 
-                column.Item().Row(row =>
-                {
-                    row.RelativeItem().Text("MwSt");
-                    row.ConstantItem(100).AlignRight()
-                        .Text($"{_invoice.TaxAmount:0.00} €");
-                });
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().Text("Netto");
+                        row.ConstantItem(100).AlignRight()
+                            .Text($"{_invoice.NetAmount:0.00} €");
+                    });
 
-                column.Item().Row(row =>
-                {
-                    row.RelativeItem().Text("Gesamt")
-                        .Bold();
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().Text("MwSt");
+                        row.ConstantItem(100).AlignRight()
+                            .Text($"{_invoice.TaxAmount:0.00} €");
+                    });
 
-                    row.ConstantItem(100).AlignRight()
-                        .Text($"{_invoice.GrossAmount:0.00} €")
-                        .Bold();
+                    column.Item().LineHorizontal(1);
+
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem().Text("Gesamt")
+                            .Bold()
+                            .FontSize(14);
+
+                        row.ConstantItem(100).AlignRight()
+                            .Text($"{_invoice.GrossAmount:0.00} €")
+                            .Bold()
+                            .FontSize(14)
+                            .FontColor(Colors.Blue.Darken2);
+                    });
                 });
-            });
         }
 
         static IContainer CellStyle(IContainer container)
         {
             return container
-                .PaddingVertical(5)
+                .PaddingVertical(8)
                 .BorderBottom(1)
                 .BorderColor(Colors.Grey.Lighten2);
         }

@@ -1,4 +1,5 @@
-﻿using BauFlow.Entities;
+﻿using BauFlow.Data;
+using BauFlow.Entities;
 using BauFlow.Interfaces;
 using BauFlow.Models;
 using BauFlow.Services;
@@ -41,10 +42,10 @@ public class EmailService : IEmailService
         await smtp.SendMailAsync(message);
     }
 
-    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings)
+    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings,string companyName)
     {
         var template = _templateService.LoadTemplate("Invoice.cshtml");
-        var document = new InvoiceDocument(invoice);
+        var document = new InvoiceDocument(invoice, companyName);
         var pdf = document.GeneratePdf();
 
         var data = new Dictionary<string, string>

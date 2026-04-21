@@ -11,7 +11,8 @@
         max-width: 700px;
         margin: auto;
     }
-     .form-control {
+
+    .form-control {
         background: #fff;
         border: 1px solid #e2e5ea;
         border-radius: 14px;
@@ -21,6 +22,7 @@
             border-color: #111;
             box-shadow: 0 0 0 3px rgba(0,0,0,.05);
         }
+
     .btn-primary-custom {
         background: #111;
         color: #fff;
@@ -46,7 +48,7 @@
 
 <div class="page-card">
 
-    <h4 class="mb-4">E-Mail Einstellungen</h4>
+    <h4 class="mb-4">Поставки за е-пошта</h4>
 
     <form method="post">
 
@@ -55,14 +57,14 @@
         <!-- Email -->
         <div class="form-floating mb-2">
             <input asp-for="EmailUser" class="form-control" />
-            <label>Login E-Mail</label>
+            <label>Најава е-пошта</label>
         </div>
 
         <div id="providerHint" class="hint mb-3"></div>
 
         <!-- PROVIDER DROPDOWN -->
         <select id="providerSelect" class="form-select mb-3 form-control">
-            <option value="">Automatisch erkennen</option>
+            <option value="">Автоматско препознавање</option>
             <option value="gmail">Gmail</option>
             <option value="outlook">Outlook / Hotmail</option>
             <option value="ionos">IONOS / 1&1</option>
@@ -75,49 +77,49 @@
         <!-- Host -->
         <div class="form-floating mb-3">
             <input asp-for="EmailHost" class="form-control" />
-            <label>SMTP Host</label>
+            <label>SMTP сервер</label>
         </div>
 
         <!-- Port -->
         <div class="form-floating mb-3">
             <input asp-for="EmailPort" class="form-control" />
-            <label>Port</label>
+            <label>Порт</label>
         </div>
 
         <!-- Passwort -->
         <div class="form-floating mb-3">
             <input asp-for="EmailPassword" class="form-control" type="password" />
-            <label>Passwort</label>
+            <label>Лозинка</label>
         </div>
 
         <!-- SSL -->
         <div class="form-check mb-3">
             <input asp-for="EmailSSL" class="form-check-input" />
-            <label class="form-check-label">SSL aktivieren</label>
+            <label class="form-check-label">Активирај SSL</label>
         </div>
 
         <!-- From -->
         <div class="form-floating mb-3">
             <input asp-for="EmailFrom" class="form-control" />
-            <label>Absender E-Mail</label>
+            <label>Испраќач е-пошта</label>
         </div>
 
         <!-- From Name -->
         <div class="form-floating mb-3">
             <input asp-for="EmailFromName" class="form-control" />
-            <label>Absender Name</label>
+            <label>Име на испраќач</label>
         </div>
 
         <!-- TEST -->
         <button type="button" id="testEmailBtn" class="btn btn-ghost w-100 mb-3">
-            Verbindung testen
+            Тестирај врска
         </button>
 
         <div id="testResult" class="mb-3"></div>
 
         <!-- SAVE -->
         <button class="btn btn-primary-custom w-100">
-            Speichern
+            Зачувај
         </button>
 
     </form>
@@ -126,125 +128,121 @@
 
 @section Scripts {
 
-<script>
+    <script>
 
-const providerList = {
-    gmail: { host: "smtp.gmail.com", port: 587, ssl: true },
-    outlook: { host: "smtp.office365.com", port: 587, ssl: true },
-    ionos: { host: "smtp.ionos.de", port: 587, ssl: true },
-    gmx: { host: "mail.gmx.net", port: 587, ssl: true },
-    web: { host: "smtp.web.de", port: 587, ssl: true },
-    strato: { host: "smtp.strato.de", port: 587, ssl: true },
-    "t-online": { host: "securesmtp.t-online.de", port: 587, ssl: true }
-};
+        const providerList = {
+            gmail: { host: "smtp.gmail.com", port: 587, ssl: true },
+            outlook: { host: "smtp.office365.com", port: 587, ssl: true },
+            ionos: { host: "smtp.ionos.de", port: 587, ssl: true },
+            gmx: { host: "mail.gmx.net", port: 587, ssl: true },
+            web: { host: "smtp.web.de", port: 587, ssl: true },
+            strato: { host: "smtp.strato.de", port: 587, ssl: true },
+            "t-online": { host: "securesmtp.t-online.de", port: 587, ssl: true }
+        };
 
-// 🔍 AUTO DETECT
-function detectProvider(email) {
+        // 🔍 AUTO DETECT
+        function detectProvider(email) {
 
             if (!email || !email.includes('@@')) return null;
 
             const domain = email.split('@@')[1].toLowerCase();
 
-    const map = {
-        "gmail.com": "gmail",
-        "outlook.com": "outlook",
-        "hotmail.com": "outlook",
-        "ionos.de": "ionos",
-        "1und1.de": "ionos",
-        "gmx.de": "gmx",
-        "web.de": "web",
-        "strato.de": "strato",
-        "t-online.de": "t-online"
-    };
+            const map = {
+                "gmail.com": "gmail",
+                "outlook.com": "outlook",
+                "hotmail.com": "outlook",
+                "ionos.de": "ionos",
+                "1und1.de": "ionos",
+                "gmx.de": "gmx",
+                "web.de": "web",
+                "strato.de": "strato",
+                "t-online.de": "t-online"
+            };
 
-    const key = map[domain];
+            const key = map[domain];
 
-    if (key) return { ...providerList[key], name: key };
+            if (key) return { ...providerList[key], name: key };
 
-    // fallback (firma etc.)
-    return {
-        host: "smtp." + domain,
-        port: 587,
-        ssl: true,
-        name: "custom"
-    };
-}
+            return {
+                host: "smtp." + domain,
+                port: 587,
+                ssl: true,
+                name: "custom"
+            };
+        }
 
-// ✨ LIVE INPUT
-document.querySelector("[name='EmailUser']").addEventListener("input", function () {
+        // ✨ LIVE INPUT
+        document.querySelector("[name='EmailUser']").addEventListener("input", function () {
 
-    const email = this.value;
-    const provider = detectProvider(email);
+            const email = this.value;
+            const provider = detectProvider(email);
 
-    if (!provider) return;
+            if (!provider) return;
 
-    // Autofill
-    document.querySelector("[name='EmailHost']").value = provider.host;
-    document.querySelector("[name='EmailPort']").value = provider.port;
-    document.querySelector("[name='EmailSSL']").checked = provider.ssl;
-    document.querySelector("[name='EmailFrom']").value = email;
+            document.querySelector("[name='EmailHost']").value = provider.host;
+            document.querySelector("[name='EmailPort']").value = provider.port;
+            document.querySelector("[name='EmailSSL']").checked = provider.ssl;
+            document.querySelector("[name='EmailFrom']").value = email;
 
-    // Dropdown sync
-    document.getElementById("providerSelect").value =
-        provider.name !== "custom" ? provider.name : "";
+            document.getElementById("providerSelect").value =
+                provider.name !== "custom" ? provider.name : "";
 
-    // Hint
             const domain = email.split('@@')[1];
-    document.getElementById("providerHint").innerText =
-        provider.name === "custom"
-        ? "Eigene Domain erkannt (" + domain + ")"
-        : "Anbieter erkannt: " + domain;
-});
-
-// 🔽 MANUAL OVERRIDE
-document.getElementById("providerSelect").addEventListener("change", function () {
-
-    const provider = providerList[this.value];
-    if (!provider) return;
-
-    document.querySelector("[name='EmailHost']").value = provider.host;
-    document.querySelector("[name='EmailPort']").value = provider.port;
-    document.querySelector("[name='EmailSSL']").checked = provider.ssl;
-
-    document.getElementById("providerHint").innerText =
-        "Manuell gewählt: " + this.value;
-});
-
-// 🧪 SMTP TEST
-document.getElementById("testEmailBtn").addEventListener("click", async function () {
-
-    const data = {
-        EmailHost: document.querySelector("[name='EmailHost']").value,
-        EmailPort: parseInt(document.querySelector("[name='EmailPort']").value),
-        EmailUser: document.querySelector("[name='EmailUser']").value,
-        EmailPassword: document.querySelector("[name='EmailPassword']").value,
-        EmailSSL: document.querySelector("[name='EmailSSL']").checked,
-        EmailFrom: document.querySelector("[name='EmailFrom']").value,
-        EmailFromName: document.querySelector("[name='EmailFromName']").value
-    };
-
-    const resultDiv = document.getElementById("testResult");
-    resultDiv.innerHTML = "Teste Verbindung...";
-
-    try {
-        const response = await fetch('/Company/TestEmailSettings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            document.getElementById("providerHint").innerText =
+                provider.name === "custom"
+                ? "Препознаен сопствен домен (" + domain + ")"
+                : "Препознаен провајдер: " + domain;
         });
 
-        const result = await response.json();
+        // 🔽 MANUAL OVERRIDE
+        document.getElementById("providerSelect").addEventListener("change", function () {
 
-        resultDiv.innerHTML =
-            `<span style="color:${result.success ? 'green' : 'red'}">
-                ${result.message}
-            </span>`;
+            const provider = providerList[this.value];
+            if (!provider) return;
 
-    } catch {
-        resultDiv.innerHTML = `<span style="color:red">Fehler beim Testen</span>`;
-    }
-});
+            document.querySelector("[name='EmailHost']").value = provider.host;
+            document.querySelector("[name='EmailPort']").value = provider.port;
+            document.querySelector("[name='EmailSSL']").checked = provider.ssl;
 
-</script>
+            document.getElementById("providerHint").innerText =
+                "Рачно избрано: " + this.value;
+        });
+
+        // 🧪 SMTP TEST
+        document.getElementById("testEmailBtn").addEventListener("click", async function () {
+
+            const data = {
+                EmailHost: document.querySelector("[name='EmailHost']").value,
+                EmailPort: parseInt(document.querySelector("[name='EmailPort']").value),
+                EmailUser: document.querySelector("[name='EmailUser']").value,
+                EmailPassword: document.querySelector("[name='EmailPassword']").value,
+                EmailSSL: document.querySelector("[name='EmailSSL']").checked,
+                EmailFrom: document.querySelector("[name='EmailFrom']").value,
+                EmailFromName: document.querySelector("[name='EmailFromName']").value
+            };
+
+            const resultDiv = document.getElementById("testResult");
+            resultDiv.innerHTML = "Се тестира врската...";
+
+            try {
+                const response = await fetch('/Company/TestEmailSettings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                resultDiv.innerHTML =
+                    `<span style="color:${result.success ? 'green' : 'red'}">
+                        ${result.message}
+                    </span>`;
+
+            } catch {
+                resultDiv.innerHTML = `<span style="color:red">Грешка при тестирање</span>`;
+            }
+        });
+
+    </script>
 
 }

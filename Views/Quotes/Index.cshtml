@@ -41,9 +41,11 @@
     tbody tr:hover {
         background: #f9f9fb;
     }
-       .search-box {
+
+    .search-box {
         max-width: 320px;
     }
+
 </style>
 
 
@@ -51,30 +53,32 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Angebote</h4>
+        <h4 class="mb-0">Понуди</h4>
 
         <a asp-action="Create" class="btn btn-primary-custom">
-            + Angebot erstellen
+            + Креирај понуда
         </a>
 
     </div>
+
     <div class="mb-4">
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Angebote durchsuchen..." />
+               placeholder="Пребарај понуди..." />
     </div>
+
     <table class="table align-middle">
 
         <thead>
 
             <tr>
-                <th>Nr</th>
-                <th>Kunde</th>
-                <th>Datum</th>
-                <th>Status</th>
-                <th>Gesamt</th>
-                <th class="text-end">Aktionen</th>
+                <th>Бр.</th>
+                <th>Клиент</th>
+                <th>Датум</th>
+                <th>Статус</th>
+                <th>Вкупно</th>
+                <th class="text-end">Акции</th>
             </tr>
 
         </thead>
@@ -101,17 +105,13 @@
                         <a asp-action="Details"
                                asp-route-id="@quote.Id"
                                class="btn btn-ghost">
-
-                            Details
-
+                            Детали
                         </a>
 
                         <a asp-action="Edit"
                                asp-route-id="@quote.Id"
                                class="btn btn-ghost">
-
-                            Bearbeiten
-
+                            Измени
                         </a>
 
                     </td>
@@ -126,25 +126,25 @@
 
 </div>
 
-                               
+
 @section Scripts {
 
     <script>
 
-        const searchInput=document.getElementById("searchInput");
-        const rows=document.querySelectorAll("#angeboteTable tr");
+        const searchInput = document.getElementById("searchInput");
+        const rows = document.querySelectorAll("#angeboteTable tr");
 
-        searchInput.addEventListener("keyup",function(){
+        searchInput.addEventListener("keyup", function () {
 
-        const value=this.value.toLowerCase();
+            const value = this.value.toLowerCase();
 
-        rows.forEach(row=>{
+            rows.forEach(row => {
 
-        const text=row.innerText.toLowerCase();
+                const text = row.innerText.toLowerCase();
 
-        row.style.display=text.includes(value)? "":"none";
+                row.style.display = text.includes(value) ? "" : "none";
 
-        });
+            });
 
         });
 

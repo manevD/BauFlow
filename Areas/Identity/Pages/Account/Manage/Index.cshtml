@@ -18,7 +18,7 @@
         margin-bottom: 25px;
     }
 
-    /* CARD STYLE wie Login */
+    /* CARD */
     .profile-card {
         background: #ffffff;
         border: 1px solid #eceef2;
@@ -64,7 +64,7 @@
     .field-validation-error {
         color: #dc3545;
     }
-    /* MOBILE FIX */
+
     @@media (max-width: 576px) {
 
         .content-wrapper {
@@ -95,6 +95,7 @@
             margin-bottom: 18px;
         }
     }
+
 </style>
 
 <partial name="_StatusMessage" for="StatusMessage" />
@@ -103,6 +104,8 @@
     <div class="col-md-6">
 
         <div class="profile-card">
+
+            <h3>Профил</h3>
 
             <form id="profile-form" method="post">
 
@@ -113,16 +116,16 @@
                 <div class="form-floating mb-4">
                     <input asp-for="Username"
                            class="form-control"
-                           placeholder="Benutzername"
+                           placeholder="Корисничко име"
                            disabled />
-                    <label asp-for="Username">Benutzername</label>
+                    <label asp-for="Username">Корисничко име</label>
                 </div>
 
                 <div class="form-floating mb-4">
                     <input asp-for="Input.PhoneNumber"
                            class="form-control"
-                           placeholder="Telefonnummer" />
-                    <label asp-for="Input.PhoneNumber">Telefonnummer</label>
+                           placeholder="Телефон" />
+                    <label asp-for="Input.PhoneNumber">Телефон</label>
                     <span asp-validation-for="Input.PhoneNumber"
                           class="small text-danger"></span>
                 </div>
@@ -130,7 +133,7 @@
                 <button id="update-profile-button"
                         type="submit"
                         class="w-100 btn btn-lg btn-primary">
-                    Speichern
+                    Зачувај
                 </button>
 
             </form>

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<BauFlow.Entities.ApplicationUser>
 
 @{
-    ViewData["Title"] = "Benutzer";
+    ViewData["Title"] = "Корисници";
 }
 
 <style>
@@ -107,6 +107,7 @@
         font-size: 13px;
         font-weight: 600;
     }
+
     .search-box {
         max-width: 320px;
     }
@@ -118,10 +119,10 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h4 class="mb-0">Benutzer</h4>
+        <h4 class="mb-0">Корисници</h4>
 
         <a asp-action="Create" class="btn btn-primary-custom">
-            + Benutzer hinzufügen
+            + Додади корисник
         </a>
 
     </div>
@@ -130,18 +131,19 @@
         <input type="text"
                id="searchInput"
                class="form-control search-box"
-               placeholder="Benutzer durchsuchen..." />
+               placeholder="Пребарај корисници..." />
     </div>
+
     <table class="table align-middle">
 
         <thead>
             <tr>
                 <th></th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Rolle</th>
-                <th>Status</th>
-                <th class="text-end">Aktionen</th>
+                <th>Е-пошта</th>
+                <th>Име</th>
+                <th>Улога</th>
+                <th>Статус</th>
+                <th class="text-end">Акции</th>
             </tr>
         </thead>
 
@@ -174,13 +176,13 @@
                         @if (user.IsInviteAccepted)
                         {
                             <span class="status-pill status-active">
-                                Aktiv
+                                Активен
                             </span>
                         }
                         else
                         {
                             <span class="status-pill status-pending">
-                                Einladung offen
+                                Поканата е отворена
                             </span>
                         }
 
@@ -191,7 +193,7 @@
                         <a asp-action="Edit"
                                asp-route-id="@user.Id"
                                class="btn btn-ghost me-2">
-                            Bearbeiten
+                            Измени
                         </a>
 
                         @if (!user.IsInviteAccepted)
@@ -205,7 +207,7 @@
                                        value="@user.Id" />
 
                                 <button class="btn btn-ghost me-2">
-                                    Einladung senden
+                                    Испрати покана
                                 </button>
 
                             </form>
@@ -214,7 +216,7 @@
                         <a asp-action="Delete"
                                asp-route-id="@user.Id"
                                class="btn btn-ghost">
-                            Löschen
+                            Избриши
                         </a>
 
                     </td>
@@ -227,6 +229,7 @@
     </table>
 
 </div>
+
 
 @section Scripts {
 

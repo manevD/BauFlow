@@ -66,30 +66,30 @@
 
     <div class="page-card">
 
-        <h4 class="mb-4">Projekt löschen</h4>
+        <h4 class="mb-4">Избриши проект</h4>
 
         <div class="warning-box">
-            Dieses Projekt wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
+            Овој проект ќе биде трајно избришан. Оваа акција не може да се поништи.
         </div>
 
 
         <div class="info-row row">
-            <div class="col-4 label">Projektname</div>
+            <div class="col-4 label">Име на проект</div>
             <div class="col-8 value">@Model.Title</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Kunde</div>
+            <div class="col-4 label">Клиент</div>
             <div class="col-8 value">@Model.Customer?.Name</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Status</div>
+            <div class="col-4 label">Статус</div>
             <div class="col-8 value">@Model.Status</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Erstellt</div>
+            <div class="col-4 label">Креирано</div>
             <div class="col-8 value">@Model.CreatedAt.ToString("dd.MM.yyyy")</div>
         </div>
 
@@ -101,11 +101,11 @@
             <div class="d-flex gap-3">
 
                 <button type="submit" class="btn btn-danger-custom">
-                    Projekt löschen
+                    Избриши проект
                 </button>
 
                 <a asp-action="Index" class="btn btn-light-custom">
-                    Abbrechen
+                    Откажи
                 </a>
 
             </div>

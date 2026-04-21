@@ -1,16 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
-
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using BauFlow.Entities;
+﻿using BauFlow.Entities;
 using BauFlow.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace BauFlow.Areas.Identity.Pages.Account.Manage
 {
@@ -31,52 +24,28 @@ namespace BauFlow.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [DataType(DataType.Password)]
-            [Display(Name = "Aktuelles Passwort")]
+            [Display(Name = "Тековна лозинка")]
             public string OldPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "Das {0} muss {2} und maximal {1} Zeichen lang sein.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "{0} мора да има најмалку {2} и најмногу {1} карактери.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Neues Passwort")]
+            [Display(Name = "Нова лозинка")]
             public string NewPassword { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Neues Passwort bestätigen")]
-            [Compare("NewPassword", ErrorMessage = "Das neue Passwort und das Bestätigungspasswort stimmen nicht überein.")]
+            [Display(Name = "Потврди нова лозинка")]
+            [Compare("NewPassword", ErrorMessage = "Новата лозинка и потврдата не се совпаѓаат.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -85,7 +54,7 @@ namespace BauFlow.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Benutzer mit ID kann nicht geladen werden '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Корисникот не може да се вчита (ID: '{_userManager.GetUserId(User)}').");
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -107,7 +76,7 @@ namespace BauFlow.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Benutzer mit ID kann nicht geladen werden '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Корисникот не може да се вчита (ID: '{_userManager.GetUserId(User)}').");
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
@@ -121,8 +90,8 @@ namespace BauFlow.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            _logger.LogInformation("Der Benutzer hat sein Passwort erfolgreich geändert.");
-            StatusMessage = "Ihr Passwort wurde geändert.";
+            _logger.LogInformation("Корисникот успешно ја промени лозинката.");
+            StatusMessage = "Вашата лозинка е успешно променета.";
 
             return RedirectToPage();
         }

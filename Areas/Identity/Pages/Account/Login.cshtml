@@ -2,7 +2,7 @@
 @model LoginModel
 
 @{
-    ViewData["Title"] = "Anmelden";
+    ViewData["Title"] = "Најава";
 }
 
 <style>
@@ -65,8 +65,8 @@
 <div class="container py-5">
 
     <div class="text-center mb-4">
-        <h1 class="fw-bold display-6">Willkommen zurück</h1>
-        <p class="text-muted fs-5">Melden Sie sich in Ihr Konto an</p>
+        <h1 class="fw-bold display-6">Добредојдовте назад</h1>
+        <p class="text-muted fs-5">Најавете се на вашата сметка</p>
     </div>
 
     <div class="card border-0 shadow-lg p-4 mx-auto" style="max-width:600px">
@@ -79,39 +79,39 @@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email"
                        class="form-control"
-                       placeholder="email@beispiel.de" />
-                <label asp-for="Input.Email">E-Mail</label>
+                       placeholder="email@пример.мк" />
+                <label asp-for="Input.Email">Е-пошта</label>
             </div>
 
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password"
                        type="password"
                        class="form-control"
-                       placeholder="Passwort" />
-                <label asp-for="Input.Password">Passwort</label>
+                       placeholder="Лозинка" />
+                <label asp-for="Input.Password">Лозинка</label>
             </div>
 
             <div class="form-check mb-4">
                 <input class="form-check-input" asp-for="Input.RememberMe" />
                 <label class="form-check-label" asp-for="Input.RememberMe">
-                    Angemeldet bleiben
+                    Запомни ме
                 </label>
             </div>
 
             <button type="submit"
                     class="btn btn-primary w-100 btn-lg mb-3">
-                Anmelden
+                Најави се
             </button>
 
             <div class="text-center small">
                 <a asp-page="./ForgotPassword" class="auth-link d-block mb-2">
-                    Passwort vergessen?
+                    Ја заборавивте лозинката?
                 </a>
 
                 <a asp-page="./Register"
-                   asp-route-returnUrl="@Model.ReturnUrl"
-                   class="auth-link d-block">
-                    Neues Konto erstellen
+                       asp-route-returnUrl="@Model.ReturnUrl"
+                       class="auth-link d-block">
+                    Креирај нов профил
                 </a>
             </div>
 
@@ -124,7 +124,7 @@
         <div class="card border-0 shadow-lg p-4 mx-auto mt-4" style="max-width:600px">
 
             <div class="text-center mb-3 small text-muted">
-                Oder anmelden mit
+                Или најавете се со
             </div>
 
             <form asp-page="./ExternalLogin"

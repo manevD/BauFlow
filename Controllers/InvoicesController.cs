@@ -167,7 +167,7 @@ namespace BauFlow.Controllers
             await _emailService.SendInvoice(
                 invoice.Customer.Email,
                 invoice,
-                settings
+                settings, company.Name
             );
 
             return RedirectToAction("Details", new { id = invoiceId });
@@ -179,7 +179,7 @@ namespace BauFlow.Controllers
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            var document = new InvoiceDocument(invoice);
+            var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value).Name);
 
             var pdf = document.GeneratePdf();
 

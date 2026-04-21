@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,39 +22,34 @@ namespace BauFlow.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-
         public class InputModel
         {
-            [Required(ErrorMessage = "Bitte E-Mail eingeben")]
-            [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse")]
-            [Display(Name = "E-Mail")]
+            [Required(ErrorMessage = "Внесете е-пошта")]
+            [EmailAddress(ErrorMessage = "Невалидна е-пошта")]
+            [Display(Name = "Е-пошта")]
             public string Email { get; set; }
 
-
-            [Required(ErrorMessage = "Bitte Passwort eingeben")]
+            [Required(ErrorMessage = "Внесете лозинка")]
             [StringLength(100,
-                ErrorMessage = "{0} muss mindestens {2} und maximal {1} Zeichen lang sein.",
+                ErrorMessage = "{0} мора да има најмалку {2} и најмногу {1} карактери.",
                 MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Neues Passwort")]
+            [Display(Name = "Нова лозинка")]
             public string Password { get; set; }
 
-
             [DataType(DataType.Password)]
-            [Display(Name = "Passwort bestätigen")]
-            [Compare("Password", ErrorMessage = "Passwort und Bestätigung stimmen nicht überein.")]
+            [Display(Name = "Потврди лозинка")]
+            [Compare("Password", ErrorMessage = "Лозинките не се совпаѓаат.")]
             public string ConfirmPassword { get; set; }
-
 
             [Required]
             public string Code { get; set; }
         }
 
-
         public IActionResult OnGet(string code = null)
         {
             if (code == null)
-                return BadRequest("Ein Reset-Code muss angegeben werden.");
+                return BadRequest("Потребен е код за ресетирање.");
 
             Input = new InputModel
             {
@@ -66,30 +59,24 @@ namespace BauFlow.Areas.Identity.Pages.Account
             return Page();
         }
 
-
-
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-
             var user = await _userManager.FindByEmailAsync(Input.Email);
 
-            // Sicherheitsmaßnahme → nicht verraten ob User existiert
+            // Безбедност → не откривај дали постои корисник
             if (user == null)
                 return RedirectToPage("./ResetPasswordConfirmation");
-
 
             var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
 
             if (result.Succeeded)
                 return RedirectToPage("./ResetPasswordConfirmation");
 
-
             foreach (var error in result.Errors)
                 ModelState.AddModelError(string.Empty, error.Description);
-
 
             return Page();
         }

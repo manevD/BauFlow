@@ -85,7 +85,7 @@
         <div>
 
             <h4 class="mb-1">
-                Rechnung @Model.InvoiceNumber
+                Фактура @Model.InvoiceNumber
             </h4>
 
             <span class="text-muted">
@@ -101,10 +101,10 @@
                        asp-route-invoiceId="@Model.Id"
                        asp-route-customerId="@Model.CustomerId"
                        class="btn btn-ghost">
-                    Send
+                    Испрати
                 </a>
             }
-         
+
             <a asp-action="Pdf"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
@@ -114,18 +114,19 @@
             <a asp-action="Edit"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
-                Bearbeiten
+                Измени
             </a>
+
             <a asp-action="Delete"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
-                Löschen
+                Избриши
             </a>
 
             <a asp-action="Pdf"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
-                PDF herunterladen
+                Преземи PDF
             </a>
         </div>
 
@@ -137,33 +138,24 @@
         <div class="col-md-6">
 
             <div class="info-row row">
-
-                <div class="col-4 label">Kunde</div>
-
+                <div class="col-4 label">Клиент</div>
                 <div class="col-8 value">
                     @Model.Customer?.Name
                 </div>
-
             </div>
 
             <div class="info-row row">
-
-                <div class="col-4 label">Rechnungsdatum</div>
-
+                <div class="col-4 label">Датум на фактура</div>
                 <div class="col-8 value">
                     @Model.InvoiceDate.ToString("dd.MM.yyyy")
                 </div>
-
             </div>
 
             <div class="info-row row">
-
-                <div class="col-4 label">Fällig</div>
-
+                <div class="col-4 label">Рок на плаќање</div>
                 <div class="col-8 value">
                     @Model.DueDate.ToString("dd.MM.yyyy")
                 </div>
-
             </div>
 
         </div>
@@ -174,7 +166,7 @@
             @if (Model.Status == InvoiceStatus.Paid)
             {
                 <span class="status-pill status-paid">
-                    Bezahlt
+                    Платено
                 </span>
             }
             else
@@ -190,21 +182,17 @@
 
     <hr class="mb-4" />
 
-    <h5 class="mb-3">Positionen</h5>
+    <h5 class="mb-3">Ставки</h5>
 
     <table class="table align-middle">
 
         <thead>
-
             <tr>
-
-                <th>Beschreibung</th>
-                <th width="120">Menge</th>
-                <th width="140">Preis</th>
-                <th width="140">Total</th>
-
+                <th>Опис</th>
+                <th width="120">Количина</th>
+                <th width="140">Цена</th>
+                <th width="140">Вкупно</th>
             </tr>
-
         </thead>
 
         <tbody>
@@ -214,21 +202,13 @@
 
                 <tr>
 
-                    <td>
-                        @item.Description
-                    </td>
+                    <td>@item.Description</td>
 
-                    <td>
-                        @item.Quantity @item.Unit
-                    </td>
+                    <td>@item.Quantity @item.Unit</td>
 
-                    <td>
-                        @item.UnitPrice.ToString("0.00") €
-                    </td>
+                    <td>@item.UnitPrice.ToString("0.00") €</td>
 
-                    <td>
-                        @item.TotalPrice.ToString("0.00") €
-                    </td>
+                    <td>@item.TotalPrice.ToString("0.00") €</td>
 
                 </tr>
 
@@ -246,35 +226,20 @@
             <div class="total-box">
 
                 <div class="d-flex justify-content-between mb-2">
-
-                    <span>Netto</span>
-
-                    <strong>
-                        @Model.NetAmount.ToString("0.00") €
-                    </strong>
-
+                    <span>Нето</span>
+                    <strong>@Model.NetAmount.ToString("0.00") €</strong>
                 </div>
 
                 <div class="d-flex justify-content-between mb-2">
-
-                    <span>MwSt (@Model.TaxRate%)</span>
-
-                    <strong>
-                        @Model.TaxAmount.ToString("0.00") €
-                    </strong>
-
+                    <span>ДДВ (@Model.TaxRate%)</span>
+                    <strong>@Model.TaxAmount.ToString("0.00") €</strong>
                 </div>
 
                 <hr>
 
                 <div class="d-flex justify-content-between">
-
-                    <h5>Gesamt</h5>
-
-                    <h5>
-                        @Model.GrossAmount.ToString("0.00") €
-                    </h5>
-
+                    <h5>Вкупно</h5>
+                    <h5>@Model.GrossAmount.ToString("0.00") €</h5>
                 </div>
 
             </div>

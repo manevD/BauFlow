@@ -1,6 +1,6 @@
 ﻿@model ErrorViewModel
 @{
-    ViewData["Title"] = "Fehler";
+    ViewData["Title"] = "Грешка";
 }
 <style>
     .error-container {
@@ -47,27 +47,28 @@
         color: #999;
     }
 </style>
+
 <div class="error-container">
 
     <div class="error-card shadow-lg">
 
         <div class="error-icon">⚠</div>
 
-        <h1 class="error-title">Ups, etwas ist schiefgelaufen</h1>
+        <h1 class="error-title">Упс, нешто тргна наопаку</h1>
 
         <p class="error-text">
-            Es ist ein unerwarteter Fehler aufgetreten.<br />
-            Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.
+            Се појави неочекувана грешка.<br />
+            Обиди се повторно или контактирај поддршка.
         </p>
 
         <div class="error-actions">
 
             <a href="/" class="btn btn-primary">
-                Zur Startseite
+                Почетна страница
             </a>
 
             <button onclick="location.reload()" class="btn btn-outline-secondary">
-                Seite neu laden
+                Освежи страница
             </button>
 
         </div>
@@ -75,7 +76,7 @@
         @if (Model?.RequestId != null)
         {
             <div class="error-id">
-                Fehler-ID: <strong>@Model.RequestId</strong>
+                ID на грешка: <strong>@Model.RequestId</strong>
             </div>
         }
 

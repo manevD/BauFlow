@@ -52,10 +52,10 @@
 
     <div class="profile-card">
 
-        <h4 class="mb-4 text-center">Benutzer einladen</h4>
+        <h4 class="mb-4 text-center">Покани корисник</h4>
 
         <div class="info-box">
-            Der Benutzer erhält eine E-Mail mit einem Einladungslink und kann sein Passwort selbst festlegen.
+            Корисникот ќе добие е-пошта со линк за покана и сам ќе може да постави лозинка.
         </div>
 
         <form asp-action="Create" method="post">
@@ -66,8 +66,8 @@
             <div class="form-floating mb-3">
                 <input asp-for="Email"
                        class="form-control"
-                       placeholder="E-Mail" />
-                <label asp-for="Email"></label>
+                       placeholder="Е-пошта" />
+                <label asp-for="Email">Е-пошта</label>
                 <span asp-validation-for="Email"
                       class="text-danger small"></span>
             </div>
@@ -75,15 +75,15 @@
             <div class="form-floating mb-4">
                 <input asp-for="FullName"
                        class="form-control"
-                       placeholder="Vollständiger Name" />
-                <label asp-for="FullName">Vollständiger Name</label>
+                       placeholder="Целосно име" />
+                <label asp-for="FullName">Целосно име</label>
             </div>
 
             <input type="hidden" asp-for="CompanyId" />
 
             <button type="submit"
                     class="btn btn-primary w-100 btn-lg">
-                Einladung senden
+                Испрати покана
             </button>
 
         </form>

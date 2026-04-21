@@ -64,7 +64,7 @@
     .field-validation-error {
         color: #dc3545;
     }
-    /* MOBILE FIX */
+
     @@media (max-width: 576px) {
 
         .content-wrapper {
@@ -95,13 +95,18 @@
             margin-bottom: 18px;
         }
     }
+
 </style>
 
 <partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="row">
     <div class="col-md-6">
 
         <div class="profile-card">
+
+            <h3>Промени е-пошта</h3>
+
             <form id="email-form" method="post">
 
                 <div asp-validation-summary="All"
@@ -114,7 +119,7 @@
                         <input asp-for="Email"
                                class="form-control"
                                disabled />
-                        <label asp-for="Email"></label>
+                        <label asp-for="Email">Е-пошта</label>
                     </div>
                 }
                 else
@@ -123,14 +128,14 @@
                         <input asp-for="Email"
                                class="form-control"
                                disabled />
-                        <label asp-for="Email"></label>
+                        <label asp-for="Email">Е-пошта</label>
                     </div>
 
                     <button id="email-verification"
                             type="submit"
                             asp-page-handler="SendVerificationEmail"
                             class="btn btn-link mb-4 p-0">
-                        Bestätigungs-E-Mail senden
+                        Испрати е-пошта за потврда
                     </button>
                 }
 
@@ -139,18 +144,21 @@
                            class="form-control"
                            autocomplete="email"
                            aria-required="true"
-                           placeholder="Neue E-Mail-Adresse" />
-                    <label asp-for="Input.NewEmail"></label>
+                           placeholder="Нова е-пошта" />
+                    <label asp-for="Input.NewEmail">Нова е-пошта</label>
                     <span asp-validation-for="Input.NewEmail"
                           class="small text-danger"></span>
                 </div>
+
                 <button id="change-email-button"
                         type="submit"
                         asp-page-handler="ChangeEmail"
                         class="w-100 btn btn-lg btn-primary">
-                    Email ändern
+                    Промени е-пошта
                 </button>
+
             </form>
+
         </div>
     </div>
 </div>

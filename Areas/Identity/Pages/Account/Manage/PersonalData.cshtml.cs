@@ -1,6 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-using BauFlow.Entities;
+﻿using BauFlow.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,7 +23,7 @@ namespace BauFlow.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Benutzer mit ID kann nicht geladen werden '{_userManager.GetUserId(User)}'.");
+                return NotFound($"Корисникот не може да се вчита (ID: '{_userManager.GetUserId(User)}').");
             }
 
             return Page();

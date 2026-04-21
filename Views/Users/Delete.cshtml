@@ -82,15 +82,15 @@
 
     <div class="page-card">
 
-        <h4 class="mb-4">Benutzer löschen</h4>
+        <h4 class="mb-4">Избриши корисник</h4>
 
         <div class="warning-box">
-            Dieser Benutzer wird dauerhaft gelöscht und verliert sofort den Zugriff auf BauFlow.
+            Овој корисник ќе биде трајно избришан и веднаш ќе го изгуби пристапот до BauFlow.
         </div>
 
 
         <div class="info-row row">
-            <div class="col-4 label">Name</div>
+            <div class="col-4 label">Име</div>
             <div class="col-8 value">
                 @(string.IsNullOrWhiteSpace(Model.FullName) ? "-" : Model.FullName)
             </div>
@@ -98,22 +98,22 @@
 
 
         <div class="info-row row">
-            <div class="col-4 label">Email</div>
+            <div class="col-4 label">Е-пошта</div>
             <div class="col-8 value">@Model.Email</div>
         </div>
 
 
         <div class="info-row row">
-            <div class="col-4 label">Status</div>
+            <div class="col-4 label">Статус</div>
             <div class="col-8 value">
 
                 @if (Model.IsInviteAccepted)
                 {
-                    <span class="status-pill status-active">Aktiv</span>
+                    <span class="status-pill status-active">Активен</span>
                 }
                 else
                 {
-                    <span class="status-pill status-pending">Einladung offen</span>
+                    <span class="status-pill status-pending">Поканата е отворена</span>
                 }
 
             </div>
@@ -127,11 +127,11 @@
             <div class="d-flex gap-3">
 
                 <button type="submit" class="btn btn-danger-custom">
-                    Benutzer löschen
+                    Избриши корисник
                 </button>
 
                 <a asp-action="Index" class="btn btn-light-custom">
-                    Abbrechen
+                    Откажи
                 </a>
 
             </div>

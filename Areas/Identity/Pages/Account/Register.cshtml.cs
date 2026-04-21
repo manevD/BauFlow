@@ -82,27 +82,27 @@ namespace BauFlow.Areas.Identity.Pages.Account
             // ACCOUNT
             // ========================
 
-            [Required(ErrorMessage = "Bitte geben Sie einen Firmennamen ein.")]
-            [Display(Name = "Firmenname")]
+            [Required(ErrorMessage = "Внесете име на фирма.")]
+            [Display(Name = "Име на фирма")]
             public string CompanyName { get; set; }
 
-            [Required(ErrorMessage = "Bitte geben Sie eine E-Mail-Adresse ein.")]
-            [EmailAddress(ErrorMessage = "Bitte geben Sie eine gültige E-Mail-Adresse ein.")]
-            [Display(Name = "E-Mail-Adresse")]
+            [Required(ErrorMessage = "Внесете е-пошта.")]
+            [EmailAddress(ErrorMessage = "Внесете валидна е-пошта.")]
+            [Display(Name = "Е-пошта")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage = "Bitte geben Sie ein Passwort ein.")]
+            [Required(ErrorMessage = "Внесете лозинка.")]
             [StringLength(100,
-                ErrorMessage = "Das Passwort muss mindestens {2} und maximal {1} Zeichen lang sein.",
+                ErrorMessage = "Лозинката мора да има најмалку {2} и најмногу {1} карактери.",
                 MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Passwort")]
+            [Display(Name = "Лозинка")]
             public string Password { get; set; }
 
-            [Required(ErrorMessage = "Bitte bestätigen Sie Ihr Passwort.")]
+            [Required(ErrorMessage = "Потврдете ја лозинката.")]
             [DataType(DataType.Password)]
-            [Display(Name = "Passwort bestätigen")]
-            [Compare("Password", ErrorMessage = "Die Passwörter stimmen nicht überein.")]
+            [Display(Name = "Потврди лозинка")]
+            [Compare("Password", ErrorMessage = "Лозинките не се совпаѓаат.")]
             public string ConfirmPassword { get; set; }
 
 
@@ -110,20 +110,20 @@ namespace BauFlow.Areas.Identity.Pages.Account
             // COMPANY ADDRESS
             // ========================
 
-            [Required(ErrorMessage = "Bitte Adresse eingeben.")]
-            [Display(Name = "Adresse")]
+            [Required(ErrorMessage = "Внесете адреса.")]
+            [Display(Name = "Адреса")]
             public string Address { get; set; }
 
-            [Required(ErrorMessage = "Bitte Postleitzahl eingeben.")]
-            [Display(Name = "PLZ")]
+            [Required(ErrorMessage = "Внесете поштенски број.")]
+            [Display(Name = "Поштенски број")]
             public string PostalCode { get; set; }
 
-            [Required(ErrorMessage = "Bitte Stadt eingeben.")]
-            [Display(Name = "Stadt")]
+            [Required(ErrorMessage = "Внесете град.")]
+            [Display(Name = "Град")]
             public string City { get; set; }
 
-            [Required(ErrorMessage = "Bitte Land eingeben.")]
-            [Display(Name = "Land")]
+            [Required(ErrorMessage = "Внесете држава.")]
+            [Display(Name = "Држава")]
             public string Country { get; set; }
 
 
@@ -131,13 +131,13 @@ namespace BauFlow.Areas.Identity.Pages.Account
             // TAX
             // ========================
 
-            [Display(Name = "Steuernummer")]
+            [Display(Name = "Даночен број")]
             public string? TaxNumber { get; set; }
 
-            [Display(Name = "USt-ID")]
+            [Display(Name = "ДДВ број")]
             public string? VatId { get; set; }
 
-            [Display(Name = "Kleinunternehmer")]
+            [Display(Name = "Мало претпријатие")]
             public bool IsSmallBusiness { get; set; }
 
 
@@ -145,18 +145,17 @@ namespace BauFlow.Areas.Identity.Pages.Account
             // BRANDING
             // ========================
 
-            [Display(Name = "Logo")]
+            [Display(Name = "Лого")]
             public IFormFile? Logo { get; set; }
 
 
             // ========================
-            // SUBSCRIPTION (hidden/system)
+            // SUBSCRIPTION
             // ========================
 
-            [Required]
+            [Required(ErrorMessage = "Изберете план.")]
             public Plan Plan { get; set; }
         }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -171,7 +170,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
            
             if (!PlanConfig.Plans.ContainsKey(Input.Plan))
             {
-                ModelState.AddModelError("", "Ungültiger Plan.");
+                ModelState.AddModelError("", "Невалиден план.");
                 return Page();
             }
             if (ModelState.IsValid)

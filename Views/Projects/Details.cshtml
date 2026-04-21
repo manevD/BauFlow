@@ -88,7 +88,7 @@
                 <div>
                     <h4 class="mb-0">@Model.Title</h4>
                     <small class="text-muted">
-                        Kunde: @Model.Customer?.Name
+                        Клиент: @Model.Customer?.Name
                     </small>
                 </div>
 
@@ -99,12 +99,12 @@
                 <a asp-action="Edit"
                        asp-route-id="@Model.Id"
                        class="btn btn-dark-custom">
-                    Bearbeiten
+                    Измени
                 </a>
 
                 <a asp-action="Index"
                        class="btn btn-light-custom">
-                    Zurück
+                    Назад
                 </a>
 
             </div>
@@ -118,24 +118,24 @@
             <div class="col-lg-6">
 
                 <div class="info-row row">
-                    <div class="col-4 label">Projektname</div>
+                    <div class="col-4 label">Име на проект</div>
                     <div class="col-8 value">@Model.Title</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-4 label">Kunde</div>
+                    <div class="col-4 label">Клиент</div>
                     <div class="col-8 value">@Model.Customer?.Name</div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-4 label">Status</div>
+                    <div class="col-4 label">Статус</div>
                     <div class="col-8 value">
                         <span class="status-pill">@Model.Status</span>
                     </div>
                 </div>
 
                 <div class="info-row row">
-                    <div class="col-4 label">Erstellt</div>
+                    <div class="col-4 label">Креирано</div>
                     <div class="col-8 value">
                         @Model.CreatedAt.ToString("dd.MM.yyyy")
                     </div>
@@ -146,10 +146,10 @@
             <div class="col-lg-6">
 
                 <div class="info-row">
-                    <div class="label mb-1">Beschreibung</div>
+                    <div class="label mb-1">Опис</div>
                     <div class="value">
                         @(string.IsNullOrWhiteSpace(Model.Description)
-                        ? "Keine Beschreibung vorhanden."
+                        ? "Нема опис."
                         : Model.Description)
                     </div>
                 </div>

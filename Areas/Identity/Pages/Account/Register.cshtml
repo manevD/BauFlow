@@ -4,314 +4,110 @@
     ViewData["Title"] = "Registrieren";
 }
 
-<div class="container py-5">
-
-    <div class="text-center mb-4">
-        <h1 class="fw-bold display-6">Registrieren</h1>
-        <p class="text-muted fs-5">Erstellen Sie Ihre Firma und wählen Sie Ihren Plan</p>
-    </div>
-
-    <!-- STEPPER -->
-    <div class="stepper mb-5">
-        <div class="step-item active" data-label="Account"></div>
-        <div class="step-item" data-label="Firma"></div>
-        <div class="step-item" data-label="Steuern"></div>
-        <div class="step-item" data-label="Plan"></div>
-    </div>
-
-    <form method="post">
-
-        <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-4"></div>
-
-        <!-- STEP 1 -->
-        <div class="step" data-step="1">
-            <div class="card border-0 shadow-lg p-4 mx-auto" style="max-width:600px">
-                <h5 class="mb-4 fw-semibold text-center">Account</h5>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" autofocus class="form-control" />
-                      <label asp-for="Input.Email"></label>
-                </div>
-
-                <div class="form-floating mb-3">
-<input asp-for="Input.Password" type="password" class="form-control" />
-                    <label asp-for="Input.Password"></label>
-                </div>
-
-                <div class="form-floating">
-<input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
-                    <label asp-for="Input.ConfirmPassword"></label>
-                </div>
-            </div>
-        </div>
-
-        <!-- STEP 2 -->
-        <div class="step d-none" data-step="2">
-            <div class="card border-0 shadow-lg p-4 mx-auto" style="max-width:700px">
-                <h5 class="mb-4 fw-semibold text-center">Firmendaten</h5>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.CompanyName" class="form-control" />
-                    <label asp-for="Input.CompanyName"></label>
-                </div>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Address" class="form-control" />
-                    <label asp-for="Input.Address"></label>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.PostalCode" class="form-control" />
-                            <label asp-for="Input.PostalCode"></label>
-                        </div>
-                    </div>
-
-                    <div class="col-8">
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.City" class="form-control" />
-                            <label asp-for="Input.City"></label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-floating">
-<input asp-for="Input.Country" value="Deutschland" class="form-control" />
-<label asp-for="Input.Country"></label>
-                </div>
-            </div>
-        </div>
-
-        <!-- STEP 3 -->
-        <div class="step d-none" data-step="3">
-            <div class="card border-0 shadow-lg p-4 mx-auto" style="max-width:600px">
-                <h5 class="mb-4 fw-semibold text-center">Steuerdaten</h5>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.TaxNumber" class="form-control" />
-                    <label asp-for="Input.TaxNumber"></label>
-                </div>
-
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.VatId" class="form-control" />
-                    <label asp-for="Input.VatId"></label>
-                </div>
-
-                <div class="form-check form-switch">
-                    <input asp-for="Input.IsSmallBusiness" class="form-check-input" />
-                    <label asp-for="Input.IsSmallBusiness" class="form-check-label"></label>
-                </div>
-            </div>
-        </div>
-
-        <!-- STEP 4 -->
-        <div class="step d-none" data-step="4">
-
-            <h4 class="text-center mb-5 fw-semibold">Plan auswählen</h4>
-
-            <div class="row g-4 justify-content-center align-items-stretch">
-
-                <!-- STARTER -->
-                <div class="col-md-4">
-                    <label class="plan-wrapper">
-                        <input type="radio" asp-for="Input.Plan" value="Starter" hidden>
-
-                        <div class="modern-card">
-                            <div class="plan-header">
-                                <span class="plan-name text-success">Starter</span>
-                                <div class="price">19€</div>
-                                <small>für Einzelunternehmer</small>
-                            </div>
-
-                            <ul>
-                                <li>1 Benutzer</li>
-                                <li>Angebote</li>
-                                <li>Rechnungen</li>
-                                <li>PDF Export</li>
-                                <li>Kundenverwaltung</li>
-                            </ul>
-
-                            <div class="plan-limit">max 50 Angebote / Monat</div>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- TEAM -->
-                <div class="col-md-4">
-                    <label class="plan-wrapper">
-                        <input type="radio" asp-for="Input.Plan" value="Pro" checked hidden>
-
-                        <div class="modern-card featured">
-                            <div class="badge-modern">BELIEBT</div>
-
-                            <div class="plan-header">
-                                <span class="plan-name text-primary">Team</span>
-                                <div class="price">39€</div>
-                                <small>für kleine Teams</small>
-                            </div>
-
-                            <ul>
-                                <li>5 Benutzer</li>
-                                <li>Unbegrenzt Angebote</li>
-                                <li>Teamverwaltung</li>
-                                <li>Rollen</li>
-                                <li>Status Tracking</li>
-                            </ul>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- BUSINESS -->
-                <div class="col-md-4">
-                    <label class="plan-wrapper">
-                        <input type="radio" asp-for="Input.Plan" value="Starter" hidden>
-                        <div class="modern-card">
-                            <div class="plan-header">
-                                <span class="plan-name text-dark">Business</span>
-                                <div class="price">79€</div>
-                                <small>für wachsende Firmen</small>
-                            </div>
-
-                            <ul>
-                                <li>Unbegrenzte Benutzer</li>
-                                <li>Alles aus Team</li>
-                                <li>API Zugriff</li>
-                                <li>Reports</li>
-                                <li>Branding</li>
-                            </ul>
-                        </div>
-                    </label>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- NAV BUTTONS -->
-        <div class="d-flex justify-content-between mt-5">
-
-            <button type="button" id="prevBtn" style="background-color:black; color:white;" class="btn" onclick="nextStep(-1)">
-                Zurück
-            </button>
-
-            <button type="button" id="nextBtn" style="background-color:black;color:white;" class="btn" onclick="nextStep(1)">
-                Weiter
-            </button>
-
-       <button type="submit" id="submitBtn" class="btn btn-success d-none">
-    <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
-    Konto erstellen
-</button>
-
-        </div>
-
-    </form>
-</div>
-
 <style>
-/* PRICING CARDS - CLEAN MODERN */
+    /* PRICING CARDS - CLEAN MODERN */
 
-.plan-wrapper {
-    cursor: pointer;
-    display: block;
-}
+    .plan-wrapper {
+        cursor: pointer;
+        display: block;
+    }
 
-.modern-card {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 40px 32px;
-    border: 1px solid #e9ecef;
-    transition: all .35s ease;
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+    .modern-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 40px 32px;
+        border: 1px solid #e9ecef;
+        transition: all .35s ease;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 
-/* Hover */
-.modern-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08);
-    border-color: #111;
-}
+        /* Hover */
+        .modern-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.08);
+            border-color: #111;
+        }
 
-/* Selected */
-.plan-wrapper input:checked + .modern-card {
-    border: 2px solid #111;
-    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
-}
+    /* Selected */
+    .plan-wrapper input:checked + .modern-card {
+        border: 2px solid #111;
+        box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+    }
 
-/* Featured Card */
-.featured {
-    border: 2px solid #111;
-    transform: scale(1.05);
-}
+    /* Featured Card */
+    .featured {
+        border: 2px solid #111;
+        transform: scale(1.05);
+    }
 
-.featured:hover {
-    transform: scale(1.05) translateY(-8px);
-}
+        .featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
 
-/* Plan Header */
-.plan-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
+    /* Plan Header */
+    .plan-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-.plan-name {
-    font-weight: 600;
-    font-size: 1.1rem;
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    display: block;
-}
+    .plan-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: block;
+    }
 
-.price {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
+    .price {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
 
-.price::after {
-    content: " / Monat";
-    font-size: .9rem;
-    font-weight: 400;
-    color: #777;
-}
+        .price::after {
+            content: " / Месечно";
+            font-size: .9rem;
+            font-weight: 400;
+            color: #777;
+        }
 
-/* Features */
-.modern-card ul {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 25px 0;
-}
+    /* Features */
+    .modern-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 25px 0;
+    }
 
-.modern-card ul li {
-    padding: 10px 0;
-    font-size: .95rem;
-    color: #444;
-    border-bottom: 1px solid #f1f1f1;
-}
+        .modern-card ul li {
+            padding: 10px 0;
+            font-size: .95rem;
+            color: #444;
+            border-bottom: 1px solid #f1f1f1;
+        }
 
-.modern-card ul li:last-child {
-    border-bottom: none;
-}
+            .modern-card ul li:last-child {
+                border-bottom: none;
+            }
 
-/* Popular badge */
-.badge-modern {
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #111;
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: .7rem;
-    letter-spacing: .8px;
-    font-weight: 600;
-}
+    /* Popular badge */
+    .badge-modern {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #111;
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: .7rem;
+        letter-spacing: .8px;
+        font-weight: 600;
+    }
     /* EXTERNAL BUTTON */
     .btn-outline-secondary {
         border: 1px solid #d1d5db !important;
@@ -323,14 +119,198 @@
             background: #f3f4f6 !important;
             color: #000 !important;
         }
-/* Limit */
-.plan-limit {
-    text-align: center;
-    font-size: .8rem;
-    color: #888;
-    margin-top: auto;
-}
+    /* Limit */
+    .plan-limit {
+        text-align: center;
+        font-size: .8rem;
+        color: #888;
+        margin-top: auto;
+    }
 </style>
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold display-6">Регистрација</h1>
+        <p class="text-muted fs-5">Креирајте ја вашата фирма и изберете план</p>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper mb-5">
+        <div class="step-item active" data-label="Сметка"></div>
+        <div class="step-item" data-label="Фирма"></div>
+        <div class="step-item" data-label="Даноци"></div>
+        <div class="step-item" data-label="План"></div>
+    </div>
+
+    <form method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-4"></div>
+
+        <!-- STEP 1 -->
+        <div class="step" data-step="1">
+            <div class="card p-4 mx-auto" style="max-width:600px">
+
+                <h5 class="mb-4 text-center">Сметка</h5>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" />
+                    <label asp-for="Input.Email">Е-пошта</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Password" type="password" class="form-control" />
+                    <label asp-for="Input.Password">Лозинка</label>
+                </div>
+
+                <div class="form-floating">
+                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
+                    <label asp-for="Input.ConfirmPassword">Потврди лозинка</label>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-dark" onclick="nextStep(-1)">Назад</button>
+                    <button type="button" class="btn btn-dark" onclick="nextStep(1)">Следно</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step d-none" data-step="2">
+            <div class="card p-4 mx-auto" style="max-width:700px">
+
+                <h5 class="mb-4 text-center">Податоци за фирма</h5>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.CompanyName" class="form-control" />
+                    <label asp-for="Input.CompanyName">Име на фирма</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Address" class="form-control" />
+                    <label asp-for="Input.Address">Адреса</label>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PostalCode" class="form-control" />
+                            <label asp-for="Input.PostalCode">Поштенски број</label>
+                        </div>
+                    </div>
+
+                    <div class="col-8">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.City" class="form-control" />
+                            <label asp-for="Input.City">Град</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-floating">
+                    <input asp-for="Input.Country" value="Северна Македонија" class="form-control" />
+                    <label asp-for="Input.Country">Држава</label>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-dark" onclick="nextStep(-1)">Назад</button>
+                    <button type="button" class="btn btn-dark" onclick="nextStep(1)">Следно</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step d-none" data-step="3">
+            <div class="card p-4 mx-auto" style="max-width:600px">
+
+                <h5 class="mb-4 text-center">Даночни податоци</h5>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.TaxNumber" class="form-control" />
+                    <label asp-for="Input.TaxNumber">Даночен број</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.VatId" class="form-control" />
+                    <label asp-for="Input.VatId">ДДВ број</label>
+                </div>
+
+                <div class="form-check form-switch">
+                    <input asp-for="Input.IsSmallBusiness" class="form-check-input" />
+                    <label asp-for="Input.IsSmallBusiness" class="form-check-label">
+                        Мало претпријатие
+                    </label>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-dark" onclick="nextStep(-1)">Назад</button>
+                    <button type="button" class="btn btn-dark" onclick="nextStep(1)">Следно</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step d-none" data-step="4">
+
+            <h4 class="text-center mb-5">Изберете план</h4>
+
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-md-4">
+                    <label class="plan-wrapper">
+                        <input type="radio" asp-for="Input.Plan" value="Starter" hidden>
+                        <div class="modern-card">
+                            <div class="plan-header">
+                                <span>Starter</span>
+                                <div class="price">1000 МКД</div>
+                                <small>за поединци</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="plan-wrapper">
+                        <input type="radio" asp-for="Input.Plan" value="Pro" checked hidden>
+                        <div class="modern-card featured">
+                            <div class="badge-modern">ПОПУЛАРНО</div>
+                            <div class="plan-header">
+                                <span>Тим</span>
+                                <div class="price">1800 МКД</div>
+                                <small>за мали тимови</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="plan-wrapper">
+                        <input type="radio" asp-for="Input.Plan" value="Business" hidden>
+                        <div class="modern-card">
+                            <div class="plan-header">
+                                <span>Бизнис</span>
+                                <div class="price">3400 МКД</div>
+                                <small>за растечки компании</small>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button type="button" class="btn btn-dark" onclick="nextStep(-1)">Назад</button>
+                <button type="submit" class="btn btn-success">Креирај профил</button>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>

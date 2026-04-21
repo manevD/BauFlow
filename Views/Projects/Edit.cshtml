@@ -60,10 +60,10 @@
 
     <div class="profile-card">
 
-        <h4 class="mb-4 text-center">Projekt bearbeiten</h4>
+        <h4 class="mb-4 text-center">Измени проект</h4>
 
         <div class="info-box">
-            Ändere die Projektdaten oder den Status des Projekts.
+            Промени ги податоците или статусот на проектот.
         </div>
 
         <form asp-action="Edit" method="post">
@@ -74,46 +74,45 @@
                  class="text-danger mb-3 text-center"></div>
 
 
-            <!-- Kunde -->
+            <!-- Клиент -->
             <div class="form-floating mb-3">
                 <select asp-for="CustomerId"
                         class="form-control"
                         asp-items="ViewBag.CustomerId">
                 </select>
-                <label asp-for="CustomerId">Kunde</label>
+                <label asp-for="CustomerId">Клиент</label>
             </div>
 
 
-
-            <!-- Titel -->
+            <!-- Наслов -->
             <div class="form-floating mb-3">
                 <input asp-for="Title"
                        class="form-control"
-                       placeholder="Projektname" />
-                <label asp-for="Title">Projektname</label>
+                       placeholder="Име на проект" />
+                <label asp-for="Title">Име на проект</label>
                 <span asp-validation-for="Title"
                       class="text-danger small"></span>
             </div>
 
 
-            <!-- Beschreibung -->
+            <!-- Опис -->
             <div class="form-floating mb-3">
                 <textarea asp-for="Description"
                           class="form-control"
                           style="height:100px"
-                          placeholder="Beschreibung"></textarea>
-                <label asp-for="Description">Beschreibung</label>
+                          placeholder="Опис"></textarea>
+                <label asp-for="Description">Опис</label>
             </div>
 
 
-            <!-- Status -->
+            <!-- Статус -->
             <div class="form-floating mb-4">
                 <select asp-for="Status" class="form-control">
-                    <option value="Offen">Offen</option>
-                    <option value="In Arbeit">In Arbeit</option>
-                    <option value="Abgeschlossen">Abgeschlossen</option>
+                    <option value="Отворен">Отворен</option>
+                    <option value="Во тек">Во тек</option>
+                    <option value="Завршен">Завршен</option>
                 </select>
-                <label asp-for="Status">Status</label>
+                <label asp-for="Status">Статус</label>
             </div>
 
 
@@ -121,12 +120,12 @@
 
                 <button type="submit"
                         class="btn btn-primary flex-fill">
-                    Änderungen speichern
+                    Зачувај измени
                 </button>
 
                 <a asp-action="Index"
                        class="btn btn-secondary-custom flex-fill">
-                    Abbrechen
+                    Откажи
                 </a>
 
             </div>

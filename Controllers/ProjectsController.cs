@@ -120,6 +120,8 @@ namespace BauFlow.Controllers
             {
                 return NotFound();
             }
+            ModelState.Remove("Customer");
+            ModelState.Remove("Quotes");
 
             if (ModelState.IsValid)
             {
@@ -141,7 +143,7 @@ namespace BauFlow.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", project.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", project.CustomerId);
             return View(project);
         }
 

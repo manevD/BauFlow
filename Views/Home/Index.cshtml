@@ -1,16 +1,194 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "BauFlow";
 }
-@* Kunde
-↓
-Angebot
-↓
-Status
-↓
-Rechnung
-↓
-Zahlung *@
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<section class="hero text-center reveal">
+    <div class="container">
+        <h1 class="hero-title">BauFlow</h1>
+
+        <p class="hero-sub">
+            Модерно решение за понуди, проекти и фактури.
+        </p>
+
+    </div>
+</section>
+
+<section>
+    <div class="container">
+
+        <!-- ПОНУДИ -->
+        <div class="row align-items-center mb-5 reveal connection-section">
+
+            <div class="col-md-6 text-side">
+                <h2>Креирај понуди</h2>
+                <p class="text-muted">
+                    Креирај професионални понуди за неколку секунди и испрати ги директно.
+                </p>
+            </div>
+
+            <div class="connector-wrapper">
+                <svg viewBox="0 0 400 120">
+                    <path d="M0 60 C100 0 200 120 300 60 S400 60 400 60"
+                          class="connector-path" />
+                </svg>
+            </div>
+
+            <div class="col-md-6 image-side">
+                <div class="dashboard-card">
+                    <img src="~/Bilder/Angebot.jpg" class="img-fluid dashboard-img">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- КЛИЕНТИ -->
+        <div class="row align-items-center mb-5 reveal connection-section flex-md-row-reverse">
+
+            <div class="col-md-6 text-side">
+                <h2>Управување со клиенти</h2>
+                <p class="text-muted">
+                    Следи ги сите клиенти и управувај со контактите централно.
+                </p>
+            </div>
+
+            <div class="col-md-6 image-side">
+                <div class="dashboard-card">
+                    <img src="~/Bilder/Kunde.jpg" class="img-fluid dashboard-img">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ПРОЕКТИ -->
+        <div class="row align-items-center mb-5 reveal connection-section">
+
+            <div class="col-md-6 text-side">
+                <h2>Организирај проекти</h2>
+                <p class="text-muted">
+                    Управувај со тековни проекти и нивниот статус прегледно.
+                </p>
+            </div>
+
+            <div class="connector-wrapper">
+                <svg viewBox="0 0 400 120">
+                    <path d="M0 60 C100 0 200 120 300 60 S400 60 400 60"
+                          class="connector-path" />
+                </svg>
+            </div>
+
+            <div class="col-md-6 image-side">
+                <div class="dashboard-card">
+                    <img src="~/Bilder/Projekte.jpg" class="img-fluid dashboard-img">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ФАКТУРИ -->
+        <div class="row align-items-center mb-5 reveal connection-section flex-md-row-reverse">
+
+            <div class="col-md-6 text-side">
+                <h2>Креирај фактури</h2>
+                <p class="text-muted">
+                    Генерирај фактури автоматски од понуди – со само еден клик.
+                </p>
+            </div>
+
+            <div class="col-md-6 image-side">
+                <div class="dashboard-card">
+                    <img src="~/Bilder/Rechnungen.jpg" class="img-fluid dashboard-img">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- ФУНКЦИИ -->
+
+<section class="features">
+    <div class="container">
+
+        <h2 class="text-center mb-5 reveal">Сè во еден систем</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <h5>Понуди</h5>
+                    <p>Креирај професионални понуди за секунди.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-people"></i>
+                    <h5>Клиенти</h5>
+                    <p>Управувај со сите клиенти централно.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-kanban"></i>
+                    <h5>Проекти</h5>
+                    <p>Секогаш имај преглед.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-receipt"></i>
+                    <h5>Фактури</h5>
+                    <p>Автоматски генерирани.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-check-circle"></i>
+                    <h5>Статус</h5>
+                    <p>Веднаш види што е завршено.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <div class="feature-card">
+                    <i class="bi bi-people-fill"></i>
+                    <h5>Тим</h5>
+                    <p>Работете заедно поефикасно.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA -->
+
+<section style="padding:140px 0; border-top:1px solid #eee;" class="text-center">
+    <div class="container reveal">
+
+        <h2 style="font-size:3rem; font-weight:700;">
+            Подготвен за помал хаос?
+        </h2>
+
+        <p class="text-muted mt-3" style="font-size:1.2rem;">
+            Започни сега со BauFlow и организирај ги твоите проекти уредно.
+        </p>
+
+        <div class="mt-5">
+            <a href="/Identity/Account/Register" class="btn btn-dark px-5 py-3" style="border-radius:12px;">
+                Започни сега
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<div class="cursor-glow"></div>

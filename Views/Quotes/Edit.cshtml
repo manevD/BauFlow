@@ -43,13 +43,13 @@
 <div class="page-card">
 
     <div class="d-flex justify-content-between mb-4">
-        <h4>Angebot bearbeiten</h4>
-        <a asp-action="Index" class="btn btn-ghost">Zurück</a>
+        <h4>Измени понуда</h4>
+        <a asp-action="Index" class="btn btn-ghost">Назад</a>
     </div>
 
     <form asp-action="Edit" method="post">
 
-        <!-- Kunde + Datum -->
+        <!-- Клиент + Датум -->
         <div class="row">
 
             <div class="col-md-6">
@@ -58,7 +58,7 @@
                             asp-items="ViewBag.CustomerId"
                             class="form-select">
                     </select>
-                    <label>Kunde</label>
+                    <label>Клиент</label>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@
                     <input asp-for="ValidUntil"
                            type="date"
                            class="form-control" />
-                    <label>Gültig bis</label>
+                    <label>Важи до</label>
                 </div>
             </div>
 
@@ -75,17 +75,17 @@
 
         <hr class="mb-4" />
 
-        <!-- Positionen -->
-        <h5 class="mb-3">Positionen</h5>
+        <!-- Ставки -->
+        <h5 class="mb-3">Ставки</h5>
 
         <table class="table align-middle" id="itemsTable">
             <thead>
                 <tr>
-                    <th>Beschreibung</th>
-                    <th width="120">Menge</th>
-                    <th width="120">Einheit</th>
-                    <th width="140">Preis</th>
-                    <th width="140">Total</th>
+                    <th>Опис</th>
+                    <th width="120">Количина</th>
+                    <th width="120">Единица</th>
+                    <th width="140">Цена</th>
+                    <th width="140">Вкупно</th>
                     <th></th>
                 </tr>
             </thead>
@@ -148,38 +148,37 @@
         </table>
 
         <button type="button" id="addRow" class="btn btn-ghost mb-4">
-            + Position hinzufügen
+            + Додади ставка
         </button>
 
-        <!-- Totals -->
+        <!-- Вкупно -->
         <div class="row justify-content-end">
             <div class="col-md-4">
                 <div class="total-box">
 
-                    <!-- Steuersatz -->
                     <div class="form-floating mb-3">
                         <select asp-for="TaxRate"
                                 asp-items="ViewBag.TaxRates"
                                 class="form-select"
                                 id="taxRate">
                         </select>
-                        <label>Steuersatz</label>
+                        <label>Даночна стапка</label>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Netto</span>
+                        <span>Нето</span>
                         <strong id="netTotal">0.00 €</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                        <span id="taxLabel">MwSt (@Model.TaxRate%)</span>
-                        <strong id="taxTotal">0.00 €</strong>
+                        <span id="taxLabel">ДДВ (@Model.TaxRate%)</span>
+                        <strong id="taxTotal">0.00 МКД</strong>
                     </div>
 
                     <hr>
 
                     <div class="d-flex justify-content-between">
-                        <h5>Gesamt</h5>
+                        <h5>Вкупно</h5>
                         <h5 id="grossTotal">0.00 €</h5>
                     </div>
 
@@ -188,7 +187,7 @@
         </div>
 
         <button class="btn btn-primary-custom w-100 mt-4">
-            Angebot speichern
+            Зачувај понуда
         </button>
 
     </form>

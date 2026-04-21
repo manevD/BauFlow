@@ -137,83 +137,87 @@
 
                     <li class="nav-item">
                         <a asp-controller="Home" asp-action="Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
-                            Dashboard
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                            Почетна
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Projects" asp-action="Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projects" ? "active" : "")">
-                            Projekte
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projects" ? "active" : "")">
+                            Проекти
                         </a>
                     </li>
-                     <li class="nav-item">
+
+                    <li class="nav-item">
                         <a asp-controller="Quotes" asp-action="Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Quotes" ? "active" : "")">
-                            Angebote
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Quotes" ? "active" : "")">
+                            Понуди
                         </a>
                     </li>
+
                     <li class="nav-item">
                         <a asp-controller="Invoices" asp-action="Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
-                            Rechnungen
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
+                            Фактури
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Customers" asp-action="Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")">
-                            Kunden
+                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")">
+                            Клиенти
                         </a>
                     </li>
+
                     @if (User.IsInRole("Owner"))
                     {
                         <li class="nav-item">
                             <a asp-controller="Users" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
-                                Benutzer
+                                   class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+                                Корисници
                             </a>
                         </li>
                     }
+
                     <li class="nav-item">
                         <a asp-controller="Company" asp-action="EmailSettings"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
-                            Email Einstellungen
+                            Поставки за е-пошта
                         </a>
                     </li>
 
-                    <li class="mt-4 text-uppercase small text-muted">Einstellungen</li>
+                    <li class="mt-4 text-uppercase small text-muted">Поставки</li>
 
                     <li class="nav-item">
                         <a asp-area="Identity"
-                           asp-page="/Account/Manage/Index"
-                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Manage/Index") == true ? "active" : "")">
-                            Profil
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-area="Identity"
-                           asp-page="/Account/Manage/ChangePassword"
-                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("ChangePassword") == true ? "active" : "")">
-                            Passwort
+                               asp-page="/Account/Manage/Index"
+                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Manage/Index") == true ? "active" : "")">
+                            Профил
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-area="Identity"
-                           asp-page="/Account/Manage/Email"
-                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Email") == true ? "active" : "")">
-                            Email
+                               asp-page="/Account/Manage/ChangePassword"
+                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("ChangePassword") == true ? "active" : "")">
+                            Лозинка
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-area="Identity"
-                           asp-page="/Account/Manage/PersonalData"
-                           class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("PersonalData") == true ? "active" : "")">
-                            Daten
+                               asp-page="/Account/Manage/Email"
+                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Email") == true ? "active" : "")">
+                            Е-пошта
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity"
+                               asp-page="/Account/Manage/PersonalData"
+                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("PersonalData") == true ? "active" : "")">
+                            Податоци
                         </a>
                     </li>
 
@@ -229,31 +233,27 @@
                     @Html.AntiForgeryToken()
 
                     <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
-                        Abmelden
+                        Одјави се
                     </button>
 
                 </form>
+
                 <div class="footer text-center small py-3">
-                    © @DateTime.Now.Year BauFlow – Alle Rechte vorbehalten
+                    © @DateTime.Now.Year BauFlow – Сите права се задржани
                 </div>
             </div>
 
         </nav>
 
-        <!-- MOBILE OVERLAY -->
-        <div class="overlay" id="overlay"></div>
-
-        <!-- MAIN AREA -->
+        <!-- MAIN -->
         <div class="main-area flex-fill">
 
-            <!-- TOPBAR -->
             <header class="topbar px-4 py-3 d-flex justify-content-between align-items-center">
                 <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle">☰</button>
-                <h5 class="mb-0">Willkommen bei BauFlow</h5>
+                <h5 class="mb-0">Добредојде во BauFlow</h5>
                 <div class="text-muted small">@User.Identity?.Name</div>
             </header>
 
-            <!-- CONTENT -->
             <main>
                 <div class="content-wrapper">
                     @RenderBody()
@@ -263,7 +263,6 @@
         </div>
 
     </div>
-
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>

@@ -49,14 +49,14 @@
 
     <div class="d-flex justify-content-between mb-4">
 
-        <h4>Angebot @Model.QuoteNumber</h4>
+        <h4>Понуда @Model.QuoteNumber</h4>
 
         <a asp-controller="Invoices"
                asp-action="CreateFromQuote"
                asp-route-quoteId="@Model.Id"
                class="btn btn-primary-custom">
 
-            Rechnung erstellen
+            Креирај фактура
 
         </a>
 
@@ -64,7 +64,7 @@
 
     <div class="info-row row">
 
-        <div class="col-3 label">Kunde</div>
+        <div class="col-3 label">Клиент</div>
 
         <div class="col-9 value">
             @Model.Customer?.Name
@@ -74,7 +74,7 @@
 
     <div class="info-row row">
 
-        <div class="col-3 label">Datum</div>
+        <div class="col-3 label">Датум</div>
 
         <div class="col-9 value">
             @Model.QuoteDate.ToString("dd.MM.yyyy")
@@ -84,7 +84,7 @@
 
     <div class="info-row row">
 
-        <div class="col-3 label">Gültig bis</div>
+        <div class="col-3 label">Важи до</div>
 
         <div class="col-9 value">
             @Model.ValidUntil?.ToString("dd.MM.yyyy")
@@ -94,7 +94,7 @@
 
     <div class="info-row row">
 
-        <div class="col-3 label">Status</div>
+        <div class="col-3 label">Статус</div>
 
         <div class="col-9 value">
             @Model.Status.GetDisplayName()

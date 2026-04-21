@@ -66,24 +66,24 @@
 
     <div class="page-card">
 
-        <h4 class="mb-4">Kunde löschen</h4>
+        <h4 class="mb-4">Избриши клиент</h4>
 
         <div class="warning-box">
-            Dieser Kunde wird dauerhaft gelöscht. Projekte, Angebote oder Rechnungen können davon betroffen sein.
+            Овој клиент ќе биде трајно избришан. Проектите, понудите или фактурите може да бидат засегнати.
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Name</div>
+            <div class="col-4 label">Име</div>
             <div class="col-8 value">@Model.Name</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Kontaktperson</div>
+            <div class="col-4 label">Контакт лице</div>
             <div class="col-8 value">@Model.ContactPerson</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Adresse</div>
+            <div class="col-4 label">Адреса</div>
             <div class="col-8 value">
                 @Model.Address<br />
                 @Model.PostalCode @Model.City<br />
@@ -92,23 +92,22 @@
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Email</div>
+            <div class="col-4 label">Е-пошта</div>
             <div class="col-8 value">@Model.Email</div>
         </div>
 
         <div class="info-row row">
-            <div class="col-4 label">Telefon</div>
+            <div class="col-4 label">Телефон</div>
             <div class="col-8 value">@Model.Phone</div>
         </div>
 
         @if (!string.IsNullOrWhiteSpace(Model.Notes))
         {
             <div class="info-row row">
-                <div class="col-4 label">Notizen</div>
+                <div class="col-4 label">Белешки</div>
                 <div class="col-8 value">@Model.Notes</div>
             </div>
         }
-
 
         <form asp-action="Delete" method="post" class="mt-4">
 
@@ -117,12 +116,13 @@
             <div class="d-flex gap-3">
 
                 <button type="submit" class="btn btn-danger-custom">
-                    Kunde löschen
+                    Избриши клиент
                 </button>
 
                 <a asp-action="Index" class="btn btn-light-custom">
-                    Abbrechen
+                    Откажи
                 </a>
+
             </div>
         </form>
     </div>
