@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace BauFlow.Entities
 {
@@ -8,6 +9,7 @@ namespace BauFlow.Entities
         public Guid? QuoteId { get; set; }
         [MaxLength(1024)]
         public string? Description { get; set; }
+        [ValidateNever]
         public string InvoiceNumber { get; set; }
 
         public DateTime InvoiceDate { get; set; }
@@ -18,8 +20,8 @@ namespace BauFlow.Entities
         public decimal NetAmount { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal GrossAmount { get; set; }
-        public int  TaxRate { get; set; } 
-
+        public int  TaxRate { get; set; }
+        [ValidateNever]
         public Customer Customer { get; set; }
         public ICollection<InvoiceItem> Items { get; set; } = new List<InvoiceItem>();
 
@@ -27,19 +29,19 @@ namespace BauFlow.Entities
 
     public enum InvoiceStatus
     {
-        [Display(Name = "Entwurf")]
+        [Display(Name = "Нацрт")]
         Draft = 1,
 
-        [Display(Name = "Gesendet")]
+        [Display(Name = "Испратена")]
         Sent = 2,
 
-        [Display(Name = "Bezahlt")]
+        [Display(Name = "Платена")]
         Paid = 3,
 
-        [Display(Name = "Überfällig")]
+        [Display(Name = "Доцни")]
         Overdue = 4,
 
-        [Display(Name = "Storniert")]
+        [Display(Name = "Откажана")]
         Cancelled = 5
     }
 }

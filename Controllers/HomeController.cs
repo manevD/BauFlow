@@ -8,6 +8,15 @@ namespace BauFlow.Controllers
     {
         public IActionResult Index()
         {
+            // Wenn eingeloggt UND noch nicht weitergeleitet
+            if (User.Identity.IsAuthenticated &&
+                HttpContext.Session.GetString("Redirected") != "true")
+            {
+                HttpContext.Session.SetString("Redirected", "true");
+
+                return RedirectToAction("Index", "Customers");
+            }
+
             return View();
         }
 

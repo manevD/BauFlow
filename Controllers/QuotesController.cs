@@ -12,7 +12,7 @@ namespace BauFlow.Controllers
     {
 
         // ===================== LIST =====================
-        [Route("Angebote")]
+        [Route("ponuda")]
         public async Task<IActionResult> Index()
         {
             var quotes = await _context.Quotes
@@ -26,10 +26,19 @@ namespace BauFlow.Controllers
         // ===================== CREATE =====================
         public IActionResult Create()
         {
-            ViewBag.CustomerId = GetCustomers();
-            ViewBag.TaxRates = GetTaxRates();
+            ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
 
-            return View();
+            ViewBag.TaxRates = GetTaxRates() ?? new List<SelectListItem>();
+
+            return View(new Quote
+            {
+                TaxRate = 19,
+                ValidUntil = DateTime.Today.AddDays(7)
+            });
         }
 
         [HttpPost]
@@ -38,6 +47,7 @@ namespace BauFlow.Controllers
         {
             ModelState.Remove("Customer");
             ModelState.Remove("QuoteNumber");
+            ModelState.Remove("Quote");
 
             if (!ModelState.IsValid)
             {
@@ -53,7 +63,7 @@ namespace BauFlow.Controllers
             // 🔥 WICHTIG: TaxRate normalisieren
             quote.TaxRate = (int)quote.TaxRate;
 
-            quote.QuoteNumber = $"ANG-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            quote.QuoteNumber = $"Понуда-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}";
 
             if (quote.Items == null)
                 quote.Items = new List<QuoteItem>();
@@ -68,7 +78,7 @@ namespace BauFlow.Controllers
             // 🔥 Totals IMMER serverseitig
             quote.NetAmount = quote.Items.Sum(x => x.TotalPrice);
             quote.TaxAmount = quote.NetAmount * (quote.TaxRate / 100m);
-            quote.GrossAmount = quote.NetAmount + quote.TaxAmount;
+            quote.GrossAmount = Math.Round(quote.NetAmount + quote.TaxAmount, 0, MidpointRounding.AwayFromZero);
 
             _context.Quotes.Add(quote);
             await _context.SaveChangesAsync();
@@ -150,7 +160,7 @@ namespace BauFlow.Controllers
             // ========= Totals =========
             quote.NetAmount = newItems.Sum(x => x.TotalPrice);
             quote.TaxAmount = quote.NetAmount * (quote.TaxRate / 100m);
-            quote.GrossAmount = quote.NetAmount + quote.TaxAmount;
+            quote.GrossAmount = Math.Round(quote.NetAmount + quote.TaxAmount, 0, MidpointRounding.AwayFromZero);
 
             await _context.SaveChangesAsync();
 

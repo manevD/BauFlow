@@ -119,7 +119,7 @@
 
             <a asp-action="Delete"
                    asp-route-id="@Model.Id"
-                   class="btn btn-ghost">
+                   class="btn btn-danger">
                 Избриши
             </a>
 
@@ -206,9 +206,9 @@
 
                     <td>@item.Quantity @item.Unit</td>
 
-                    <td>@item.UnitPrice.ToString("0.00") €</td>
+                    <td>@item.UnitPrice.ToString("0.00") МКД</td>
 
-                    <td>@item.TotalPrice.ToString("0.00") €</td>
+                    <td>@item.TotalPrice.ToString("0.00") МКД</td>
 
                 </tr>
 
@@ -227,19 +227,19 @@
 
                 <div class="d-flex justify-content-between mb-2">
                     <span>Нето</span>
-                    <strong>@Model.NetAmount.ToString("0.00") €</strong>
+                    <strong>@Model.NetAmount.ToString("0.00") МКД</strong>
                 </div>
 
                 <div class="d-flex justify-content-between mb-2">
                     <span>ДДВ (@Model.TaxRate%)</span>
-                    <strong>@Model.TaxAmount.ToString("0.00") €</strong>
+                    <strong>@Model.TaxAmount.ToString("0.00") МКД</strong>
                 </div>
 
                 <hr>
 
                 <div class="d-flex justify-content-between">
                     <h5>Вкупно</h5>
-                    <h5>@Model.GrossAmount.ToString("0.00") €</h5>
+                    <h5>@Model.GrossAmount.ToString("0.00") МКД</h5>
                 </div>
 
             </div>

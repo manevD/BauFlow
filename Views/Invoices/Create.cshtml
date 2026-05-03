@@ -8,6 +8,25 @@
         box-shadow: 0 8px 24px rgba(0,0,0,.04);
         padding: 32px;
     }
+    
+    .summary-box {
+        background: #f6f7f9;
+        border-radius: 16px;
+        padding: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .summary-total {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
 
     .btn-primary-custom {
         background: #111;
@@ -44,57 +63,55 @@
     }
 </style>
 
+
 <div class="page-card">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Нова фактура</h4>
-
-        <a asp-action="Index" class="btn btn-ghost">
-            Назад
-        </a>
-    </div>
+    <h4 class="mb-4">Нова фактура</h4>
 
     <form asp-action="Create" method="post">
 
-        <!-- Клиент -->
-        <div class="form-floating mb-3">
-            <select asp-for="CustomerId"
-                    asp-items="ViewBag.CustomerId"
-                    class="form-control"></select>
-            <label>Клиент</label>
-        </div>
+        <div class="row mb-4">
 
-        <!-- Данок -->
-        <div class="form-floating mb-4">
-            <select asp-for="TaxRate" id="taxRate" class="form-select">
-                <option value="0">0%</option>
-                <option value="7">7%</option>
-                <option value="19" selected>19%</option>
-            </select>
-            <label>Даночна стапка</label>
-        </div>
+            <!-- Клиент -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select asp-for="CustomerId"
+                            asp-items="ViewBag.CustomerId"
+                            class="form-control"></select>
+                    <label>Клиент</label>
+                </div>
+            </div>
 
+            <!-- Due Date -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input asp-for="DueDate" type="date" class="form-control" />
+                    <label>Рок на плаќање</label>
+                </div>
+            </div>
+
+        </div>
         <!-- Опис -->
         <div class="form-floating mb-4">
             <textarea asp-for="Description"
                       class="form-control"
                       style="height: 120px"></textarea>
-            <label>Текст на фактура / напомени</label>
+            <label>Текст на фактура</label>
         </div>
 
-        <hr class="mb-4" />
+        <hr />
 
-        <!-- Ставки -->
-        <h5 class="mb-3">Ставки</h5>
+        <h5>Ставки</h5>
 
-        <table class="table align-middle" id="itemsTable">
+        <table class="table" id="itemsTable">
             <thead>
                 <tr>
                     <th>Опис</th>
-                    <th width="120">Количина</th>
-                    <th width="140">Цена</th>
-                    <th width="140">Вкупно</th>
-                    <th width="60"></th>
+                    <th>Количина</th>
+                    <th>Единица</th>
+                    <th>Цена</th>
+                    <th>Вкупно</th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -105,13 +122,18 @@
                     </td>
 
                     <td>
-                        <input type="number" step="0.01"
+                        <input type="number" step="0.01" value="1"
                                name="Items[0].Quantity"
                                class="form-control qty" />
                     </td>
 
                     <td>
-                        <input type="number" step="0.01"
+                        <input name="Items[0].Unit" value="бр."
+                               class="form-control" />
+                    </td>
+
+                    <td>
+                        <input type="number" step="0.01" value="0"
                                name="Items[0].UnitPrice"
                                class="form-control price" />
                     </td>
@@ -124,45 +146,45 @@
                     </td>
 
                     <td>
-                        <button type="button"
-                                class="btn btn-ghost removeRow">
-                            x
-                        </button>
+                        <button type="button" class="btn btn-ghost removeRow">x</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <button type="button" id="addRow" class="btn btn-ghost mb-4">
+        <button type="button" id="addRow" class="btn btn-ghost mb-3">
             + Додади ставка
         </button>
-
-        <!-- Резиме -->
         <div class="row justify-content-end">
+
             <div class="col-md-4">
-                <div class="total-box">
+                <!-- SUMMARY -->
+                <div class="summary-box">
 
-                    <div class="d-flex justify-content-between mb-2">
+                    <select asp-for="TaxRate"
+                            asp-items="ViewBag.TaxRates"
+                            class="form-select mb-3"
+                            id="taxRate"></select>
+
+                    <div class="summary-row">
                         <span>Нето</span>
-                        <strong id="netTotal">0,00 €</strong>
+                        <strong id="netTotal">0 МКД</strong>
                     </div>
 
-                    <div class="d-flex justify-content-between mb-2">
+                    <div class="summary-row">
                         <span id="taxLabel">ДДВ (19%)</span>
-                        <strong id="taxTotal">0,00 €</strong>
+                        <strong id="taxTotal">0 МКД</strong>
                     </div>
 
-                    <hr>
-
-                    <div class="d-flex justify-content-between">
-                        <h5>Вкупно</h5>
-                        <h5 id="grossTotal">0,00 €</h5>
+                    <div class="summary-total d-flex justify-content-between">
+                        <span>Вкупно</span>
+                        <span id="grossTotal">0 МКД</span>
                     </div>
 
                 </div>
             </div>
-        </div>
 
+        </div>
         <button class="btn btn-primary-custom w-100 mt-4">
             Зачувај фактура
         </button>
@@ -172,42 +194,94 @@
 </div>
 
 @section Scripts {
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            let rowIndex = document.querySelectorAll("#itemsTable tbody tr").length;
+            console.log("INVOICE JS LOADED");
 
             const taxRateEl = document.getElementById("taxRate");
-            const descriptionEl = document.querySelector("textarea[name='Description']");
+            const tbody = document.querySelector("#itemsTable tbody");
 
-            const defaultTaxText = "Im ausgewiesenen Rechnungsbetrag ist gemäß § 19 UStG keine Umsatzsteuer enthalten";
+            let rowIndex = tbody.querySelectorAll("tr").length;
 
-            const formatCurrency = (value) => {
-                return new Intl.NumberFormat('de-DE', {
+            // ===== PARSER =====
+            function parseNumber(val) {
+                if (!val) return 0;
+                return parseFloat(
+                    val.toString()
+                        .replace(/\./g, "")
+                        .replace(",", ".")
+                ) || 0;
+            }
+
+            function formatCurrency(val) {
+                return new Intl.NumberFormat('mk-MK', {
                     style: 'currency',
-                    currency: 'EUR'
-                }).format(value);
-            };
+                    currency: 'MKD'
+                }).format(val || 0);
+            }
 
+            // ===== CALCULATE =====
+            function calculate() {
+
+                let net = 0;
+
+                tbody.querySelectorAll("tr").forEach(row => {
+
+                    const qty = parseNumber(row.querySelector(".qty")?.value);
+                    const price = parseNumber(row.querySelector(".price")?.value);
+
+                    const total = qty * price;
+
+                    const totalInput = row.querySelector(".total");
+                    if (totalInput) totalInput.value = total.toFixed(2);
+
+                    net += total;
+                });
+
+                const taxRate = parseNumber(taxRateEl?.value);
+                const tax = net * taxRate / 100;
+                const gross = net + tax;
+
+                document.getElementById("netTotal").innerText = formatCurrency(net);
+                document.getElementById("taxTotal").innerText = formatCurrency(tax);
+                document.getElementById("grossTotal").innerText = formatCurrency(gross);
+                document.getElementById("taxLabel").innerText = `ДДВ (${taxRate}%)`;
+            }
+
+            // ===== ADD ROW (FIXED) =====
             document.getElementById("addRow").addEventListener("click", function () {
 
-                let table = document.querySelector("#itemsTable tbody");
-
-                let row = `
+                const row = `
                 <tr>
                     <td><input name="Items[${rowIndex}].Description" class="form-control"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].Quantity" class="form-control qty"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].UnitPrice" class="form-control price"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/></td>
-                    <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
-                </tr>
-                `;
 
-                table.insertAdjacentHTML("beforeend", row);
+                    <td><input type="number" step="0.01" value="1"
+                               name="Items[${rowIndex}].Quantity"
+                               class="form-control qty"/></td>
+
+                    <td><input name="Items[${rowIndex}].Unit" value="бр."
+                               class="form-control"/></td>
+
+                    <td><input type="number" step="0.01" value="0"
+                               name="Items[${rowIndex}].UnitPrice"
+                               class="form-control price"/></td>
+
+                    <td><input type="number" step="0.01" 
+                               name="Items[${rowIndex}].TotalPrice"
+                               class="form-control total"
+                               readonly/></td>
+
+                    <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
+                </tr>`;
+
+                tbody.insertAdjacentHTML("beforeend", row);
+
                 rowIndex++;
+                calculate();
             });
 
+            // ===== REMOVE ROW =====
             document.addEventListener("click", function (e) {
                 if (e.target.classList.contains("removeRow")) {
                     e.target.closest("tr").remove();
@@ -215,63 +289,19 @@
                 }
             });
 
+            // ===== LIVE INPUT =====
             document.addEventListener("input", function (e) {
-                if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
+                if (e.target.classList.contains("qty") ||
+                    e.target.classList.contains("price")) {
                     calculate();
                 }
             });
 
-            taxRateEl.addEventListener("change", function () {
-                calculate();
-                updateDescription();
-            });
+            taxRateEl?.addEventListener("change", calculate);
 
-            function updateDescription() {
-                let taxRate = parseFloat(taxRateEl.value) || 0;
+            // ===== INIT =====
+            setTimeout(calculate, 50);
 
-                if (!descriptionEl) return;
-
-                if (taxRate === 0 && !descriptionEl.value.trim()) {
-                    descriptionEl.value = defaultTaxText;
-                }
-
-                if (taxRate > 0 && descriptionEl.value === defaultTaxText) {
-                    descriptionEl.value = "";
-                }
-            }
-
-            function calculate() {
-
-                let net = 0;
-
-                document.querySelectorAll("#itemsTable tbody tr").forEach(row => {
-
-                    let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
-                    let price = parseFloat(row.querySelector(".price")?.value) || 0;
-
-                    let total = qty * price;
-
-                    let totalInput = row.querySelector(".total");
-                    if (totalInput) totalInput.value = total.toFixed(2);
-
-                    net += total;
-                });
-
-                let taxRate = parseFloat(taxRateEl.value) || 0;
-
-                let tax = net * (taxRate / 100);
-                let gross = net + tax;
-
-                document.getElementById("taxLabel").innerText = `ДДВ (${taxRate}%)`;
-
-                document.getElementById("netTotal").innerText = formatCurrency(net);
-                document.getElementById("taxTotal").innerText = formatCurrency(tax);
-                document.getElementById("grossTotal").innerText = formatCurrency(gross);
-            }
-
-            calculate();
-            updateDescription();
         });
     </script>
-
 }

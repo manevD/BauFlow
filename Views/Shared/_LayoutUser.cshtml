@@ -7,14 +7,16 @@
     <title>BauFlow</title>
 
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             background: #f6f7f9;
             color: #111;
             min-height: 100vh;
         }
-
+            .nav-link i {
+                margin-right: 8px;
+            }
         /* SIDEBAR */
         .sidebar {
             width: 260px;
@@ -135,38 +137,37 @@
 
                 <ul class="nav nav-pills flex-column gap-2">
 
-                    <li class="nav-item">
+                  @*   <li class="nav-item">
                         <a asp-controller="Home" asp-action="Index"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
                             Почетна
                         </a>
-                    </li>
-
+                    </li> *@
                     <li class="nav-item">
                         <a asp-controller="Projects" asp-action="Index"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projects" ? "active" : "")">
-                            Проекти
+                            <i class="bi bi-kanban"></i> Проекти
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Quotes" asp-action="Index"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Quotes" ? "active" : "")">
-                            Понуди
+                            <i class="bi bi-file-earmark-text"></i> Понуди
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Invoices" asp-action="Index"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
-                            Фактури
+                            <i class="bi bi-receipt"></i> Фактури
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Customers" asp-action="Index"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")">
-                            Клиенти
+                            <i class="bi bi-people"></i> Клиенти
                         </a>
                     </li>
 
@@ -175,7 +176,7 @@
                         <li class="nav-item">
                             <a asp-controller="Users" asp-action="Index"
                                    class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
-                                Корисници
+                                <i class="bi bi-person-gear"></i> Корисници
                             </a>
                         </li>
                     }
@@ -183,7 +184,7 @@
                     <li class="nav-item">
                         <a asp-controller="Company" asp-action="EmailSettings"
                                class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
-                            Поставки за е-пошта
+                            <i class="bi bi-envelope-gear"></i> Поставки за е-пошта
                         </a>
                     </li>
 
@@ -193,7 +194,7 @@
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/Index"
                                class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Manage/Index") == true ? "active" : "")">
-                            Профил
+                            <i class="bi bi-person"></i> Профил
                         </a>
                     </li>
 
@@ -201,7 +202,7 @@
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/ChangePassword"
                                class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("ChangePassword") == true ? "active" : "")">
-                            Лозинка
+                            <i class="bi bi-key"></i> Лозинка
                         </a>
                     </li>
 
@@ -209,7 +210,7 @@
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/Email"
                                class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Email") == true ? "active" : "")">
-                            Е-пошта
+                            <i class="bi bi-envelope"></i> Е-пошта
                         </a>
                     </li>
 
@@ -217,7 +218,7 @@
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/PersonalData"
                                class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("PersonalData") == true ? "active" : "")">
-                            Податоци
+                            <i class="bi bi-file-person"></i> Податоци
                         </a>
                     </li>
 

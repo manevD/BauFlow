@@ -8,7 +8,8 @@
     public class InvoiceDocument : IDocument
     {
         private readonly Invoice _invoice;
-        private string _companyName;
+        private readonly string _companyName;
+
         public InvoiceDocument(Invoice invoice, string companyName)
         {
             QuestPDF.Settings.License = LicenseType.Community;
@@ -25,13 +26,12 @@
                 page.Margin(40);
 
                 page.Header().Element(ComposeHeader);
-
                 page.Content().Element(ComposeContent);
 
                 page.Footer().AlignCenter().Text(x =>
                 {
                     x.Span(_companyName);
-                    x.Span($"Rechnung {_invoice.InvoiceNumber}");
+                    x.Span($" Фактура {_invoice.InvoiceNumber}");
                 });
             });
         }
@@ -49,7 +49,7 @@
                         .Bold()
                         .FontColor(Colors.Blue.Darken2);
 
-                    column.Item().Text("Digitale Bauverwaltung")
+                    column.Item().Text("Дигитален систем за фактури")
                         .FontSize(10)
                         .FontColor(Colors.Grey.Darken1);
                 });
@@ -59,13 +59,13 @@
                     .Padding(10)
                     .Column(column =>
                     {
-                        column.Item().Text("RECHNUNG")
+                        column.Item().Text("ФАКТУРА")
                             .Bold()
                             .FontSize(16);
 
-                        column.Item().Text($"Nr: {_invoice.InvoiceNumber}");
-                        column.Item().Text($"Datum: {_invoice.InvoiceDate:dd.MM.yyyy}");
-                        column.Item().Text($"Fällig: {_invoice.DueDate:dd.MM.yyyy}");
+                        column.Item().Text($"Број: {_invoice.InvoiceNumber}");
+                        column.Item().Text($"Датум: {_invoice.InvoiceDate:dd.MM.yyyy}");
+                        column.Item().Text($"Рок на плаќање: {_invoice.DueDate:dd.MM.yyyy}");
                     });
             });
         }
@@ -77,9 +77,7 @@
                 column.Spacing(20);
 
                 column.Item().Element(ComposeCustomer);
-
                 column.Item().Element(ComposeTable);
-
                 column.Item().AlignRight().Element(ComposeTotals);
             });
         }
@@ -93,7 +91,7 @@
                 {
                     column.Spacing(3);
 
-                    column.Item().Text("Rechnung an")
+                    column.Item().Text("Фактура за")
                         .Bold()
                         .FontSize(12);
 
@@ -117,10 +115,10 @@
 
                 table.Header(header =>
                 {
-                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Beschreibung").Bold();
-                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Menge").Bold();
-                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Preis").Bold();
-                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Total").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Опис").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).Text("Количина").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Цена").Bold();
+                    header.Cell().Background(Colors.Blue.Lighten3).Padding(5).AlignRight().Text("Вкупно").Bold();
                 });
 
                 foreach (var item in _invoice.Items)
@@ -149,14 +147,14 @@
 
                     column.Item().Row(row =>
                     {
-                        row.RelativeItem().Text("Netto");
+                        row.RelativeItem().Text("Нето");
                         row.ConstantItem(100).AlignRight()
                             .Text($"{_invoice.NetAmount:0.00} €");
                     });
 
                     column.Item().Row(row =>
                     {
-                        row.RelativeItem().Text("MwSt");
+                        row.RelativeItem().Text("ДДВ");
                         row.ConstantItem(100).AlignRight()
                             .Text($"{_invoice.TaxAmount:0.00} €");
                     });
@@ -165,7 +163,7 @@
 
                     column.Item().Row(row =>
                     {
-                        row.RelativeItem().Text("Gesamt")
+                        row.RelativeItem().Text("Вкупно")
                             .Bold()
                             .FontSize(14);
 

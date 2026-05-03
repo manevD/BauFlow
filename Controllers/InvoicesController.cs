@@ -60,7 +60,11 @@ namespace BauFlow.Controllers
             }).ToList();
             ViewBag.TaxRates = GetTaxRates(); // 🔥 NEU
 
-            return View();
+            return View(new Invoice
+            {
+                TaxRate = 19,
+                DueDate = DateTime.UtcNow.AddDays(7)
+            });
         }
         public async Task<IActionResult> CreateFromQuote(Guid quoteId)
         {
@@ -96,8 +100,7 @@ namespace BauFlow.Controllers
 
             invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
             invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
-       
+            invoice.GrossAmount =Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
 
             invoice.InvoiceNumber =
                 await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
@@ -115,6 +118,7 @@ namespace BauFlow.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Invoice invoice)
         {
+            
             if (!ModelState.IsValid)
             {
                 ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
@@ -125,15 +129,14 @@ namespace BauFlow.Controllers
                 return View(invoice);
             }
 
+
             invoice.Id = Guid.NewGuid();
-
             invoice.InvoiceNumber = await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
-            invoice.TaxRate = invoice.TaxRate;
-
             invoice.InvoiceDate = DateTime.UtcNow;
+            invoice.Status = InvoiceStatus.Draft;
             invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
             invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
+            invoice.GrossAmount = Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
 
             _context.Invoices.Add(invoice);
 
@@ -257,7 +260,7 @@ namespace BauFlow.Controllers
             // ========= Totals =========
             invoice.NetAmount = newItems.Sum(x => x.TotalPrice);
             invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount = invoice.NetAmount + invoice.TaxAmount;
+            invoice.GrossAmount = Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
 
             await _context.SaveChangesAsync();
 

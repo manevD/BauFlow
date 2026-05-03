@@ -54,8 +54,8 @@ builder.Services
 // -----------------------------
 // 🔥 ONLY MKD CULTURE
 // -----------------------------
-var culture = new CultureInfo("mk-MK");
-culture.NumberFormat.CurrencySymbol = "ден";
+var culture = new CultureInfo("en-US");
+
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
@@ -86,6 +86,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
 });
+builder.Services.AddSession();
 
 // -----------------------------
 // MVC
@@ -223,5 +224,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions
         await context.Response.WriteAsync(result);
     }
 });
-
+app.UseSession();
 app.Run();

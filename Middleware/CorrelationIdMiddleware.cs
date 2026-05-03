@@ -1,4 +1,10 @@
-﻿namespace BauFlow.Middleware
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace BauFlow.Middleware
 {
     public class CorrelationIdMiddleware
     {
@@ -15,24 +21,23 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            string correlationId;
+            string correlationId = context.Request.Headers[HeaderName].FirstOrDefault();
 
-            if (context.Request.Headers.ContainsKey(HeaderName))
-            {
-                correlationId = context.Request.Headers[HeaderName];
-            }
-            else
+            if (string.IsNullOrWhiteSpace(correlationId))
             {
                 correlationId = Guid.NewGuid().ToString();
             }
 
-            // verfügbar für gesamte Request Pipeline
-            context.Items[HeaderName] = correlationId;
+            // für gesamte Pipeline verfügbar
+            context.Items["CorrelationId"] = correlationId;
 
             // Response Header setzen
             context.Response.Headers[HeaderName] = correlationId;
 
-            using (_logger.BeginScope("{CorrelationId}", correlationId))
+            using (_logger.BeginScope(new Dictionary<string, object>
+            {
+                ["CorrelationId"] = correlationId
+            }))
             {
                 await _next(context);
             }

@@ -1,4 +1,6 @@
-﻿namespace BauFlow.Entities
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace BauFlow.Entities
 {
     public class InvoiceItem
     {
@@ -12,6 +14,7 @@
 
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        [ValidateNever]
         public Invoice Invoice { get; set; }
     }
 }

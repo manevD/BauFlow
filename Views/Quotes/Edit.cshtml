@@ -98,14 +98,14 @@
                         <tr>
                             <td>
                                 <input name="Items[@i].Id" type="hidden" value="@items[i].Id" />
-                                <input name="Items[@i].Description" class="form-control" value="@items[i].Description" />
+                                <input type="text" name="Items[@i].Description" class="form-control" value="@items[i].Description" />
                             </td>
 
                             <td>
-                                <input type="number" step="0.01"
+                                <input type="text" 
                                        name="Items[@i].Quantity"
                                        class="form-control qty"
-                                       value="@items[i].Quantity.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" />
+                                       value="@items[i].Quantity" />
                             </td>
 
                             <td>
@@ -113,14 +113,14 @@
                             </td>
 
                             <td>
-                                <input type="number" step="0.01"
+                                <input type="text" 
                                        name="Items[@i].UnitPrice"
                                        class="form-control price"
-                                       value="@items[i].UnitPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" />
+                                       value="@items[i].UnitPrice" />
                             </td>
 
                             <td>
-                                <input type="number" step="0.01"
+                                <input type="text" 
                                        name="Items[@i].TotalPrice"
                                        class="form-control total"
                                        value="@items[i].TotalPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
@@ -136,11 +136,11 @@
                 else
                 {
                     <tr>
-                        <td><input name="Items[0].Description" class="form-control" /></td>
-                        <td><input type="number" step="0.01" name="Items[0].Quantity" class="form-control qty" /></td>
+                        <td><input type="text" name="Items[0].Description" class="form-control" /></td>
+                        <td><input type="text" value="0" name="Items[0].Quantity" class="form-control qty" /></td>
                         <td><input name="Items[0].Unit" class="form-control" /></td>
-                        <td><input type="number" step="0.01" name="Items[0].UnitPrice" class="form-control price" /></td>
-                        <td><input type="number" step="0.01" name="Items[0].TotalPrice" class="form-control total" readonly /></td>
+                        <td><input type="text" value="0" name="Items[0].UnitPrice" class="form-control price" /></td>
+                        <td><input type="text" value="0" name="Items[0].TotalPrice" class="form-control total" readonly /></td>
                         <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
                     </tr>
                 }
@@ -167,7 +167,7 @@
 
                     <div class="d-flex justify-content-between mb-2">
                         <span>Нето</span>
-                        <strong id="netTotal">0.00 €</strong>
+                        <strong id="netTotal">0.00 МКД</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
@@ -179,7 +179,7 @@
 
                     <div class="d-flex justify-content-between">
                         <h5>Вкупно</h5>
-                        <h5 id="grossTotal">0.00 €</h5>
+                        <h5 id="grossTotal">0.00 МКД</h5>
                     </div>
 
                 </div>
@@ -209,11 +209,11 @@
 
                 let row = `
                 <tr>
-                    <td><input name="Items[${rowIndex}].Description" class="form-control"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].Quantity" class="form-control qty"/></td>
+                    <td><input type="text" name="Items[${rowIndex}].Description" class="form-control"/></td>
+                    <td><input type="text" value="0" name="Items[${rowIndex}].Quantity" class="form-control qty"/></td>
                     <td><input name="Items[${rowIndex}].Unit" class="form-control"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].UnitPrice" class="form-control price"/></td>
-                    <td><input type="number" step="0.01" name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/></td>
+                    <td><input type="text"  value="0" name="Items[${rowIndex}].UnitPrice" class="form-control price"/></td>
+                    <td><input type="text"  value="0" name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/></td>
                     <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
                 </tr>`;
 
@@ -260,11 +260,11 @@
                 let tax = net * (taxRate / 100);
                 let gross = net + tax;
 
-                document.getElementById("taxLabel").innerText = `MwSt (${taxRate}%)`;
+                document.getElementById("taxLabel").innerText = `Данок (${taxRate}%)`;
 
-                document.getElementById("netTotal").innerText = net.toFixed(2) + " €";
-                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " €";
-                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " €";
+                document.getElementById("netTotal").innerText = net.toFixed(2) + " МКД";
+                document.getElementById("taxTotal").innerText = tax.toFixed(2) + " МКД";
+                document.getElementById("grossTotal").innerText = gross.toFixed(2) + " МКД";
             }
 
             calculateTotals();

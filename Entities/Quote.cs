@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace BauFlow.Entities
 {
@@ -23,16 +24,16 @@ namespace BauFlow.Entities
     }
     public enum QuoteStatus
     {
-        [Display(Name = "Entwurf")]
+        [Display(Name = "Нацрт")]
         Draft = 0,
 
-        [Display(Name = "Gesendet")]
+        [Display(Name = "Испратена")]
         Sent = 1,
 
-        [Display(Name = "Angenommen")]
+        [Display(Name = "Прифатена")]
         Accepted = 2,
 
-        [Display(Name = "Abgelehnt")]
+        [Display(Name = "Одбиена")]
         Rejected = 3
     }
 }

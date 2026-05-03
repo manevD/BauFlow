@@ -78,7 +78,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Корисникот успешно се најави.");
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect("/Customers");
                 }
 
                 if (result.RequiresTwoFactor)
