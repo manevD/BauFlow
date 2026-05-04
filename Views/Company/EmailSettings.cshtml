@@ -133,11 +133,8 @@
         const providerList = {
             gmail: { host: "smtp.gmail.com", port: 587, ssl: true },
             outlook: { host: "smtp.office365.com", port: 587, ssl: true },
-            ionos: { host: "smtp.ionos.de", port: 587, ssl: true },
             gmx: { host: "mail.gmx.net", port: 587, ssl: true },
-            web: { host: "smtp.web.de", port: 587, ssl: true },
-            strato: { host: "smtp.strato.de", port: 587, ssl: true },
-            "t-online": { host: "securesmtp.t-online.de", port: 587, ssl: true }
+            web: { host: "smtp.web.de", port: 587, ssl: true }
         };
 
         // 🔍 AUTO DETECT
@@ -150,13 +147,9 @@
             const map = {
                 "gmail.com": "gmail",
                 "outlook.com": "outlook",
-                "hotmail.com": "outlook",
-                "ionos.de": "ionos",
-                "1und1.de": "ionos",
+                "hotmail.com": "hotmail",
                 "gmx.de": "gmx",
                 "web.de": "web",
-                "strato.de": "strato",
-                "t-online.de": "t-online"
             };
 
             const key = map[domain];

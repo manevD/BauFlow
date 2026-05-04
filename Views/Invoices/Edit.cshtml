@@ -243,3 +243,93 @@
     </form>
 
 </div>
+
+@section Scripts {
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const tbody = document.querySelector("#itemsTable tbody");
+            const taxRateEl = document.getElementById("taxRate");
+
+            let rowIndex = tbody.querySelectorAll("tr").length;
+
+            function parseNumber(val) {
+                if (!val) return 0;
+                return parseFloat(val.toString().replace(",", ".")) || 0;
+            }
+
+            function formatCurrency(val) {
+                return val.toFixed(2) + " МКД";
+            }
+
+            function calculate() {
+
+                let net = 0;
+
+                tbody.querySelectorAll("tr").forEach(row => {
+
+                    const qty = parseNumber(row.querySelector(".qty")?.value);
+                    const price = parseNumber(row.querySelector(".price")?.value);
+
+                    const total = qty * price;
+
+                    const totalInput = row.querySelector(".total");
+                    if (totalInput) totalInput.value = total.toFixed(2);
+
+                    net += total;
+                });
+
+                const taxRate = parseNumber(taxRateEl?.value);
+                const tax = net * taxRate / 100;
+                const gross = net + tax;
+
+                document.getElementById("netTotal").innerText = formatCurrency(net);
+                document.getElementById("taxTotal").innerText = formatCurrency(tax);
+                document.getElementById("grossTotal").innerText = formatCurrency(gross);
+                document.getElementById("taxLabel").innerText = `ДДВ (${taxRate}%)`;
+            }
+
+            // ➕ ADD ROW
+            document.getElementById("addRow").addEventListener("click", function () {
+
+                const row = `
+                <tr>
+                    <td><input name="Items[${rowIndex}].Description" class="form-control"/></td>
+                    <td><input type="number" step="0.01" value="1" name="Items[${rowIndex}].Quantity" class="form-control qty"/></td>
+                    <td><input name="Items[${rowIndex}].Unit" value="бр." class="form-control"/></td>
+                    <td><input type="number" step="0.01" value="0" name="Items[${rowIndex}].UnitPrice" class="form-control price"/></td>
+                    <td><input type="number" step="0.01" value="0" name="Items[${rowIndex}].TotalPrice" class="form-control total" readonly/></td>
+                    <td><button type="button" class="btn btn-ghost removeRow">x</button></td>
+                </tr>`;
+
+                tbody.insertAdjacentHTML("beforeend", row);
+                rowIndex++;
+
+                calculate();
+            });
+
+            // ❌ REMOVE
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("removeRow")) {
+                    e.target.closest("tr").remove();
+                    calculate();
+                }
+            });
+
+            // 🔄 LIVE INPUT
+            document.addEventListener("input", function (e) {
+                if (e.target.classList.contains("qty") || e.target.classList.contains("price")) {
+                    calculate();
+                }
+            });
+
+            // TAX CHANGE
+            taxRateEl?.addEventListener("change", calculate);
+
+            // INIT
+            calculate();
+
+        });
+    </script>
+}

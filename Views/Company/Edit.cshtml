@@ -1,0 +1,148 @@
+﻿@model BauFlow.ViewModels.CompanyViewModel
+
+@{
+    ViewData["Title"] = "Фирма - Измени";
+}
+@if (TempData["Success"] != null)
+{
+    <div style="
+        background:#e6fcf5;
+        border:1px solid #96f2d7;
+        color:#087f5b;
+        padding:12px;
+        border-radius:12px;
+        margin-bottom:20px;">
+        
+        ✔ @TempData["Success"]
+    </div>
+}
+<style>
+    .page-card {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.04);
+        padding: 32px;
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .form-control {
+        border-radius: 14px;
+        border: 1px solid #e2e5ea;
+        min-height: 52px;
+    }
+
+    .btn-primary-custom {
+        background: #111;
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-weight: 600;
+    }
+
+        .btn-primary-custom:hover {
+            background: #000;
+        }
+
+    .btn-light-custom {
+        background: #f6f7f9;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 18px;
+    }
+</style>
+
+<div class="container py-4">
+
+    <div class="page-card">
+
+        <h4 class="mb-4">Измени фирма</h4>
+
+        <form asp-action="Edit" method="post">
+
+            <!-- NAME -->
+            <div class="section-title">Основни податоци</div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" />
+                <label>Име на фирма</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- ADDRESS -->
+            <div class="form-floating mb-3">
+                <input asp-for="Address" class="form-control" />
+                <label>Адреса</label>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input asp-for="PostalCode" class="form-control" />
+                        <label>Поштенски број</label>
+                        <span asp-validation-for="PostalCode" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input asp-for="City" class="form-control" />
+                        <label>Град</label>
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Country" class="form-control" />
+                        <label>Држава</label>
+                        <span asp-validation-for="Country" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAX -->
+            <div class="section-title mt-3">Даночни податоци</div>
+
+            <div class="form-floating mb-4">
+                <input asp-for="TaxNumber" class="form-control" />
+                <label>Даночен број</label>
+                <span asp-validation-for="TaxNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="IBAN" class="form-control" />
+                <label>IBAN</label>
+                <span asp-validation-for="IBAN" class="text-danger"></span>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex gap-3">
+
+                <button type="submit" class="btn btn-primary-custom">
+                    Зачувај
+                </button>
+                <a asp-action="Index" class="btn btn-light-custom">
+                    Откажи
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    setTimeout(() => {
+        const alert = document.querySelector(".alert");
+        if (alert) alert.style.display = "none";
+    }, 3000);
+</script>

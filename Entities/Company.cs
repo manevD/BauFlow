@@ -60,6 +60,12 @@ namespace BauFlow.Entities
 
         public string EmailFrom { get; set; }
         public string EmailFromName { get; set; }
+
+        [Required(ErrorMessage = "IBAN е задолжителен")]
+        [MaxLength(34)]
+        [RegularExpression(@"^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$",
+           ErrorMessage = "Невалиден IBAN формат")]
+        public string IBAN { get; set; }
     }
     public enum Plan
     {
