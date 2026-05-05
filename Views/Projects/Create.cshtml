@@ -1,60 +1,6 @@
 ﻿@model BauFlow.Entities.Project
 
-<style>
-
-    .profile-card {
-        background: #fff;
-        border: 1px solid #eceef2;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,.04);
-        padding: 35px;
-        width: 100%;
-        max-width: 700px;
-    }
-
-    .form-control {
-        background: #fff;
-        border: 1px solid #e2e5ea;
-        border-radius: 14px;
-    }
-
-        .form-control:focus {
-            border-color: #111;
-            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
-        }
-
-    .btn-primary {
-        background: #111 !important;
-        border: none !important;
-        border-radius: 14px;
-        font-weight: 600;
-    }
-
-        .btn-primary:hover {
-            background: #000 !important;
-        }
-
-    .info-box {
-        background: #f6f7f9;
-        border-radius: 12px;
-        padding: 14px;
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 20px;
-    }
-
-    .btn-secondary-custom {
-        background: #f6f7f9;
-        border: none;
-        border-radius: 14px;
-    }
-
-        .btn-secondary-custom:hover {
-            background: #eceef2;
-        }
-
-</style>
-
+<link href="~/css/siteUser.css" rel="stylesheet" />
 
 <div class="d-flex justify-content-center">
 
@@ -101,32 +47,26 @@
                           placeholder="Опис"></textarea>
                 <label asp-for="Description">Опис</label>
             </div>
-
-
-            <!-- Статус -->
             <div class="form-floating mb-4">
                 <select asp-for="Status" class="form-control">
-                    <option value="Open">Отворен</option>
-                    <option value="InProgress">Во тек</option>
-                    <option value="Completed">Завршен</option>
+                    <option value="Отворен">Отворен</option>
+                    <option value="Во тек">Во тек</option>
+                    <option value="Завршен">Завршен</option>
                 </select>
                 <label asp-for="Status">Статус</label>
             </div>
 
 
-            <div class="d-flex gap-3">
-
                 <button type="submit"
-                        class="btn btn-primary flex-fill">
+                        class="btn btn-primary-custom w-100">
                     Креирај проект
                 </button>
+            <div id="testResult" class="mb-3"></div>
 
-                <a asp-action="Index"
-                       class="btn btn-secondary-custom flex-fill">
-                    Откажи
-                </a>
+            <a asp-action="Index" style="margin-top:10px;" type="button" class="btn btn-ghost w-100 mb-3">
+                Откажи
+            </a>
 
-            </div>
 
         </form>
 

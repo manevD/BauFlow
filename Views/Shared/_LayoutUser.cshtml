@@ -1,131 +1,124 @@
 ﻿@using BauFlow.Areas.Identity.Pages.Account.Manage
 <!DOCTYPE html>
-<html lang="de">
+<html lang="mk">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BauFlow</title>
 
+    <!-- FIX: само еднаш bootstrap -->
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        body {
-            background: #f6f7f9;
-            color: #111;
-            min-height: 100vh;
-        }
+            body {
+                background: #f6f7f9;
+                color: #111;
+                min-height: 100vh;
+            }
+
             .nav-link i {
                 margin-right: 8px;
             }
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: #ffffff;
-            border-right: 1px solid #eceef2;
-            box-shadow: 4px 0 20px rgba(0,0,0,.03);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 1030;
-        }
 
-            .sidebar .nav-link {
-                color: #444;
-                border-radius: 12px;
-                padding: 10px 14px;
-                font-weight: 500;
-                transition: all .2s ease;
-            }
-
-                .sidebar .nav-link:hover {
-                    background: #f1f3f5;
-                    color: #000;
-                }
-
-                .sidebar .nav-link.active {
-                    background: #111;
-                    color: #fff !important;
-                }
-
-        /* MAIN AREA */
-        .main-area {
-            margin-left: 260px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* TOPBAR */
-        .topbar {
-            background: #ffffff;
-            border-bottom: 1px solid #eceef2;
-        }
-
-        /* CONTENT */
-        main {
-            flex: 1;
-            background: #f6f7f9;
-        }
-
-        .content-wrapper {
-            padding: 40px 60px;
-        }
-
-        /* FOOTER */
-        .footer {
-            background: #ffffff;
-            border-top: 1px solid #eceef2;
-            color: #6b7280;
-        }
-
-        /* MOBILE */
-        #sidebarToggle {
-            display: none;
-        }
-
-        @@media (max-width: 991.98px) {
-
+            /* SIDEBAR */
             .sidebar {
-                left: -280px;
-                transition: all .3s ease;
-            }
-
-                .sidebar.show {
-                    left: 0;
-                }
-
-            .main-area {
-                margin-left: 0;
-            }
-
-            #sidebarToggle {
-                display: inline-block;
-            }
-
-            .overlay {
-                display: none;
+                width: 260px;
+                background: #fff;
+                border-right: 1px solid #eceef2;
+                box-shadow: 4px 0 20px rgba(0,0,0,.03);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
                 position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,.4);
-                z-index: 1025;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1030;
             }
 
-                .overlay.show {
-                    display: block;
+                .sidebar .nav-link {
+                    color: #444;
+                    border-radius: 12px;
+                    padding: 10px 14px;
+                    font-weight: 500;
                 }
-        }
 
-        h1, h2, h3, h4, h5 {
-            font-weight: 600;
-        }
+                    .sidebar .nav-link:hover {
+                        background: #f1f3f5;
+                        color: #000;
+                    }
+
+                    .sidebar .nav-link.active {
+                        background: #111;
+                        color: #fff !important;
+                    }
+
+            /* MAIN */
+            .main-area {
+                margin-left: 260px;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .topbar {
+                background: #fff;
+                border-bottom: 1px solid #eceef2;
+            }
+
+            .content-wrapper {
+                padding: 40px 60px;
+            }
+
+            .footer {
+                background: #fff;
+                border-top: 1px solid #eceef2;
+                color: #6b7280;
+            }
+
+            /* MOBILE */
+            #sidebarToggle {
+                display: none;
+            }
+
+            @@media (max-width: 991px) {
+                .sidebar {
+                    left: -280px;
+                    transition: .3s;
+                }
+
+                    .sidebar.show {
+                        left: 0;
+                    }
+
+                .main-area {
+                    margin-left: 0;
+                }
+
+                #sidebarToggle {
+                    display: inline-block;
+                }
+
+                .overlay {
+                    display: none;
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,.4);
+                    z-index: 1025;
+                }
+
+                    .overlay.show {
+                        display: block;
+                    }
+            }
     </style>
 </head>
 
 <body>
+
+    <!-- FIX: overlay -->
+    <div class="overlay" id="overlay"></div>
 
     <div class="d-flex">
 
@@ -137,36 +130,30 @@
 
                 <ul class="nav nav-pills flex-column gap-2">
 
-                  @*   <li class="nav-item">
-                        <a asp-controller="Home" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
-                            Почетна
-                        </a>
-                    </li> *@
                     <li class="nav-item">
                         <a asp-controller="Projects" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projects" ? "active" : "")">
+                               class="nav-link @(IsActive("Projects", "Index") ? "active" : "")">
                             <i class="bi bi-kanban"></i> Проекти
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Quotes" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Quotes" ? "active" : "")">
+                               class="nav-link @(IsActive("Quotes", "Index") ? "active" : "")">
                             <i class="bi bi-file-earmark-text"></i> Понуди
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Invoices" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Invoices" ? "active" : "")">
+                               class="nav-link @(IsActive("Invoices", "Index") ? "active" : "")">
                             <i class="bi bi-receipt"></i> Фактури
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a asp-controller="Customers" asp-action="Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Customers" ? "active" : "")">
+                               class="nav-link @(IsActive("Customers", "Index") ? "active" : "")">
                             <i class="bi bi-people"></i> Клиенти
                         </a>
                     </li>
@@ -175,25 +162,32 @@
                     {
                         <li class="nav-item">
                             <a asp-controller="Users" asp-action="Index"
-                                   class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+                                   class="nav-link @(IsActive("Users", "Index") ? "active" : "")">
                                 <i class="bi bi-person-gear"></i> Корисници
                             </a>
                         </li>
-                    }
 
-                    <li class="nav-item">
-                        <a asp-controller="Company" asp-action="EmailSettings"
-                               class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
-                            <i class="bi bi-envelope-gear"></i> Поставки за е-пошта
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a asp-controller="Company" asp-action="EmailSettings"
+                                   class="nav-link @(IsActive("Company", "EmailSettings") ? "active" : "")">
+                                <i class="bi bi-envelope"></i> Е-пошта
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Company" asp-action="Edit"
+                                   class="nav-link @(IsActive("Company", "Edit") ? "active" : "")">
+                                <i class="bi bi-gear"></i> Фирма
+                            </a>
+                        </li>
+                    }
 
                     <li class="mt-4 text-uppercase small text-muted">Поставки</li>
 
                     <li class="nav-item">
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/Index"
-                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Manage/Index") == true ? "active" : "")">
+                               class="nav-link @(IsPageActive("Manage/Index") ? "active" : "")">
                             <i class="bi bi-person"></i> Профил
                         </a>
                     </li>
@@ -201,7 +195,7 @@
                     <li class="nav-item">
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/ChangePassword"
-                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("ChangePassword") == true ? "active" : "")">
+                               class="nav-link @(IsPageActive("ChangePassword") ? "active" : "")">
                             <i class="bi bi-key"></i> Лозинка
                         </a>
                     </li>
@@ -209,7 +203,7 @@
                     <li class="nav-item">
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/Email"
-                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("Email") == true ? "active" : "")">
+                               class="nav-link @(IsPageActive("Email") ? "active" : "")">
                             <i class="bi bi-envelope"></i> Е-пошта
                         </a>
                     </li>
@@ -217,7 +211,7 @@
                     <li class="nav-item">
                         <a asp-area="Identity"
                                asp-page="/Account/Manage/PersonalData"
-                               class="nav-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.Contains("PersonalData") == true ? "active" : "")">
+                               class="nav-link @(IsPageActive("PersonalData") ? "active" : "")">
                             <i class="bi bi-file-person"></i> Податоци
                         </a>
                     </li>
@@ -236,7 +230,6 @@
                     <button type="submit" class="btn btn-outline-secondary w-100 mb-3">
                         Одјави се
                     </button>
-
                 </form>
 
                 <div class="footer text-center small py-3">
@@ -246,7 +239,7 @@
 
         </nav>
 
-        <!-- MAIN -->
+        <!-- ТВОЈ MAIN (НЕСКРАТЕН) -->
         <div class="main-area flex-fill">
 
             <header class="topbar px-4 py-3 d-flex justify-content-between align-items-center">
@@ -264,26 +257,39 @@
         </div>
 
     </div>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const toggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const toggle = document.getElementById('sidebarToggle');
 
-        toggle.addEventListener('click', () => {
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
-        });
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            });
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.
-            ('show');
-            overlay.classList.remove('show');
-        });
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('show'); // FIX
+                overlay.classList.remove('show');
+            });
     </script>
 
-    @RenderSection("Scripts", required: false)
+@functions {
+    public bool IsActive(string controller, string action)
+    {
+        return ViewContext.RouteData.Values["Controller"]?.ToString() == controller
+            && ViewContext.RouteData.Values["Action"]?.ToString() == action;
+    }
+
+    public bool IsPageActive(string page)
+    {
+        return ViewContext.RouteData.Values["Page"]?.ToString()?.Contains(page) == true;
+    }
+}
+
+@RenderSection("Scripts", required: false)
 
 </body>
 </html>

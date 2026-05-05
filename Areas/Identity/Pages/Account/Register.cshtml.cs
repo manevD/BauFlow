@@ -140,6 +140,12 @@ namespace BauFlow.Areas.Identity.Pages.Account
             [Display(Name = "Мало претпријатие")]
             public bool IsSmallBusiness { get; set; }
 
+            [Required(ErrorMessage = "IBAN е задолжителен")]
+            [MaxLength(34)]
+            [RegularExpression(@"^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$",
+           ErrorMessage = "Невалиден IBAN формат")]
+            public string IBAN { get; set; }
+
 
             // ========================
             // BRANDING
@@ -192,6 +198,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
                         City = Input.City,
                         Country = Input.Country,
                         TaxNumber = Input.TaxNumber,
+                        IBAN = Input.IBAN,
                         VatId = Input.VatId,
                         IsSmallBusiness = Input.IsSmallBusiness,
                         IsTrial = false,

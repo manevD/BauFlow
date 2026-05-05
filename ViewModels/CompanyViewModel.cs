@@ -23,10 +23,10 @@ namespace BauFlow.ViewModels
         // TAX
         [MaxLength(50)]
         public string? TaxNumber { get; set; }
+
         [Required(ErrorMessage = "IBAN е задолжителен")]
         [MaxLength(34)]
-        [RegularExpression(@"^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$",
-           ErrorMessage = "Невалиден IBAN формат")]
+        [RegularExpression(@"^[A-Z]{2}[0-9]{2}([ ]?[A-Z0-9]){1,30}$", ErrorMessage = "Невалиден IBAN формат")]
         public string IBAN { get; set; }
     }
 }

@@ -4,162 +4,68 @@
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
 
-<style>
+<link href="~/css/siteUser.css" rel="stylesheet" />
 
-    body {
-        background: #f6f7f9;
-        color: #111;
-    }
-
-    .profile-card {
-        background: #ffffff;
-        border: 1px solid #eceef2;
-        border-radius: 20px;
-        box-shadow: 0 8px 24px rgba(0,0,0,.04);
-        padding: 35px;
-    }
-
-    .form-control {
-        background: #ffffff;
-        border: 1px solid #e2e5ea;
-        color: #111;
-        border-radius: 14px;
-    }
-
-        .form-control:focus {
-            border-color: #111;
-            box-shadow: 0 0 0 3px rgba(0,0,0,.05);
-        }
-
-    .form-floating label {
-        color: #6b7280;
-    }
-
-    .btn-primary {
-        background: #111 !important;
-        border: none !important;
-        color: #fff !important;
-        border-radius: 14px;
-        font-weight: 600;
-        transition: all .2s ease;
-    }
-
-        .btn-primary:hover {
-            background: #000 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(0,0,0,.15);
-        }
-
-    .btn-link {
-        color: #111;
-        font-weight: 500;
-        text-decoration: none;
-    }
-
-        .btn-link:hover {
-            text-decoration: underline;
-        }
-
-    .validation-summary-errors,
-    .field-validation-error {
-        color: #dc3545;
-    }
-
-    @@media (max-width: 576px) {
-
-        .content-wrapper {
-            padding: 20px 18px;
-        }
-
-        .profile-card {
-            padding: 22px;
-            border-radius: 18px;
-        }
-
-        .form-floating {
-            margin-bottom: 16px !important;
-        }
-
-        .form-control {
-            height: 52px;
-            font-size: 15px;
-        }
-
-        .btn-primary {
-            padding: 14px;
-            font-size: 15px;
-        }
-
-        h3 {
-            font-size: 20px;
-            margin-bottom: 18px;
-        }
-    }
-
-</style>
 
 <partial name="_StatusMessage" for="StatusMessage" />
 
-<div class="row">
-    <div class="col-md-6">
+<div class="col-md-6">
 
-        <div class="profile-card">
+    <div class="profile-card">
 
-            <h3>Промени е-пошта</h3>
+        <h3>Промени е-пошта</h3>
 
-            <form id="email-form" method="post">
+        <form id="email-form" method="post">
 
-                <div asp-validation-summary="All"
-                     class="text-danger mb-3"
-                     role="alert"></div>
+            <div asp-validation-summary="All"
+                 class="text-danger mb-3"
+                 role="alert"></div>
 
-                @if (Model.IsEmailConfirmed)
-                {
-                    <div class="form-floating mb-4">
-                        <input asp-for="Email"
-                               class="form-control"
-                               disabled />
-                        <label asp-for="Email">Е-пошта</label>
-                    </div>
-                }
-                else
-                {
-                    <div class="form-floating mb-2">
-                        <input asp-for="Email"
-                               class="form-control"
-                               disabled />
-                        <label asp-for="Email">Е-пошта</label>
-                    </div>
-
-                    <button id="email-verification"
-                            type="submit"
-                            asp-page-handler="SendVerificationEmail"
-                            class="btn btn-link mb-4 p-0">
-                        Испрати е-пошта за потврда
-                    </button>
-                }
-
+            @if (Model.IsEmailConfirmed)
+            {
                 <div class="form-floating mb-4">
-                    <input asp-for="Input.NewEmail"
+                    <input asp-for="Email"
                            class="form-control"
-                           autocomplete="email"
-                           aria-required="true"
-                           placeholder="Нова е-пошта" />
-                    <label asp-for="Input.NewEmail">Нова е-пошта</label>
-                    <span asp-validation-for="Input.NewEmail"
-                          class="small text-danger"></span>
+                           disabled />
+                    <label asp-for="Email">Е-пошта</label>
+                </div>
+            }
+            else
+            {
+                <div class="form-floating mb-2">
+                    <input asp-for="Email"
+                           class="form-control"
+                           disabled />
+                    <label asp-for="Email">Е-пошта</label>
                 </div>
 
-                <button id="change-email-button"
+                <button id="email-verification"
                         type="submit"
-                        asp-page-handler="ChangeEmail"
-                        class="w-100 btn btn-lg btn-primary">
-                    Промени е-пошта
+                        asp-page-handler="SendVerificationEmail"
+                        class="btn btn-link mb-4 p-0">
+                    Испрати е-пошта за потврда
                 </button>
+            }
 
-            </form>
+            <div class="form-floating mb-4">
+                <input asp-for="Input.NewEmail"
+                       class="form-control"
+                       autocomplete="email"
+                       aria-required="true"
+                       placeholder="Нова е-пошта" />
+                <label asp-for="Input.NewEmail">Нова е-пошта</label>
+                <span asp-validation-for="Input.NewEmail"
+                      class="small text-danger"></span>
+            </div>
 
-        </div>
+            <button id="change-email-button"
+                    type="submit"
+                    asp-page-handler="ChangeEmail"
+                    class="btn btn-primary-custom w-100">
+                Промени е-пошта
+            </button>
+
+        </form>
     </div>
 </div>
 

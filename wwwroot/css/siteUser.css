@@ -1,0 +1,299 @@
+/* ===== BASE ===== */
+body {
+    background: #f9f9fb;
+    color: #111;
+    font-size: 14px;
+}
+
+/* ===== CARDS ===== */
+.page-card,
+.profile-card {
+    background: #fff;
+    border: 1px solid #eceef2;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.04);
+    padding: 32px;
+    width: 100%;
+    max-width: 750px;
+    margin: auto;
+}
+
+/* ===== INPUTS ===== */
+.form-control,
+.form-select {
+    background: #fff;
+    border: 1px solid #e2e5ea;
+    border-radius: 14px;
+    min-height: 48px;
+    font-size: 14px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #111;
+        box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+    }
+
+/* ===== BUTTONS ===== */
+.btn-primary-custom,
+.btn-dark-custom {
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+    .btn-primary-custom:hover,
+    .btn-dark-custom:hover {
+        background: #000;
+    }
+
+.btn-ghost,
+.btn-light-custom {
+    background: #f6f7f9;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    transition: .2s;
+}
+.btn-ghost-danger
+ {
+    background: red;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    transition: .2s;
+}
+
+    .btn-ghost:hover,
+    .btn-light-custom:hover {
+        background: #eceef2;
+    }
+
+.btn-danger-custom {
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 16px;
+}
+
+    .btn-danger-custom:hover {
+        background: #000;
+    }
+
+/* ===== TEXT ===== */
+.section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.hint {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* ===== TABLE ===== */
+.table thead {
+    background: #fafafa;
+}
+
+.table th {
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+}
+
+.table td {
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: #f9f9fb;
+}
+
+/* ===== STATUS ===== */
+.status-pill {
+    background: #f6f7f9;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.status-paid {
+    background: #111;
+    color: #fff;
+}
+
+.status-open {
+    background: #f6f7f9;
+}
+
+/* ===== BOXES ===== */
+.info-box {
+    background: #f6f7f9;
+    border-radius: 12px;
+    padding: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.warning-box {
+    background: #fff5f5;
+    border: 1px solid #ffe3e3;
+    color: #c92a2a;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 20px;
+}
+
+/* ===== SUMMARY ===== */
+.summary-box {
+    background: #f6f7f9;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.summary-total {
+    font-weight: 700;
+    font-size: 18px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+/* ===== AVATAR ===== */
+.avatar,
+.avatar-lg {
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+}
+
+.avatar-lg {
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
+}
+
+/* ===== SEARCH ===== */
+.search-box {
+    max-width: 320px;
+}
+
+/* ===== STATS ===== */
+.stat-card {
+    background: #f6f7f9;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+/* ===== PAGE CARD ===== */
+.page-card {
+    background: #fff;
+    border: 1px solid #eceef2;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.04);
+    padding: 30px;
+    width: 100%;
+}
+
+/* ===== AVATAR ===== */
+.avatar-lg {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: #111;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* ===== INFO ROW ===== */
+.info-row {
+    border-bottom: 1px solid #f1f1f1;
+    padding: 12px 0;
+    font-size: 14px;
+}
+
+/* ===== TEXT ===== */
+.label {
+    color: #666;
+    font-weight: 500;
+}
+
+.value {
+    color: #111;
+}
+
+/* ===== STATUS ===== */
+.status-pill {
+    background: #f6f7f9;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-dark-custom {
+    background: #111;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    padding: 8px 14px;
+}
+
+    .btn-dark-custom:hover {
+        background: #000;
+    }
+
+.btn-light-custom {
+    background: #f6f7f9;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 14px;
+}
+
+    .btn-light-custom:hover {
+        background: #eceef2;
+    }

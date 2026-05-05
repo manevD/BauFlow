@@ -2,6 +2,7 @@
 using BauFlow.Security;
 using BauFlow.Services;
 using BauFlow.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Mail;
@@ -9,7 +10,7 @@ using System.Net.Mail;
 namespace BauFlow.Controllers
 {
     [RequireTenant]
-
+    [Authorize("OwnerOnly")]
     public class CompanyController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,6 +20,7 @@ namespace BauFlow.Controllers
             _encryptionService = encryptionService;
             _context = context;
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
@@ -34,7 +36,8 @@ namespace BauFlow.Controllers
                 PostalCode = company.PostalCode,
                 City = company.City,
                 Country = company.Country,
-                TaxNumber = company.TaxNumber
+                TaxNumber = company.TaxNumber,
+                IBAN = company.IBAN,
             };
             return View(companyViewModel);
         }
@@ -57,7 +60,7 @@ namespace BauFlow.Controllers
             company.City = companyViewModel.City;
             company.Country = companyViewModel.Country;
             company.TaxNumber = companyViewModel.TaxNumber;
-            company.IBAN = companyViewModel.IBAN;
+            company.IBAN = companyViewModel.IBAN.Replace(" ", "");
 
             await _context.SaveChangesAsync(); 
 
