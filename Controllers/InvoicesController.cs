@@ -182,12 +182,12 @@ namespace BauFlow.Controllers
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value).Name);
+            var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value));
 
             var pdf = document.GeneratePdf();
 
             return File(pdf, "application/pdf",
-                $"Rechnung-{invoice.InvoiceNumber}.pdf");
+                $"Фактура-{invoice.InvoiceNumber}.pdf");
         }
         // GET: Invoices/Edit/5
         public async Task<IActionResult> Edit(Guid? id)

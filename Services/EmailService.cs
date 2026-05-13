@@ -12,13 +12,16 @@ public class EmailService : IEmailService
 {
     private readonly EmailTemplateService _templateService;
     private readonly EmailSettings _defaultSettings;
+    private readonly ApplicationDbContext _context;
 
     public EmailService(
         EmailTemplateService templateService,
-        IOptions<EmailSettings> defaultSettings)
+        IOptions<EmailSettings> defaultSettings,
+        ApplicationDbContext context)
     {
         _templateService = templateService;
         _defaultSettings = defaultSettings.Value;
+        _context = context;
     }
     public async Task SendInvite(string email, string name, string inviteLink)
     {
@@ -45,7 +48,7 @@ public class EmailService : IEmailService
     public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings,string companyName)
     {
         var template = _templateService.LoadTemplate("Invoice.cshtml");
-        var document = new InvoiceDocument(invoice, companyName);
+        var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value));
         var pdf = document.GeneratePdf();
 
         var data = new Dictionary<string, string>
