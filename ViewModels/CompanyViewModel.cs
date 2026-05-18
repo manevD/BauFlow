@@ -7,6 +7,8 @@ namespace BauFlow.ViewModels
         [Required, MaxLength(200)]
         public string Name { get; set; }
 
+        [EmailAddress]
+        public string? Accountant { get; set; }
         // ADDRESS
         [Required, MaxLength(300)]
         public string Address { get; set; }
@@ -24,9 +26,11 @@ namespace BauFlow.ViewModels
         [MaxLength(50)]
         public string? TaxNumber { get; set; }
 
-        [Required(ErrorMessage = "IBAN е задолжителен")]
-        [MaxLength(34)]
-        [RegularExpression(@"^[A-Z]{2}[0-9]{2}([ ]?[A-Z0-9]){1,30}$", ErrorMessage = "Невалиден IBAN формат")]
+        [Required(ErrorMessage = "Жиросметката е задолжителна")]
         public string IBAN { get; set; }
+
+        [Required(ErrorMessage = "Име на банката е задолжително")]
+        public string BankName { get; set; }
+
     }
 }

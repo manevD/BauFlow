@@ -1,15 +1,44 @@
 ﻿using BauFlow.Data;
 using BauFlow.Entities;
+using BauFlow.Interfaces;
+using BauFlow.Models;
 using BauFlow.Security;
+using BauFlow.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
 
 namespace BauFlow.Controllers
 {
     [RequireTenant]
-    public class QuotesController(ApplicationDbContext _context) : Controller
+    public class QuotesController : Controller
     {
+        private readonly ApplicationDbContext _context;
+        private readonly NumberService _numberService;
+        private readonly EmailService _emailService;
+        private readonly EmailEncryptionService _encryptionService;
+        public QuotesController(ApplicationDbContext context, NumberService numberService, EmailService emailService, EmailEncryptionService encryptionService)
+        {
+            _context = context;
+            _emailService = emailService;
+            _numberService = numberService;
+            _encryptionService = encryptionService;
+        }
+        public async Task<IActionResult> Pdf(Guid id)
+        {
+            var quote = await _context.Quotes
+                .Include(x => x.Customer)
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var document = new QuotesDocument(quote, _context.Companies.Find(_context.CurrentCompanyId.Value));
+
+            var pdf = document.GeneratePdf();
+
+            return File(pdf, "application/pdf",
+                $"{quote.QuoteNumber}.pdf");
+        }
 
         // ===================== LIST =====================
         [Route("ponuda")]
@@ -40,7 +69,36 @@ namespace BauFlow.Controllers
                 ValidUntil = DateTime.Today.AddDays(7)
             });
         }
+        public async Task<IActionResult> SendInvoice(Guid invoiceId)
+        {
+            var invoice = await _context.Invoices
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync(x => x.Id == invoiceId);
 
+            if (invoice == null)
+                return NotFound();
+
+            var company = await _context.Companies.FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
+
+            var settings = new EmailSettings
+            {
+                Host = company.EmailHost,
+                Port = company.EmailPort,
+                UserName = company.EmailUser,
+                Password = _encryptionService.Decrypt(company.EmailPassword),
+                EnableSSL = company.EmailSSL,
+                From = company.EmailFrom,
+                FromName = company.EmailFromName
+            };
+
+            await _emailService.SendInvoice(
+                invoice.Customer.Email,
+                invoice,
+                settings, company.Name
+            );
+
+            return RedirectToAction("Details", new { id = invoiceId });
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Quote quote)

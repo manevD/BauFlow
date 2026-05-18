@@ -10,14 +10,32 @@
 
         <h4>@Model.QuoteNumber</h4>
 
-        <a asp-controller="Invoices"
+      
+        <div class="d-flex gap-2">
+            <a asp-controller="Invoices"
                asp-action="CreateFromQuote"
                asp-route-quoteId="@Model.Id"
                class="btn btn-primary-custom">
 
-            Креирај фактура
+                Креирај фактура
 
-        </a>
+            </a>
+            @if (!string.IsNullOrEmpty(Model.Customer.Email))
+            {
+                <a asp-action="SendInvoice"
+                   asp-route-invoiceId="@Model.Id"
+                   asp-route-customerId="@Model.CustomerId"
+                   class="btn btn-ghost">
+                    Испрати
+                </a>
+            }
+
+            <a asp-action="Pdf"
+               asp-route-id="@Model.Id"
+               class="btn btn-ghost">
+                Преземи PDF
+            </a>
+        </div>
 
     </div>
 
@@ -50,7 +68,6 @@
         </div>
 
     </div>
-
     <div class="info-row row">
 
         <div class="col-3 label">Статус</div>

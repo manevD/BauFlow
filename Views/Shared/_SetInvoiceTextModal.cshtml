@@ -1,0 +1,36 @@
+﻿@using BauFlow.Entities
+@model InvoiceText
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        Текст за фактура
+    </h5>
+
+    <button type="button"
+            class="btn-close"
+            data-bs-dismiss="modal">
+    </button>
+</div>
+
+<form asp-action="SetInvoiceText">
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="modal-body">
+
+        <textarea asp-for="Text"
+                  class="form-control"
+                  rows="8">
+        </textarea>
+
+    </div>
+
+    <div class="modal-footer">
+
+        <button class="btn btn-success">
+            Зачувај
+        </button>
+
+    </div>
+
+</form>

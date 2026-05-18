@@ -140,10 +140,7 @@ namespace BauFlow.Areas.Identity.Pages.Account
             [Display(Name = "Мало претпријатие")]
             public bool IsSmallBusiness { get; set; }
 
-            [Required(ErrorMessage = "IBAN е задолжителен")]
-            [MaxLength(34)]
-            [RegularExpression(@"^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$",
-           ErrorMessage = "Невалиден IBAN формат")]
+            [Required(ErrorMessage = "Жиросметката е задолжителна")]
             public string IBAN { get; set; }
 
 

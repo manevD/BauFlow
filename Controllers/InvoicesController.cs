@@ -3,6 +3,7 @@ using BauFlow.Entities;
 using BauFlow.Models;
 using BauFlow.Security;
 using BauFlow.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,45 @@ namespace BauFlow.Controllers
             _emailService = emailService;
             _numberService = numberService;
             _encryptionService = encryptionService;
+        }
+        [HttpGet]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> SetInvoiceText()
+        {
+            var invoiceText = _context.InvoiceTexts.FirstOrDefault(x => x.CompanyId == _context.CurrentCompanyId.Value);
+            if (invoiceText == null)
+            {
+              invoiceText = new InvoiceText
+              {
+                  CompanyId = _context.CurrentCompanyId.Value,
+                  Text = ""
+              };
+            }
+            return PartialView("_SetInvoiceTextModal", invoiceText);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> SetInvoiceText(InvoiceText model)
+        {
+            var existing = _context.InvoiceTexts
+                .FirstOrDefault(x =>
+                    x.CompanyId == _context.CurrentCompanyId.Value);
+
+            if (existing == null)
+            {
+                model.CompanyId = _context.CurrentCompanyId.Value;
+
+                _context.InvoiceTexts.Add(model);
+            }
+            else
+            {
+                existing.Text = model.Text ?? "";
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Invoices
@@ -59,10 +99,13 @@ namespace BauFlow.Controllers
                 Text = c.Name
             }).ToList();
             ViewBag.TaxRates = GetTaxRates(); // 🔥 NEU
-
+            var existing = _context.InvoiceTexts
+               .FirstOrDefault(x =>
+                   x.CompanyId == _context.CurrentCompanyId.Value);
             return View(new Invoice
             {
                 TaxRate = 19,
+                Description = existing?.Text ?? "",
                 DueDate = DateTime.UtcNow.AddDays(7)
             });
         }

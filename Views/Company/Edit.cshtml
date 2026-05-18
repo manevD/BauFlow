@@ -67,6 +67,14 @@
                         <span asp-validation-for="Country" class="text-danger"></span>
                     </div>
                 </div>
+
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input type="email" asp-for="Accountant" class="form-control" />
+                        <label>Е-пошта на сметководител</label>
+                        <span asp-validation-for="Accountant" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
             <!-- TAX -->
@@ -77,12 +85,18 @@
                 <label>Даночен број</label>
                 <span asp-validation-for="TaxNumber" class="text-danger"></span>
             </div>
-
+            <div class="form-floating mb-3">
+                <input asp-for="BankName"
+                       class="form-control"
+                       placeholder="@(string.IsNullOrEmpty(Model?.BankName) ? "Име на банка" : "")" />
+                <label>Име на банка</label>
+                <span asp-validation-for="BankName" class="text-danger"></span>
+            </div>
             <div class="form-floating mb-3">
                 <input asp-for="IBAN"
                        class="form-control"
-                       placeholder="@(string.IsNullOrEmpty(Model?.IBAN) ? "Број на картичка" : "")" />
-                <label>Број на картичка (IBAN)</label>
+                       placeholder="@(string.IsNullOrEmpty(Model?.IBAN) ? "Број на жиросметка" : "")" />
+                <label>Број на жиросметка</label>
                 <span asp-validation-for="IBAN" class="text-danger"></span>
             </div>
 

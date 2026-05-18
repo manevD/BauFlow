@@ -36,8 +36,10 @@ namespace BauFlow.Controllers
                 PostalCode = company.PostalCode,
                 City = company.City,
                 Country = company.Country,
+                Accountant = company.Accountant,
                 TaxNumber = company.TaxNumber,
                 IBAN = company.IBAN,
+                BankName = company.BankName
             };
             return View(companyViewModel);
         }
@@ -60,7 +62,9 @@ namespace BauFlow.Controllers
             company.City = companyViewModel.City;
             company.Country = companyViewModel.Country;
             company.TaxNumber = companyViewModel.TaxNumber;
-            company.IBAN = companyViewModel.IBAN.Replace(" ", "");
+            company.IBAN = companyViewModel.IBAN;
+            company.Accountant = companyViewModel.Accountant;
+            company.BankName = companyViewModel.BankName;
 
             await _context.SaveChangesAsync(); 
 

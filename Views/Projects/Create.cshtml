@@ -46,6 +46,8 @@
                           style="height:100px"
                           placeholder="Опис"></textarea>
                 <label asp-for="Description">Опис</label>
+                <span asp-validation-for="Description"
+                      class="text-danger small"></span>
             </div>
             <div class="form-floating mb-4">
                 <select asp-for="Status" class="form-control">
