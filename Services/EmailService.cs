@@ -30,7 +30,7 @@ public class EmailService : IEmailService
         var message = new MailMessage
         {
             From = new MailAddress(_defaultSettings.From, _defaultSettings.FromName),
-            Subject = "Einladung zu BauFlow",
+            Subject = "Покана од Флоу",
             Body = html,
             IsBodyHtml = true
         };
@@ -56,7 +56,7 @@ public class EmailService : IEmailService
             { "CustomerName", invoice.Customer?.Name ?? "" },
             { "InvoiceNumber", invoice.InvoiceNumber },
             { "InvoiceDate", invoice.InvoiceDate.ToString("dd.MM.yyyy") },
-            { "Total", invoice.GrossAmount.ToString("C") },
+            { "Total", invoice.GrossAmount.ToString() + " МКД"},
             { "Description", invoice.Description ?? "" }
         };
 
@@ -65,9 +65,9 @@ public class EmailService : IEmailService
         var message = new MailMessage
         {
             From = new MailAddress(settings.From, settings.FromName),
-            Subject = $"Rechnung {invoice.InvoiceNumber}",
+            Subject = $"Фактура {invoice.InvoiceNumber}",
             Body = body,
-            Attachments = { new Attachment(new MemoryStream(pdf), $"Rechnung_{invoice.InvoiceNumber}.pdf") },
+            Attachments = { new Attachment(new MemoryStream(pdf), $"Фактура{invoice.InvoiceNumber}.pdf") },
             IsBodyHtml = true
         };
 
@@ -90,88 +90,88 @@ public class EmailService : IEmailService
     private string BuildInviteTemplate(string name, string link)
     {
         return $"""
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                        <meta charset="UTF-8">
-                        </head>
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="UTF-8">
+                    </head>
 
-                        <body style="margin:0;background:#f6f9fc;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+                    <body style="margin:0;background:#f6f9fc;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
 
-                        <table width="100%" cellpadding="0" cellspacing="0">
-                        <tr>
-                        <td align="center">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                    <td align="center">
 
-                        <table width="520" cellpadding="0" cellspacing="0" style="margin-top:40px;background:white;border-radius:12px;padding:40px">
+                    <table width="520" cellpadding="0" cellspacing="0" style="margin-top:40px;background:white;border-radius:12px;padding:40px">
 
-                        <tr>
-                        <td style="font-size:24px;font-weight:600;color:#111">
-                        BauFlow
-                        </td>
-                        </tr>
+                    <tr>
+                    <td style="font-size:24px;font-weight:600;color:#111">
+                    BauFlow
+                    </td>
+                    </tr>
 
-                        <tr>
-                        <td style="padding-top:30px;font-size:18px;font-weight:500">
-                        Du wurdest eingeladen
-                        </td>
-                        </tr>
+                    <tr>
+                    <td style="padding-top:30px;font-size:18px;font-weight:500">
+                    Добивте покана
+                    </td>
+                    </tr>
 
-                        <tr>
-                        <td style="padding-top:10px;color:#555;font-size:15px;line-height:1.6">
-                        {name},<br><br>
-                        du wurdest zu <b>BauFlow</b> eingeladen.<br>
-                        Klicke auf den Button, um dein Konto zu aktivieren.
-                        </td>
-                        </tr>
+                    <tr>
+                    <td style="padding-top:10px;color:#555;font-size:15px;line-height:1.6">
+                    {name},<br><br>
+                    поканети сте во <b>BauFlow</b>.<br>
+                    Кликнете на копчето подолу за да ја активирате вашата сметка.
+                    </td>
+                    </tr>
 
-                        <tr>
-                        <td align="center" style="padding-top:35px">
+                    <tr>
+                    <td align="center" style="padding-top:35px">
 
-                        <a href="{link}"
-                        style="
-                        background:#635bff;
-                        color:white;
-                        text-decoration:none;
-                        padding:14px 26px;
-                        border-radius:8px;
-                        font-weight:600;
-                        display:inline-block;
-                        font-size:15px;">
-                        Konto aktivieren
-                        </a>
+                    <a href="{link}"
+                    style="
+                    background:#635bff;
+                    color:white;
+                    text-decoration:none;
+                    padding:14px 26px;
+                    border-radius:8px;
+                    font-weight:600;
+                    display:inline-block;
+                    font-size:15px;">
+                    Активирај сметка
+                    </a>
 
-                        </td>
-                        </tr>
+                    </td>
+                    </tr>
 
-                        <tr>
-                        <td style="padding-top:30px;color:#888;font-size:13px">
-                        Oder kopiere diesen Link in deinen Browser:<br>
-                        {link}
-                        </td>
-                        </tr>
+                    <tr>
+                    <td style="padding-top:30px;color:#888;font-size:13px">
+                    Или копирајте го следниот линк во вашиот прелистувач:<br>
+                    {link}
+                    </td>
+                    </tr>
 
-                        <tr>
-                        <td style="padding-top:30px;font-size:12px;color:#999">
-                        Dieser Einladungslink läuft aus Sicherheitsgründen nach 24 Stunden ab.
-                        </td>
-                        </tr>
+                    <tr>
+                    <td style="padding-top:30px;font-size:12px;color:#999">
+                    Од безбедносни причини, овој линк за покана истекува по 24 часа.
+                    </td>
+                    </tr>
 
-                        </table>
+                    </table>
 
-                        <table width="520" cellpadding="0" cellspacing="0" style="margin-top:15px">
-                        <tr>
-                        <td style="text-align:center;font-size:12px;color:#999">
-                        © {DateTime.UtcNow.Year} BauFlow
-                        </td>
-                        </tr>
-                        </table>
+                    <table width="520" cellpadding="0" cellspacing="0" style="margin-top:15px">
+                    <tr>
+                    <td style="text-align:center;font-size:12px;color:#999">
+                    © {DateTime.UtcNow.Year} BauFlow
+                    </td>
+                    </tr>
+                    </table>
 
-                        </td>
-                        </tr>
-                        </table>
+                    </td>
+                    </tr>
+                    </table>
 
-                        </body>
-                        </html>
-                        """;
+                    </body>
+                    </html>
+                    """;
     }
 }

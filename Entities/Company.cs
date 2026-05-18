@@ -60,6 +60,7 @@ namespace BauFlow.Entities
         [DataType(DataType.Password)]
         public string EmailPassword { get; set; }
         public bool EmailSSL { get; set; }
+        public string? CEO { get; set; }
 
         public string EmailFrom { get; set; }
         public string EmailFromName { get; set; }

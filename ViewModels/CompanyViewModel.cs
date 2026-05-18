@@ -6,6 +6,7 @@ namespace BauFlow.ViewModels
     {
         [Required, MaxLength(200)]
         public string Name { get; set; }
+        public string? CEO { get; set; }
 
         [EmailAddress]
         public string? Accountant { get; set; }

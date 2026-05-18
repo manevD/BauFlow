@@ -36,6 +36,7 @@ namespace BauFlow.Controllers
                 PostalCode = company.PostalCode,
                 City = company.City,
                 Country = company.Country,
+                CEO = company.CEO,
                 Accountant = company.Accountant,
                 TaxNumber = company.TaxNumber,
                 IBAN = company.IBAN,
@@ -64,6 +65,7 @@ namespace BauFlow.Controllers
             company.TaxNumber = companyViewModel.TaxNumber;
             company.IBAN = companyViewModel.IBAN;
             company.Accountant = companyViewModel.Accountant;
+            company.CEO = companyViewModel.CEO;
             company.BankName = companyViewModel.BankName;
 
             await _context.SaveChangesAsync(); 
