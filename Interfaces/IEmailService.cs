@@ -5,6 +5,6 @@ namespace BauFlow.Interfaces
 {
     public interface IEmailService
     {
-        Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings, string companyName);
+        Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings, string companyName, bool sendToAccountant);
     }
 }

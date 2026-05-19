@@ -94,7 +94,7 @@ namespace BauFlow.Controllers
             await _emailService.SendInvoice(
                 invoice.Customer.Email,
                 invoice,
-                settings, company.Name
+                settings, company.Name,false
             );
 
             return RedirectToAction("Details", new { id = invoiceId });

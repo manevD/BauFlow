@@ -101,11 +101,17 @@ namespace BauFlow.Controllers
             var company = await _context.Companies.FindAsync(vm.Id);
 
             if (company == null) return NotFound();
-
+            if (vm.EmailPassword == null)
+            {
+                vm.EmailPassword = _encryptionService.Encrypt(company.EmailPassword);
+            }
+            else
+            {
+                company.EmailPassword = _encryptionService.Decrypt(vm.EmailPassword);
+            }
             company.EmailHost = vm.EmailHost;
             company.EmailPort = vm.EmailPort;
             company.EmailUser = vm.EmailUser;
-            company.EmailPassword = _encryptionService.Encrypt(vm.EmailPassword);
             company.EmailSSL = vm.EmailSSL;
             company.EmailFrom = vm.EmailFrom;
             company.EmailFromName = vm.EmailFromName;

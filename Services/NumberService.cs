@@ -38,7 +38,7 @@ namespace BauFlow.Services
 
             await _context.SaveChangesAsync();
 
-            return $"Фактура-{DateTime.Now.Year}-{entry.CurrentNumber:D4}";
+            return $"{DateTime.Now.Year}-{entry.CurrentNumber:D4}";
         }
     }
 }

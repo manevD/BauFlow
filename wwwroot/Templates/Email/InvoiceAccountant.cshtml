@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; color:#333; line-height:1.6;">
+
+    <h2 style="color:#1d4ed8;">
+        Фактура {{InvoiceNumber}}
+    </h2>
+
+    <p>Почитувани,</p>
+
+    <p>
+        Во прилог ви ја доставувам фактурата за евиденција и понатамошна обработка.
+        Ве молам истата да биде заведена согласно потребните процедури.
+    </p>
+
+    <table style="width:100%; border-collapse: collapse; margin-top:20px;">
+        <tr>
+            <td style="padding:6px 0;"><strong>Број на фактура:</strong></td>
+            <td>{{InvoiceNumber}}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:6px 0;"><strong>Датум:</strong></td>
+            <td>{{InvoiceDate}}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:6px 0;"><strong>Клиент:</strong></td>
+            <td>{{CustomerName}}</td>
+        </tr>
+
+        <tr>
+            <td style="padding:6px 0;"><strong>Износ:</strong></td>
+            <td>{{Total}}</td>
+        </tr>
+    </table>
+
+    <div style="
+        margin-top:25px;
+        padding:15px;
+        background:#f5f7fb;
+        border-left:4px solid #2563eb;
+        border-radius:6px;">
+
+        <strong>Опис:</strong><br />
+        {{Description}}
+
+    </div>
+
+    <br />
+    <br />
+
+    <p>
+        Доколку се потребни дополнителни информации,
+        слободно контактирајте ме.
+    </p>
+
+    <br />
+
+    <p>
+        Со почит,<br />
+        <strong>{{CompanyName}}</strong>
+    </p>
+
+</body>
+</html>

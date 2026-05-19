@@ -81,6 +81,7 @@ namespace BauFlow.Controllers
         {
             var invoice = await _context.Invoices
                 .Include(i => i.Customer)
+                .Include(i => i.Company)
                 .Include(i => i.Items)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -188,7 +189,7 @@ namespace BauFlow.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-        public async Task<IActionResult> SendInvoice(Guid invoiceId)
+        public async Task<IActionResult> SendInvoice(Guid invoiceId, bool sendToAccountant)
         {
             var invoice = await _context.Invoices
                 .Include(i => i.Customer)
@@ -211,9 +212,10 @@ namespace BauFlow.Controllers
             };
 
             await _emailService.SendInvoice(
-                invoice.Customer.Email,
+                sendToAccountant ? invoice.Company.Accountant : invoice.Customer.Email,
                 invoice,
-                settings, company.Name
+                settings, company.Name,
+                sendToAccountant
             );
 
             return RedirectToAction("Details", new { id = invoiceId });

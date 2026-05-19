@@ -2,26 +2,26 @@
 <html>
 <body style="font-family: Arial;">
 
-    <h2>Rechnung {{InvoiceNumber}}</h2>
+    <h2>Фактура {{InvoiceNumber}}</h2>
 
-    <p>Hallo {{CustomerName}},</p>
+    <p>Здраво {{CustomerName}},</p>
 
     <p>
-        vielen Dank für Ihren Auftrag.<br />
-        anbei finden Sie Ihre Rechnung.
+        ви благодарам за соработката. <br />
+        Ви ја испраќам фактурата за надоместување.
     </p>
 
     <table style="width:100%; border-collapse: collapse;">
         <tr>
-            <td><strong>Rechnungsnummer:</strong></td>
+            <td><strong>Број на фактура:</strong></td>
             <td>{{InvoiceNumber}}</td>
         </tr>
         <tr>
-            <td><strong>Datum:</strong></td>
+            <td><strong>Датум:</strong></td>
             <td>{{InvoiceDate}}</td>
         </tr>
         <tr>
-            <td><strong>Betrag:</strong></td>
+            <td><strong>Износ:</strong></td>
             <td>{{Total}}</td>
         </tr>
     </table>
@@ -32,7 +32,10 @@
 
     <br />
 
-    <p>Mit freundlichen Grüßen<br />Ihr Team</p>
+    <p>
+        Со почит <br />    
+        <strong>{{CompanyName}}</strong>
+    </p>
 
 </body>
 </html>

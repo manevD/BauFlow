@@ -45,9 +45,17 @@ public class EmailService : IEmailService
         await smtp.SendMailAsync(message);
     }
 
-    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings,string companyName)
+    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings,string companyName,bool sendToAccountant)
     {
-        var template = _templateService.LoadTemplate("Invoice.cshtml");
+        var template ="";
+        if (!sendToAccountant)
+        {
+            template = _templateService.LoadTemplate("Invoice.cshtml");
+        }
+        else
+        {
+            template = _templateService.LoadTemplate("InvoiceAccountant.cshtml");
+        }
         var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value));
         var pdf = document.GeneratePdf();
 
@@ -57,7 +65,8 @@ public class EmailService : IEmailService
             { "InvoiceNumber", invoice.InvoiceNumber },
             { "InvoiceDate", invoice.InvoiceDate.ToString("dd.MM.yyyy") },
             { "Total", invoice.GrossAmount.ToString() + " МКД"},
-            { "Description", invoice.Description ?? "" }
+            { "Description", invoice.Description ?? "" },
+            { "CompanyName", companyName }
         };
 
         var body = _templateService.ReplacePlaceholders(template, data);

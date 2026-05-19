@@ -14,7 +14,7 @@ namespace BauFlow.Entities
 
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
-
+        public Company? Company { get; set; }
         public InvoiceStatus Status { get; set; }
 
         public decimal NetAmount { get; set; }

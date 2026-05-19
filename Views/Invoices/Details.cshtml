@@ -11,7 +11,7 @@
         <div>
 
             <h4 class="mb-1">
-                Фактура @Model.InvoiceNumber
+                @Model.InvoiceNumber
             </h4>
 
             <span class="text-muted">
@@ -21,6 +21,18 @@
         </div>
 
         <div class="d-flex gap-2">
+
+            @if (!string.IsNullOrEmpty(Model.Company?.Accountant))
+            {
+                <a asp-action="SendInvoice"
+                   asp-route-invoiceId="@Model.Id"
+                   asp-route-customerId="@Model.CustomerId"
+                   asp-route-sendToAccountant="true"
+                   class="btn btn-ghost">
+                    Испрати на книговодител
+                </a>
+            }
+
             @if (!string.IsNullOrEmpty(Model.Customer.Email))
             {
                 <a asp-action="SendInvoice"
@@ -30,7 +42,7 @@
                     Испрати
                 </a>
             }
-
+         
             <a asp-action="Pdf"
                    asp-route-id="@Model.Id"
                    class="btn btn-ghost">
