@@ -193,7 +193,8 @@ namespace BauFlow.Controllers
         {
             var invoice = await _context.Invoices
                 .Include(i => i.Customer)
-                .FirstOrDefaultAsync(x => x.Id == invoiceId);
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync(x => x.Id == invoiceId); 
 
             if (invoice == null)
                 return NotFound();
