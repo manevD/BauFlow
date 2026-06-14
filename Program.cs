@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Serilog;
 using System.Globalization;
 using System.Text.Json;
 
@@ -22,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 // -----------------------------
 // Logging
 // -----------------------------
-SerilogConfig.Configure(builder);
+//SerilogConfig.Configure(builder);
 
 // -----------------------------
 // Database
@@ -162,7 +161,7 @@ var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 
 // -----------------------------
 // Environment

@@ -105,7 +105,7 @@ namespace BauFlow.Controllers
                    x.CompanyId == _context.CurrentCompanyId.Value);
             return View(new Invoice
             {
-                TaxRate = 19,
+                TaxRate = 0,
                 Description = existing?.Text ?? "",
                 DueDate = DateTime.UtcNow.AddDays(7)
             });
