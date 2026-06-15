@@ -100,10 +100,8 @@ public class EmailService : IEmailService
         {
             throw new Exception(
                 "PDF ERROR: " +
-                ex.GetBaseException().Message);
+                ex.ToString());
         }
-
-
 
 
         var data =

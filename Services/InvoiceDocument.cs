@@ -13,14 +13,14 @@ namespace BauFlow.Services
         public InvoiceDocument(Invoice invoice, Company company)
         {
             QuestPDF.Settings.License = LicenseType.Community;
+            QuestPDF.Settings.UseEnvironmentFonts = true;
 
             _invoice = invoice
-                ?? throw new ArgumentNullException(nameof(invoice));
+                ?? throw new Exception("Invoice missing");
 
             _company = company
-                ?? throw new ArgumentNullException(nameof(company));
+                ?? throw new Exception("Company missing");
         }
-
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
         public void Compose(IDocumentContainer container)
@@ -58,12 +58,21 @@ namespace BauFlow.Services
                 {
                     column.Spacing(5);
 
-                    if (!string.IsNullOrWhiteSpace(_company.LogoPath)
-                        && File.Exists(_company.LogoPath))
+                    try
                     {
-                        column.Item()
-                            .Height(60)
-                            .Image(_company.LogoPath);
+                        if (!string.IsNullOrWhiteSpace(_company.LogoPath)
+                            && File.Exists(_company.LogoPath))
+                        {
+                            var logoBytes = File.ReadAllBytes(_company.LogoPath);
+
+                            column.Item()
+                                .Height(60)
+                                .Image(logoBytes);
+                        }
+                    }
+                    catch
+                    {
+                        // Live server: ignore bad logo
                     }
 
                     column.Item()
@@ -72,15 +81,15 @@ namespace BauFlow.Services
                         .FontSize(22)
                         .FontColor(Colors.Blue.Darken2);
 
-                    column.Item().Text(_company.Address);
-                    column.Item().Text($"{_company.PostalCode} {_company.City}");
-
+                    column.Item().Text(_company.Address ?? "");
+                    column.Item()
+                        .Text($"{_company.PostalCode ?? ""} {_company.City ?? ""}");
                     if (!string.IsNullOrWhiteSpace(_company.TaxNumber))
                         column.Item()
                             .Text($"Даночен број: {_company.TaxNumber}");
 
-                    column.Item().Text(_company.IBAN);
-                    column.Item().Text(_company.BankName);
+                    column.Item().Text(_company.IBAN ?? "");
+                    column.Item().Text(_company.BankName ?? "");
                 });
 
                 row.ConstantItem(220)
@@ -204,7 +213,7 @@ namespace BauFlow.Services
                         table.Cell()
                             .Background(bg)
                             .Element(CellStyle)
-                            .Text(item.Description);
+                            .Text(item.Description ?? "");
 
                         table.Cell()
                             .Background(bg)
