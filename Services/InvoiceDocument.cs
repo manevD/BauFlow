@@ -14,8 +14,11 @@ namespace BauFlow.Services
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
-            _invoice = invoice;
-            _company = company;
+            _invoice = invoice
+                ?? throw new ArgumentNullException(nameof(invoice));
+
+            _company = company
+                ?? throw new ArgumentNullException(nameof(company));
         }
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
@@ -26,7 +29,9 @@ namespace BauFlow.Services
             {
                 page.Margin(35);
                 page.Size(PageSizes.A4);
-                page.DefaultTextStyle(x => x.FontSize(10));
+                page.DefaultTextStyle(x =>
+                    x.FontSize(10)
+                     .FontFamily("Arial"));
 
                 page.Header().Element(ComposeHeader);
 
@@ -183,7 +188,7 @@ namespace BauFlow.Services
 
                     int rowIndex = 0;
 
-                    foreach (var item in _invoice.Items)
+                    foreach (var item in _invoice.Items ?? new List<InvoiceItem>())
                     {
                         var lineTotal = item.TotalPrice > 0
                             ? item.TotalPrice

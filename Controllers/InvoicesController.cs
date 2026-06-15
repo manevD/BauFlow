@@ -246,8 +246,16 @@ namespace BauFlow.Controllers
                 .Include(x => x.Customer)
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync(x => x.Id == id);
+            var company = _context.Companies
+           .FirstOrDefault(x => x.Id == invoice.CompanyId);
 
-            var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value));
+            if (company == null)
+                throw new Exception("Company fehlt für PDF");
+
+
+            var document = new InvoiceDocument(
+                invoice,
+                company);
 
             var pdf = document.GeneratePdf();
 

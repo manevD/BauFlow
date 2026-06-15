@@ -76,6 +76,9 @@ namespace BauFlow.Controllers
         }
         public async Task<IActionResult> EmailSettings()
         {
+            if (!_context.CurrentCompanyId.HasValue)
+                return Unauthorized();
+
             var company = await _context.Companies
                 .FindAsync(_context.CurrentCompanyId);
 
@@ -112,30 +115,34 @@ namespace BauFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> EmailSettings(CompanyEmailSettingsVM vm)
         {
-            var company = await _context.Companies.FindAsync(vm.Id);
+            var company = await _context.Companies
+                .FindAsync(vm.Id);
 
-            if (company == null) return NotFound();
-            if (vm.EmailPassword == null)
-            {
-                vm.EmailPassword = _encryptionService.Encrypt(company.EmailPassword);
-            }
-            else
-            {
-                company.EmailPassword = _encryptionService.Decrypt(vm.EmailPassword);
-            }
+            if (company == null)
+                return NotFound();
+
+
             company.EmailHost = vm.EmailHost;
             company.EmailPort = vm.EmailPort;
             company.EmailUser = vm.EmailUser;
             company.EmailSSL = vm.EmailSSL;
             company.EmailFrom = vm.EmailFrom;
             company.EmailFromName = vm.EmailFromName;
+
+
             if (!string.IsNullOrEmpty(vm.EmailPassword))
             {
-                company.EmailPassword = _encryptionService.Encrypt(vm.EmailPassword);
+                company.EmailPassword =
+                    _encryptionService.Encrypt(
+                        vm.EmailPassword);
             }
+
+
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("EmailSettings");
+
+            return RedirectToAction(
+                nameof(EmailSettings));
         }
 
         [HttpPost]
