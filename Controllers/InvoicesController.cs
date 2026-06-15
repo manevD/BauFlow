@@ -269,7 +269,7 @@ namespace BauFlow.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var invoice =
@@ -293,6 +293,83 @@ namespace BauFlow.Controllers
                     Value = x.Id.ToString(),
                     Text = x.Name
                 }).ToList();
+        }
+        // GET: Invoices/Edit/5
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            ModelState.Clear(); // 💥 DAS IST DER FIX
+            var invoice = await _context.Invoices
+                .Include(i => i.Items)
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync(i => i.Id == id);
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.TaxRates = GetTaxRates();
+
+            ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            }).ToList();
+            return View(invoice);
+        }
+
+        // POST: Invoices/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, Invoice model)
+        {
+            var invoice = await _context.Invoices
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (invoice == null)
+                return NotFound();
+
+            // ========= Stammdaten =========
+            invoice.CustomerId = model.CustomerId;
+            invoice.InvoiceNumber = model.InvoiceNumber;
+            invoice.InvoiceDate = model.InvoiceDate;
+            invoice.DueDate = model.DueDate;
+            invoice.Status = model.Status;
+            invoice.TaxRate = model.TaxRate;
+
+            // ========= Items SAFE =========
+            var existingItems = await _context.InvoiceItems
+                .Where(x => x.InvoiceId == invoice.Id)
+                .ToListAsync();
+
+            _context.InvoiceItems.RemoveRange(existingItems);
+
+            var newItems = model.Items.Select(x => new InvoiceItem
+            {
+                Id = Guid.NewGuid(),
+                InvoiceId = invoice.Id,
+                Description = x.Description,
+                Quantity = x.Quantity,
+                Unit = x.Unit,
+                UnitPrice = x.UnitPrice,
+                TotalPrice = x.TotalPrice
+            }).ToList();
+
+            await _context.InvoiceItems.AddRangeAsync(newItems);
+
+            // ========= Totals =========
+            invoice.NetAmount = newItems.Sum(x => x.TotalPrice);
+            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
+            invoice.GrossAmount = Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
 

@@ -197,32 +197,23 @@ public class EmailService : IEmailService
 
 
 
-
-
-    private SmtpClient BuildSmtp(
-        EmailSettings settings)
+    private SmtpClient BuildSmtp(EmailSettings settings)
     {
-        if (string.IsNullOrWhiteSpace(settings.Host))
-            throw new Exception("SMTP Host missing");
+        var smtp = new SmtpClient(settings.Host, settings.Port);
 
+        smtp.EnableSsl = settings.EnableSSL;
 
-        if (settings.Port == 0)
-            throw new Exception("SMTP Port missing");
+        smtp.UseDefaultCredentials = false;
 
+        smtp.Credentials =
+            new NetworkCredential(
+                settings.UserName,
+                settings.Password);
 
+        smtp.DeliveryMethod =
+            SmtpDeliveryMethod.Network;
 
-        return new SmtpClient(
-            settings.Host,
-            settings.Port)
-        {
-            Credentials =
-                new NetworkCredential(
-                    settings.UserName,
-                    settings.Password),
-
-            EnableSsl =
-                settings.EnableSSL
-        };
+        return smtp;
     }
 
 
