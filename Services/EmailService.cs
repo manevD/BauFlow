@@ -3,6 +3,7 @@ using BauFlow.Entities;
 using BauFlow.Interfaces;
 using BauFlow.Models;
 using BauFlow.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using QuestPDF.Fluent;
 using System.Net;
@@ -23,164 +24,237 @@ public class EmailService : IEmailService
         _defaultSettings = defaultSettings.Value;
         _context = context;
     }
-    public async Task SendInvite(string email, string name, string inviteLink)
+
+    public async Task SendInvite(
+        string email,
+        string name,
+        string inviteLink)
     {
         var html = BuildInviteTemplate(name, inviteLink);
 
-        var message = new MailMessage
+        using var message = new MailMessage
         {
-            From = new MailAddress(_defaultSettings.From, _defaultSettings.FromName),
+            From = new MailAddress(
+                _defaultSettings.From,
+                _defaultSettings.FromName),
+
             Subject = "Покана од Флоу",
+
             Body = html,
+
             IsBodyHtml = true
         };
 
         message.To.Add(email);
-        using var smtp = new SmtpClient(_defaultSettings.Host, _defaultSettings.Port)
-        {
-            Credentials = new NetworkCredential(_defaultSettings.UserName, _defaultSettings.Password),
-            EnableSsl = _defaultSettings.EnableSSL
-        };
+
+        using var smtp = BuildSmtp(_defaultSettings);
 
         await smtp.SendMailAsync(message);
     }
 
-    public async Task SendInvoice(string toEmail, Invoice invoice, EmailSettings settings,string companyName,bool sendToAccountant)
+
+
+    public async Task SendInvoice(
+        string toEmail,
+        Invoice invoice,
+        EmailSettings settings,
+        string companyName,
+        bool sendToAccountant)
     {
-        var template ="";
-        if (!sendToAccountant)
-        {
-            template = _templateService.LoadTemplate("Invoice.cshtml");
-        }
-        else
-        {
-            template = _templateService.LoadTemplate("InvoiceAccountant.cshtml");
-        }
-        var document = new InvoiceDocument(invoice, _context.Companies.Find(_context.CurrentCompanyId.Value));
-        var pdf = document.GeneratePdf();
+        if (string.IsNullOrWhiteSpace(toEmail))
+            throw new Exception("Email receiver missing");
 
-        var data = new Dictionary<string, string>
+
+        // TEMPLATE
+        var template = _templateService.LoadTemplate(
+            sendToAccountant
+            ? "InvoiceAccountant.cshtml"
+            : "Invoice.cshtml");
+
+
+
+        // COMPANY FOR PDF
+        var company = await _context.Companies
+            .FirstOrDefaultAsync(
+                x => x.Id == invoice.CompanyId);
+
+
+        if (company == null)
+            throw new Exception(
+                "Company missing for PDF");
+
+
+
+        byte[] pdf;
+
+        try
         {
-            { "CustomerName", invoice.Customer?.Name ?? "" },
-            { "InvoiceNumber", invoice.InvoiceNumber },
-            { "InvoiceDate", invoice.InvoiceDate.ToString("dd.MM.yyyy") },
-            { "Total", invoice.GrossAmount.ToString() + " МКД"},
-            { "Description", invoice.Description ?? "" },
-            { "CompanyName", companyName }
+            var document =
+                new InvoiceDocument(
+                    invoice,
+                    company);
+
+            pdf = document.GeneratePdf();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(
+                "PDF ERROR: " +
+                ex.GetBaseException().Message);
+        }
+
+
+
+
+        var data =
+            new Dictionary<string, string>
+            {
+                {
+                    "CustomerName",
+                    invoice.Customer?.Name ?? ""
+                },
+
+                {
+                    "InvoiceNumber",
+                    invoice.InvoiceNumber
+                },
+
+                {
+                    "InvoiceDate",
+                    invoice.InvoiceDate
+                    .ToString("dd.MM.yyyy")
+                },
+
+                {
+                    "Total",
+                    invoice.GrossAmount
+                    .ToString("0.00") + " МКД"
+                },
+
+                {
+                    "Description",
+                    invoice.Description ?? ""
+                },
+
+                {
+                    "CompanyName",
+                    companyName
+                }
+            };
+
+
+
+        var body =
+            _templateService
+            .ReplacePlaceholders(
+                template,
+                data);
+
+
+
+
+        using var message = new MailMessage
+        {
+            From =
+                new MailAddress(
+                    settings.From,
+                    settings.FromName),
+
+            Subject =
+                $"Фактура {invoice.InvoiceNumber}",
+
+            Body =
+                body,
+
+            IsBodyHtml =
+                true
         };
 
-        var body = _templateService.ReplacePlaceholders(template, data);
 
-        var message = new MailMessage
-        {
-            From = new MailAddress(settings.From, settings.FromName),
-            Subject = $"Фактура {invoice.InvoiceNumber}",
-            Body = body,
-            Attachments = { new Attachment(new MemoryStream(pdf), $"Фактура{invoice.InvoiceNumber}.pdf") },
-            IsBodyHtml = true
-        };
+
+        using var stream =
+            new MemoryStream(pdf);
+
+
+
+        message.Attachments.Add(
+            new Attachment(
+                stream,
+                $"Invoice-{invoice.InvoiceNumber}.pdf",
+                "application/pdf"));
+
+
 
         message.To.Add(toEmail);
 
-        using var smtp = BuildSmtp(settings);
+
+
+        using var smtp =
+            BuildSmtp(settings);
+
+
+
         await smtp.SendMailAsync(message);
     }
 
-    private SmtpClient BuildSmtp(EmailSettings settings)
+
+
+
+
+    private SmtpClient BuildSmtp(
+        EmailSettings settings)
     {
-        return new SmtpClient(settings.Host, settings.Port)
+        if (string.IsNullOrWhiteSpace(settings.Host))
+            throw new Exception("SMTP Host missing");
+
+
+        if (settings.Port == 0)
+            throw new Exception("SMTP Port missing");
+
+
+
+        return new SmtpClient(
+            settings.Host,
+            settings.Port)
         {
-            Credentials = new NetworkCredential(settings.UserName, settings.Password),
-            EnableSsl = settings.EnableSSL
+            Credentials =
+                new NetworkCredential(
+                    settings.UserName,
+                    settings.Password),
+
+            EnableSsl =
+                settings.EnableSSL
         };
     }
 
 
-    private string BuildInviteTemplate(string name, string link)
+
+
+    private string BuildInviteTemplate(
+        string name,
+        string link)
     {
         return $"""
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                    <meta charset="UTF-8">
-                    </head>
+        <!DOCTYPE html>
+        <html>
+        <body>
 
-                    <body style="margin:0;background:#f6f9fc;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;">
+        <h2>BauFlow</h2>
 
-                    <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                    <td align="center">
+        <p>
+        {name}, добивте покана.
+        </p>
 
-                    <table width="520" cellpadding="0" cellspacing="0" style="margin-top:40px;background:white;border-radius:12px;padding:40px">
+        <a href="{link}">
+        Активирај сметка
+        </a>
 
-                    <tr>
-                    <td style="font-size:24px;font-weight:600;color:#111">
-                    BauFlow
-                    </td>
-                    </tr>
+        <br/>
 
-                    <tr>
-                    <td style="padding-top:30px;font-size:18px;font-weight:500">
-                    Добивте покана
-                    </td>
-                    </tr>
+        {link}
 
-                    <tr>
-                    <td style="padding-top:10px;color:#555;font-size:15px;line-height:1.6">
-                    {name},<br><br>
-                    поканети сте во <b>BauFlow</b>.<br>
-                    Кликнете на копчето подолу за да ја активирате вашата сметка.
-                    </td>
-                    </tr>
-
-                    <tr>
-                    <td align="center" style="padding-top:35px">
-
-                    <a href="{link}"
-                    style="
-                    background:#635bff;
-                    color:white;
-                    text-decoration:none;
-                    padding:14px 26px;
-                    border-radius:8px;
-                    font-weight:600;
-                    display:inline-block;
-                    font-size:15px;">
-                    Активирај сметка
-                    </a>
-
-                    </td>
-                    </tr>
-
-                    <tr>
-                    <td style="padding-top:30px;color:#888;font-size:13px">
-                    Или копирајте го следниот линк во вашиот прелистувач:<br>
-                    {link}
-                    </td>
-                    </tr>
-
-                    <tr>
-                    <td style="padding-top:30px;font-size:12px;color:#999">
-                    Од безбедносни причини, овој линк за покана истекува по 24 часа.
-                    </td>
-                    </tr>
-
-                    </table>
-
-                    <table width="520" cellpadding="0" cellspacing="0" style="margin-top:15px">
-                    <tr>
-                    <td style="text-align:center;font-size:12px;color:#999">
-                    © {DateTime.UtcNow.Year} BauFlow
-                    </td>
-                    </tr>
-                    </table>
-
-                    </td>
-                    </tr>
-                    </table>
-
-                    </body>
-                    </html>
-                    """;
+        </body>
+        </html>
+        """;
     }
 }
