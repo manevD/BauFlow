@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BauFlow.Controllers
 {
-    //[RequireTenant]
+    [RequireTenant]
     public class CustomersController(ApplicationDbContext context) : Controller
     {
         private readonly ApplicationDbContext _context = context;

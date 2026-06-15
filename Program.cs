@@ -7,51 +7,57 @@ using BauFlow.Models;
 using BauFlow.Providers;
 using BauFlow.Security;
 using BauFlow.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+
 using System.Globalization;
 using System.Text.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// -----------------------------
-// Logging
-// -----------------------------
-//SerilogConfig.Configure(builder);
 
 // -----------------------------
 // Database
 // -----------------------------
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string not found.");
 
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString,
-        sql => sql.EnableRetryOnFailure()));
+    options.UseSqlServer(
+        connectionString,
+        sql => sql.EnableRetryOnFailure()
+    ));
+
 
 // -----------------------------
 // Identity
 // -----------------------------
 builder.Services
-.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false;
+    .AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
 
-    options.Password.RequireDigit = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireNonAlphanumeric = false;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders()
-.AddErrorDescriber<MacedonianIdentityErrors>(); // 🔥 MKD errors
+        options.Password.RequireDigit = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<MacedonianIdentityErrors>();
+
+
 
 // -----------------------------
-// 🔥 ONLY MKD CULTURE
+// Culture
 // -----------------------------
 var culture = new CultureInfo("en-US");
 
@@ -59,45 +65,74 @@ var culture = new CultureInfo("en-US");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.DefaultRequestCulture = new RequestCulture(culture);
-    options.SupportedCultures = new[] { culture };
-    options.SupportedUICultures = new[] { culture };
+    options.DefaultRequestCulture =
+        new RequestCulture(culture);
+
+    options.SupportedCultures =
+        new[] { culture };
+
+    options.SupportedUICultures =
+        new[] { culture };
 });
 
+
+
 // -----------------------------
-// Tokens / Cookies
+// Cookies / Tokens
 // -----------------------------
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
 {
-    o.TokenLifespan = TimeSpan.FromHours(24);
+    o.TokenLifespan =
+        TimeSpan.FromHours(24);
 });
+
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.LoginPath =
+        "/Account/Login";
+
+    options.AccessDeniedPath =
+        "/Account/AccessDenied";
 });
+
+
+
+// -----------------------------
+// Session
+// -----------------------------
 builder.Services.AddSession();
+
+
 
 // -----------------------------
 // MVC
 // -----------------------------
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddRazorPages()
+
+builder.Services
+    .AddRazorPages()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-// -----------------------------
-// Tenant System
-// -----------------------------
-builder.Services.AddScoped<ITenantProvider, TenantProvider>();
-builder.Services.AddHttpContextAccessor();
+
 
 // -----------------------------
-// Application Services
+// Tenant
+// -----------------------------
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped
+    <ITenantProvider, TenantProvider>();
+
+
+
+// -----------------------------
+// Services
 // -----------------------------
 builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
@@ -105,57 +140,103 @@ builder.Services.AddScoped<EmailTemplateService>();
 builder.Services.AddScoped<NumberService>();
 builder.Services.AddScoped<EmailEncryptionService>();
 
+
 builder.Services.AddDataProtection();
+
+
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+
+
 // -----------------------------
-// Custom Claims
+// Claims
 // -----------------------------
 builder.Services.AddScoped<
     IUserClaimsPrincipalFactory<ApplicationUser>,
     CustomClaimsPrincipalFactory>();
 
+
+
 // -----------------------------
-// Authorization Policies
+// Authorization
 // -----------------------------
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("OwnerOnly", p => p.RequireRole("Owner"));
-    options.AddPolicy("AdminOrOwner", p => p.RequireRole("Admin", "Owner"));
-    options.AddPolicy("MemberAccess", p => p.RequireRole("Member", "Admin", "Owner"));
+    options.AddPolicy(
+        "OwnerOnly",
+        p => p.RequireRole("Owner"));
 
-    options.AddPolicy("TenantActive",
-        policy => policy.Requirements.Add(new TenantRequirement()));
+
+    options.AddPolicy(
+        "AdminOrOwner",
+        p => p.RequireRole("Admin", "Owner"));
+
+
+    options.AddPolicy(
+        "MemberAccess",
+        p => p.RequireRole("Member", "Admin", "Owner"));
+
+
+
+    // Tenant Check
+    options.AddPolicy(
+        "TenantActive",
+        policy =>
+            policy.Requirements.Add(
+                new TenantRequirement()
+            ));
+
+
 
     foreach (Plan plan in Enum.GetValues<Plan>())
     {
-        options.AddPolicy($"Plan_{plan}", policy =>
-            policy.Requirements.Add(new PlanRequirement(plan)));
+        options.AddPolicy(
+            $"Plan_{plan}",
+            policy =>
+                policy.Requirements.Add(
+                    new PlanRequirement(plan)
+                ));
     }
+
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, TenantHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, PlanHandler>();
+
+
+builder.Services.AddScoped
+    <IAuthorizationHandler, TenantHandler>();
+
+builder.Services.AddScoped
+    <IAuthorizationHandler, PlanHandler>();
+
+
 
 // -----------------------------
-// Health Checks
+// Health
 // -----------------------------
 builder.Services.AddHealthChecks();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// -----------------------------
-// Build App
-// -----------------------------
+
+
+
+// =============================
+// BUILD
+// =============================
 var app = builder.Build();
+
+
+
 
 // -----------------------------
 // Middleware
 // -----------------------------
 app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-//app.UseSerilogRequestLogging();
+
 
 // -----------------------------
 // Environment
@@ -167,55 +248,115 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
+
     app.UseHsts();
 }
 
+
+
 // -----------------------------
-// HTTP Pipeline
+// HTTP PIPELINE
 // -----------------------------
+
 app.UseHttpsRedirection();
+
+
 app.UseStaticFiles();
 
-// 🔥 АКТИВИРАЈ MKD LOCALIZATION
-var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
-app.UseRequestLocalization(locOptions.Value);
 
+
+// Localization
+var locOptions =
+    app.Services.GetRequiredService
+    <IOptions<RequestLocalizationOptions>>();
+
+
+app.UseRequestLocalization(
+    locOptions.Value);
+
+
+
+// Routing
 app.UseRouting();
 
+
+
+// 🔥 WICHTIG FÜR LIVE
+// Session VOR Authorization
+app.UseSession();
+
+
+
+// Login Cookie laden
 app.UseAuthentication();
+
+
+
+// Policies:
+// OwnerOnly
+// TenantActive
+// Plan_X
 app.UseAuthorization();
+
+
 
 // -----------------------------
 // Routes
 // -----------------------------
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern:
+    "{controller=Home}/{action=Index}/{id?}"
+);
+
 
 app.MapRazorPages();
 
+
+
 // -----------------------------
-// Health Endpoint
+// Health endpoint
 // -----------------------------
-app.MapHealthChecks("/health", new HealthCheckOptions
-{
-    ResponseWriter = async (context, report) =>
+app.MapHealthChecks(
+    "/health",
+    new HealthCheckOptions
     {
-        context.Response.ContentType = "application/json";
-
-        var result = JsonSerializer.Serialize(new
+        ResponseWriter =
+        async (context, report) =>
         {
-            status = report.Status.ToString(),
-            checks = report.Entries.Select(e => new
-            {
-                name = e.Key,
-                status = e.Value.Status.ToString(),
-                error = e.Value.Exception?.Message
-            })
-        });
+            context.Response.ContentType =
+                "application/json";
 
-        await context.Response.WriteAsync(result);
-    }
-});
-app.UseSession();
+
+            var result =
+                JsonSerializer.Serialize(new
+                {
+                    status =
+                        report.Status.ToString(),
+
+
+                    checks =
+                    report.Entries.Select(e => new
+                    {
+                        name = e.Key,
+
+                        status =
+                            e.Value.Status.ToString(),
+
+                        error =
+                            e.Value.Exception?.Message
+                    })
+                });
+
+
+            await context.Response
+                .WriteAsync(result);
+        }
+    });
+
+
+
+// -----------------------------
+// RUN
+// -----------------------------
 app.Run();
