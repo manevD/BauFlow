@@ -39,10 +39,16 @@ namespace BauFlow.Services
                     .Element(ComposeContent);
 
                 page.Footer()
+                    .PaddingTop(10)
                     .AlignCenter()
-                    .Text($"{_company.Name} • Фактура {_invoice.InvoiceNumber}");
+                    .Text(text =>
+                    {
+                        text.Span(_company.Name ?? "");
+                        text.Span($" • Фактура {_invoice.InvoiceNumber}");
+                    });
             });
         }
+
 
         void ComposeHeader(IContainer container)
         {
@@ -64,32 +70,61 @@ namespace BauFlow.Services
                     }
                     catch { }
 
+
                     column.Item()
                         .Text(_company.Name ?? "")
                         .Bold()
-                        .FontSize(22);
+                        .FontSize(22)
+                        .FontColor(Colors.Blue.Darken2);
+
 
                     column.Item().Text(_company.Address ?? "");
-                    column.Item().Text($"{_company.PostalCode ?? ""} {_company.City ?? ""}");
+
+                    column.Item()
+                        .Text($"{_company.PostalCode ?? ""} {_company.City ?? ""}");
+
+
+                    if (!string.IsNullOrWhiteSpace(_company.TaxNumber))
+                    {
+                        column.Item()
+                            .Text($"Даночен број: {_company.TaxNumber}");
+                    }
+
+
                     column.Item().Text(_company.IBAN ?? "");
                     column.Item().Text(_company.BankName ?? "");
                 });
 
+
+
                 row.ConstantItem(220)
                     .Background(Colors.Blue.Lighten5)
+                    .Border(1)
+                    .BorderColor(Colors.Blue.Lighten4)
                     .Padding(15)
-                    .Column(c =>
+                    .Column(column =>
                     {
-                        c.Item().Text("ФАКТУРА")
-                            .Bold()
-                            .FontSize(20);
+                        column.Spacing(6);
 
-                        c.Item().Text($"Број: {_invoice.InvoiceNumber}");
-                        c.Item().Text($"Датум: {_invoice.InvoiceDate:dd.MM.yyyy}");
-                        c.Item().Text($"Рок: {_invoice.DueDate:dd.MM.yyyy}");
+                        column.Item()
+                            .Text("ФАКТУРА")
+                            .Bold()
+                            .FontSize(20)
+                            .FontColor(Colors.Blue.Darken2);
+
+                        column.Item()
+                            .Text($"Број: {_invoice.InvoiceNumber}");
+
+                        column.Item()
+                            .Text($"Датум: {_invoice.InvoiceDate:dd.MM.yyyy}");
+
+                        column.Item()
+                            .Text($"Рок: {_invoice.DueDate:dd.MM.yyyy}");
                     });
             });
         }
+
+
 
         void ComposeContent(IContainer container)
         {
@@ -98,6 +133,7 @@ namespace BauFlow.Services
                 column.Spacing(20);
 
                 column.Item().Element(ComposeCustomer);
+
                 column.Item().Element(ComposeTable);
 
                 column.Item()
@@ -110,79 +146,132 @@ namespace BauFlow.Services
         }
 
 
+
         void ComposeCustomer(IContainer container)
         {
             container
                 .Background(Colors.Grey.Lighten4)
+                .Border(1)
+                .BorderColor(Colors.Grey.Lighten2)
                 .Padding(15)
-                .Column(c =>
+                .Column(column =>
                 {
-                    c.Item().Text("Фактура за").Bold();
+                    column.Spacing(5);
 
-                    c.Item()
+                    column.Item()
+                        .Text("Фактура за")
+                        .Bold()
+                        .FontSize(12);
+
+
+                    column.Item()
                         .Text(_invoice.Customer?.Name ?? "");
 
-                    c.Item()
+
+                    column.Item()
                         .Text(_invoice.Customer?.Address ?? "");
 
-                    c.Item()
-                        .Text($"{_invoice.Customer?.PostalCode ?? ""} {_invoice.Customer?.City ?? ""}");
+
+                    column.Item()
+                        .Text(
+                        $"{_invoice.Customer?.PostalCode ?? ""} {_invoice.Customer?.City ?? ""}");
                 });
         }
+
 
 
 
         void ComposeTable(IContainer container)
         {
-            container.Table(table =>
-            {
-                table.ColumnsDefinition(c =>
+            container
+                .Border(1)
+                .BorderColor(Colors.Grey.Lighten2)
+                .Table(table =>
                 {
-                    c.RelativeColumn(4);
-                    c.RelativeColumn();
-                    c.RelativeColumn(2);
-                    c.RelativeColumn(2);
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.RelativeColumn(4);
+                        columns.RelativeColumn(1);
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);
+                        columns.RelativeColumn(2);
+                    });
+
+
+                    table.Header(header =>
+                    {
+                        header.Cell()
+                            .Element(HeaderCellStyle)
+                            .Text("Опис")
+                            .Bold();
+
+                        header.Cell()
+                            .Element(HeaderCellStyle)
+                            .AlignCenter()
+                            .Text("Кол.");
+
+                        header.Cell()
+                            .Element(HeaderCellStyle)
+                            .AlignRight()
+                            .Text("Цена");
+
+                        header.Cell()
+                            .Element(HeaderCellStyle)
+                            .AlignRight()
+                            .Text("ДДВ");
+
+                        header.Cell()
+                            .Element(HeaderCellStyle)
+                            .AlignRight()
+                            .Text("Вкупно");
+                    });
+
+
+
+                    foreach (var item in _invoice.Items ?? new List<InvoiceItem>())
+                    {
+                        var total =
+                            item.TotalPrice > 0
+                            ? item.TotalPrice
+                            : item.Quantity * item.UnitPrice;
+
+
+                        var tax =
+                            total * (_invoice.TaxRate / 100m);
+
+
+
+                        table.Cell()
+                            .Element(CellStyle)
+                            .Text(item.Description ?? "");
+
+
+                        table.Cell()
+                            .Element(CellStyle)
+                            .AlignCenter()
+                            .Text($"{item.Quantity} {item.Unit}");
+
+
+                        table.Cell()
+                            .Element(CellStyle)
+                            .AlignRight()
+                            .Text($"{item.UnitPrice:0.00}");
+
+
+                        table.Cell()
+                            .Element(CellStyle)
+                            .AlignRight()
+                            .Text($"{tax:0.00}");
+
+
+                        table.Cell()
+                            .Element(CellStyle)
+                            .AlignRight()
+                            .Text($"{total:0.00} МКД");
+                    }
                 });
-
-
-                table.Header(h =>
-                {
-                    h.Cell().Element(HeaderCell).Text("Опис");
-                    h.Cell().Element(HeaderCell).Text("Кол.");
-                    h.Cell().Element(HeaderCell).Text("Цена");
-                    h.Cell().Element(HeaderCell).Text("Вкупно");
-                });
-
-
-                foreach (var item in _invoice.Items ?? new List<InvoiceItem>())
-                {
-                    var total =
-                        item.TotalPrice > 0
-                        ? item.TotalPrice
-                        : item.Quantity * item.UnitPrice;
-
-
-                    table.Cell()
-                        .Element(Cell)
-                        .Text(item.Description ?? "");
-
-
-                    table.Cell()
-                        .Element(Cell)
-                        .Text($"{item.Quantity} {item.Unit}");
-
-
-                    table.Cell()
-                        .Element(Cell)
-                        .Text($"{item.UnitPrice:0.00}");
-
-
-                    table.Cell()
-                        .Element(Cell)
-                        .Text($"{total:0.00} МКД");
-                }
-            });
         }
+
 
 
 
@@ -192,22 +281,57 @@ namespace BauFlow.Services
                 .Width(280)
                 .Background(Colors.Grey.Lighten5)
                 .Padding(15)
-                .Column(c =>
+                .Border(1)
+                .BorderColor(Colors.Grey.Lighten2)
+                .Column(column =>
                 {
-                    c.Item()
-                     .Text($"Нето: {_invoice.NetAmount:0.00} МКД");
+                    column.Spacing(8);
 
-                    c.Item()
-                     .Text($"ДДВ: {CalculateInvoiceTax(_invoice):0.00} МКД");
 
-                    c.Item()
-                     .LineHorizontal(1);
+                    AddTotalRow(
+                        column,
+                        "Нето",
+                        _invoice.NetAmount);
 
-                    c.Item()
-                     .Text($"ВКУПНО: {_invoice.GrossAmount:0.00} МКД")
-                     .Bold();
+
+                    AddTotalRow(
+                        column,
+                        "ДДВ",
+                        CalculateInvoiceTax(_invoice));
+
+
+                    column.Item()
+                        .LineHorizontal(1);
+
+
+
+                    column.Item()
+                        .Text($"ВКУПНО: {_invoice.GrossAmount:0.00} МКД")
+                        .Bold()
+                        .FontSize(16)
+                        .FontColor(Colors.Blue.Darken2);
                 });
         }
+
+
+
+        void AddTotalRow(
+            ColumnDescriptor column,
+            string title,
+            decimal amount)
+        {
+            column.Item()
+                .Row(row =>
+                {
+                    row.RelativeItem()
+                        .Text(title);
+
+                    row.ConstantItem(120)
+                        .AlignRight()
+                        .Text($"{amount:0.00} МКД");
+                });
+        }
+
 
 
 
@@ -215,30 +339,42 @@ namespace BauFlow.Services
         {
             container
                 .Background(Colors.Blue.Lighten5)
+                .Border(1)
+                .BorderColor(Colors.Blue.Lighten4)
                 .Padding(15)
-                .Column(c =>
+                .Column(column =>
                 {
-                    c.Item()
-                     .Text(_invoice.Description ?? "");
+                    column.Item()
+                        .Text("Опис")
+                        .Bold();
 
-                    c.Item()
-                     .PaddingTop(20)
-                     .Text(_company.CEO ?? "");
+
+                    column.Item()
+                        .Text(_invoice.Description ?? "");
+
+
+                    column.Item()
+                        .PaddingTop(20)
+                        .AlignRight()
+                        .Text(_company.CEO ?? "")
+                        .Bold();
                 });
         }
 
 
 
-        static IContainer HeaderCell(IContainer c)
+        static IContainer HeaderCellStyle(IContainer c)
         {
             return c
                 .Background(Colors.Blue.Darken2)
-                .DefaultTextStyle(x => x.FontColor(Colors.White))
+                .DefaultTextStyle(x =>
+                    x.FontColor(Colors.White))
                 .Padding(8);
         }
 
 
-        static IContainer Cell(IContainer c)
+
+        static IContainer CellStyle(IContainer c)
         {
             return c
                 .Padding(8)
@@ -248,15 +384,18 @@ namespace BauFlow.Services
 
 
 
+
         decimal CalculateInvoiceTax(Invoice invoice)
         {
             if (invoice.TaxRate <= 0)
                 return 0;
 
+
             return Math.Round(
                 invoice.NetAmount *
                 invoice.TaxRate / 100m,
-                2);
+                2,
+                MidpointRounding.AwayFromZero);
         }
     }
 }
