@@ -189,32 +189,54 @@ namespace BauFlow.Controllers
         }
 
         public async Task<IActionResult> SendInvoice(
-          Guid invoiceId,
-          bool sendToAccountant = false)
+        Guid invoiceId,
+        bool sendToAccountant = false)
         {
             try
             {
                 var invoice = await _context.Invoices
-                    .Include(i => i.Customer)
-                    .Include(i => i.Items)
+                    .Include(x => x.Customer)
+                    .Include(x => x.Company)
+                    .Include(x => x.Items)
                     .FirstOrDefaultAsync(x => x.Id == invoiceId);
 
 
                 if (invoice == null)
-                    return NotFound();
+                {
+                    TempData["Error"] = "Фактурата не е пронајдена";
+                    return RedirectToAction("Index");
+                }
 
 
-                var company = await _context.Companies
-                    .FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
-
+                var company = invoice.Company;
 
                 if (company == null)
-                    return BadRequest("Company nicht gefunden");
+                {
+                    TempData["Error"] = "Компанијата не е пронајдена";
+                    return RedirectToAction("Details", new { id = invoiceId });
+                }
 
 
-                var password = "";
+                // ===============================
+                // SMTP CHECK
+                // ===============================
 
-                if (!string.IsNullOrEmpty(company.EmailPassword))
+                if (string.IsNullOrWhiteSpace(company.EmailHost) ||
+                    string.IsNullOrWhiteSpace(company.EmailUser) ||
+                    string.IsNullOrWhiteSpace(company.EmailFrom))
+                {
+                    TempData["Error"] =
+                        "SMTP податоците не се внесени";
+
+                    return RedirectToAction(
+                        "Details",
+                        new { id = invoiceId });
+                }
+
+
+                string password = "";
+
+                if (!string.IsNullOrWhiteSpace(company.EmailPassword))
                 {
                     password =
                         _encryptionService.Decrypt(
@@ -222,26 +244,43 @@ namespace BauFlow.Controllers
                 }
 
 
-                var settings = new EmailSettings
-                {
-                    Host = company.EmailHost,
-                    Port = company.EmailPort,
-                    UserName = company.EmailUser,
-                    Password = password,
-                    EnableSSL = company.EmailSSL,
-                    From = company.EmailFrom,
-                    FromName = company.EmailFromName
-                };
 
-
-                var receiver =
-                    sendToAccountant
+                var receiver = sendToAccountant
                     ? company.Accountant
                     : invoice.Customer?.Email;
 
 
-                if (string.IsNullOrEmpty(receiver))
-                    return BadRequest("Keine Empfänger Email");
+                if (string.IsNullOrWhiteSpace(receiver))
+                {
+                    TempData["Error"] =
+                        "Нема внесено е-маил адреса";
+
+                    return RedirectToAction(
+                        "Details",
+                        new { id = invoiceId });
+                }
+
+
+
+                var settings = new EmailSettings
+                {
+                    Host = company.EmailHost,
+
+                    Port = company.EmailPort,
+
+                    UserName = company.EmailUser,
+
+                    Password = password,
+
+                    EnableSSL = company.EmailSSL,
+
+                    From = company.EmailFrom,
+
+                    FromName = string.IsNullOrWhiteSpace(company.EmailFromName)
+                        ? company.Name
+                        : company.EmailFromName
+                };
+
 
 
                 await _emailService.SendInvoice(
@@ -249,12 +288,12 @@ namespace BauFlow.Controllers
                     invoice,
                     settings,
                     company.Name,
-                    sendToAccountant
-                );
+                    sendToAccountant);
+
 
 
                 TempData["Success"] =
-                    "Email gesendet an " + receiver;
+                    $"Е-маилот е успешно испратен до {receiver}";
 
 
                 return RedirectToAction(
@@ -264,7 +303,8 @@ namespace BauFlow.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] =
-                    ex.Message;
+                    ex.GetBaseException().Message;
+
 
                 return RedirectToAction(
                     "Details",

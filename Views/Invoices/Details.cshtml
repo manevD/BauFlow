@@ -1,6 +1,18 @@
 ﻿@using BauFlow.Entities
 @model BauFlow.Entities.Invoice
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
 
 <link href="~/css/siteUser.css" rel="stylesheet" />
 
