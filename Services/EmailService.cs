@@ -26,26 +26,24 @@ public class EmailService : IEmailService
     }
 
     public async Task SendInvite(
-        string email,
-        string name,
-        string inviteLink)
+    string email,
+    string name,
+    string inviteLink)
     {
         var html = BuildInviteTemplate(name, inviteLink);
 
-        using var message = new MailMessage
-        {
-            From = new MailAddress(
-                _defaultSettings.From,
-                _defaultSettings.FromName),
+        using var message = new MailMessage();
 
-            Subject = "Покана од Флоу",
-
-            Body = html,
-
-            IsBodyHtml = true
-        };
+        message.From = new MailAddress(
+            _defaultSettings.From,
+            _defaultSettings.FromName
+        );
 
         message.To.Add(email);
+
+        message.Subject = "Покана од BauFlow";
+        message.Body = html;
+        message.IsBodyHtml = true;
 
         using var smtp = BuildSmtp(_defaultSettings);
 
@@ -199,19 +197,19 @@ public class EmailService : IEmailService
 
     private SmtpClient BuildSmtp(EmailSettings settings)
     {
-        var smtp = new SmtpClient(settings.Host, settings.Port);
-
-        smtp.EnableSsl = settings.EnableSSL;
+        var smtp = new SmtpClient(settings.Host)
+        {
+            Port = settings.Port,
+            EnableSsl = settings.EnableSSL,
+            DeliveryMethod = SmtpDeliveryMethod.Network
+        };
 
         smtp.UseDefaultCredentials = false;
 
-        smtp.Credentials =
-            new NetworkCredential(
-                settings.UserName,
-                settings.Password);
-
-        smtp.DeliveryMethod =
-            SmtpDeliveryMethod.Network;
+        smtp.Credentials = new NetworkCredential(
+            settings.UserName,
+            settings.Password
+        );
 
         return smtp;
     }
