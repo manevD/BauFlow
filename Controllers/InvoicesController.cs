@@ -227,14 +227,24 @@ namespace BauFlow.Controllers
 
             if (string.IsNullOrEmpty(receiver))
                 return BadRequest("Keine Empfänger Email");
+            try
+            {
+                await _emailService.SendInvoice(
+                    receiver,
+                    invoice,
+                    settings,
+                    company.Name,
+                    sendToAccountant
+                );
 
-            await _emailService.SendInvoice(
-                receiver,
-                invoice,
-                settings,
-                company.Name,
-                sendToAccountant
-            );
+                TempData["Success"] =
+                    "Email gesendet an: " + receiver;
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    ex.Message;
+            }
 
             return RedirectToAction(
                 "Details",
