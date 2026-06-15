@@ -173,7 +173,6 @@ namespace BauFlow.Controllers
                 return View(invoice);
             }
 
-
             invoice.Id = Guid.NewGuid();
             invoice.InvoiceNumber = await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
             invoice.InvoiceDate = DateTime.UtcNow;
@@ -187,39 +186,59 @@ namespace BauFlow.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
-
         }
-        public async Task<IActionResult> SendInvoice(Guid invoiceId, bool sendToAccountant)
+
+        public async Task<IActionResult> SendInvoice(Guid invoiceId,bool sendToAccountant = false)
         {
             var invoice = await _context.Invoices
                 .Include(i => i.Customer)
-                .Include(x => x.Items)
-                .FirstOrDefaultAsync(x => x.Id == invoiceId); 
+                .Include(i => i.Items)
+                .FirstOrDefaultAsync(x => x.Id == invoiceId);
+
 
             if (invoice == null)
                 return NotFound();
 
-            var company = await _context.Companies.FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
+
+            var company = await _context.Companies
+                .FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
+
+            if (company == null) return BadRequest("Company nicht gefunden");
 
             var settings = new EmailSettings
             {
                 Host = company.EmailHost,
+
                 Port = company.EmailPort,
+
                 UserName = company.EmailUser,
-                Password = _encryptionService.Decrypt(company.EmailPassword),
+
+                Password = string.IsNullOrEmpty(company.EmailPassword)? "" : _encryptionService.Decrypt(company.EmailPassword),
+
                 EnableSSL = company.EmailSSL,
+
                 From = company.EmailFrom,
+
                 FromName = company.EmailFromName
             };
 
+
+            var receiver =sendToAccountant? company.Accountant: invoice.Customer?.Email;
+
+            if (string.IsNullOrEmpty(receiver))
+                return BadRequest("Keine Empfänger Email");
+
             await _emailService.SendInvoice(
-                sendToAccountant ? invoice.Company.Accountant : invoice.Customer.Email,
+                receiver,
                 invoice,
-                settings, company.Name,
+                settings,
+                company.Name,
                 sendToAccountant
             );
 
-            return RedirectToAction("Details", new { id = invoiceId });
+            return RedirectToAction(
+                "Details",
+                new { id = invoiceId });
         }
         public async Task<IActionResult> Pdf(Guid id)
         {

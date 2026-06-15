@@ -76,21 +76,35 @@ namespace BauFlow.Controllers
         }
         public async Task<IActionResult> EmailSettings()
         {
-            var company = await _context.Companies.FindAsync(_context.CurrentCompanyId);
+            var company = await _context.Companies
+                .FindAsync(_context.CurrentCompanyId);
 
-            if (company == null) return NotFound();
+            if (company == null)
+                return NotFound();
+
 
             var vm = new CompanyEmailSettingsVM
             {
                 Id = company.Id,
+
                 EmailHost = company.EmailHost,
+
                 EmailPort = company.EmailPort,
+
                 EmailUser = company.EmailUser,
-                EmailPassword = _encryptionService.Decrypt(company.EmailPassword),
+
+                EmailPassword =
+                    string.IsNullOrEmpty(company.EmailPassword)
+                    ? ""
+                    : _encryptionService.Decrypt(company.EmailPassword),
+
                 EmailSSL = company.EmailSSL,
+
                 EmailFrom = company.EmailFrom,
+
                 EmailFromName = company.EmailFromName
             };
+
 
             return View(vm);
         }
