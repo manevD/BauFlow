@@ -10,7 +10,6 @@ using System.Net.Mail;
 namespace BauFlow.Controllers
 {
     [RequireTenant]
-    [Authorize("OwnerOnly")]
     public class CompanyController : Controller
     {
         private readonly ApplicationDbContext _context;

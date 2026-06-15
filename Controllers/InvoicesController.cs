@@ -188,47 +188,62 @@ namespace BauFlow.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> SendInvoice(Guid invoiceId,bool sendToAccountant = false)
+        public async Task<IActionResult> SendInvoice(
+          Guid invoiceId,
+          bool sendToAccountant = false)
         {
-            var invoice = await _context.Invoices
-                .Include(i => i.Customer)
-                .Include(i => i.Items)
-                .FirstOrDefaultAsync(x => x.Id == invoiceId);
-
-
-            if (invoice == null)
-                return NotFound();
-
-
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
-
-            if (company == null) return BadRequest("Company nicht gefunden");
-
-            var settings = new EmailSettings
-            {
-                Host = company.EmailHost,
-
-                Port = company.EmailPort,
-
-                UserName = company.EmailUser,
-
-                Password = string.IsNullOrEmpty(company.EmailPassword)? "" : _encryptionService.Decrypt(company.EmailPassword),
-
-                EnableSSL = company.EmailSSL,
-
-                From = company.EmailFrom,
-
-                FromName = company.EmailFromName
-            };
-
-
-            var receiver =sendToAccountant? company.Accountant: invoice.Customer?.Email;
-
-            if (string.IsNullOrEmpty(receiver))
-                return BadRequest("Keine Empfänger Email");
             try
             {
+                var invoice = await _context.Invoices
+                    .Include(i => i.Customer)
+                    .Include(i => i.Items)
+                    .FirstOrDefaultAsync(x => x.Id == invoiceId);
+
+
+                if (invoice == null)
+                    return NotFound();
+
+
+                var company = await _context.Companies
+                    .FirstOrDefaultAsync(x => x.Id == invoice.CompanyId);
+
+
+                if (company == null)
+                    return BadRequest("Company nicht gefunden");
+
+
+                var password = "";
+
+                if (!string.IsNullOrEmpty(company.EmailPassword))
+                {
+                    password =
+                        _encryptionService.Decrypt(
+                            company.EmailPassword);
+                }
+
+
+                var settings = new EmailSettings
+                {
+                    Host = company.EmailHost,
+                    Port = company.EmailPort,
+                    UserName = company.EmailUser,
+                    Password = password,
+                    EnableSSL = company.EmailSSL,
+                    From = company.EmailFrom,
+                    FromName = company.EmailFromName
+                };
+
+
+                var receiver =
+                    sendToAccountant
+                    ? company.Accountant
+                    : invoice.Customer?.Email;
+
+
+                if (string.IsNullOrEmpty(receiver))
+                    return BadRequest("Keine Empfänger Email");
+
+
                 await _emailService.SendInvoice(
                     receiver,
                     invoice,
@@ -237,18 +252,24 @@ namespace BauFlow.Controllers
                     sendToAccountant
                 );
 
+
                 TempData["Success"] =
-                    "Email gesendet an: " + receiver;
+                    "Email gesendet an " + receiver;
+
+
+                return RedirectToAction(
+                    "Details",
+                    new { id = invoiceId });
             }
             catch (Exception ex)
             {
                 TempData["Error"] =
                     ex.Message;
-            }
 
-            return RedirectToAction(
-                "Details",
-                new { id = invoiceId });
+                return RedirectToAction(
+                    "Details",
+                    new { id = invoiceId });
+            }
         }
         public async Task<IActionResult> Pdf(Guid id)
         {
