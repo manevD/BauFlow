@@ -9,6 +9,7 @@ using BauFlow.Security;
 using BauFlow.Services;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -141,8 +142,13 @@ builder.Services.AddScoped<NumberService>();
 builder.Services.AddScoped<EmailEncryptionService>();
 
 
-builder.Services.AddDataProtection();
-
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(
+        new DirectoryInfo(
+            Path.Combine(
+                builder.Environment.ContentRootPath,
+                "keys")))
+    .SetApplicationName("BauFlow");
 
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));

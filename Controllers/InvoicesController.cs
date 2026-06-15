@@ -3,11 +3,14 @@ using BauFlow.Entities;
 using BauFlow.Models;
 using BauFlow.Security;
 using BauFlow.Services;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+
 using QuestPDF.Fluent;
+
 
 namespace BauFlow.Controllers
 {
@@ -18,208 +21,506 @@ namespace BauFlow.Controllers
         private readonly NumberService _numberService;
         private readonly EmailService _emailService;
         private readonly EmailEncryptionService _encryptionService;
-        public InvoicesController(ApplicationDbContext context, NumberService numberService, EmailService emailService, EmailEncryptionService encryptionService)
+
+
+        public InvoicesController(
+            ApplicationDbContext context,
+            NumberService numberService,
+            EmailService emailService,
+            EmailEncryptionService encryptionService)
         {
             _context = context;
-            _emailService = emailService;
             _numberService = numberService;
+            _emailService = emailService;
             _encryptionService = encryptionService;
         }
+
+
+
+        // =====================
+        // INVOICE TEXT
+        // =====================
+
         [HttpGet]
         [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> SetInvoiceText()
+        public IActionResult SetInvoiceText()
         {
-            var invoiceText = _context.InvoiceTexts.FirstOrDefault(x => x.CompanyId == _context.CurrentCompanyId.Value);
-            if (invoiceText == null)
+            if (!_context.CurrentCompanyId.HasValue)
+                return Unauthorized();
+
+
+            var text =
+                _context.InvoiceTexts
+                .FirstOrDefault(x =>
+                    x.CompanyId ==
+                    _context.CurrentCompanyId.Value);
+
+
+            text ??= new InvoiceText
             {
-              invoiceText = new InvoiceText
-              {
-                  CompanyId = _context.CurrentCompanyId.Value,
-                  Text = ""
-              };
-            }
-            return PartialView("_SetInvoiceTextModal", invoiceText);
+                CompanyId =
+                    _context.CurrentCompanyId.Value,
+
+                Text = ""
+            };
+
+
+            return PartialView(
+                "_SetInvoiceTextModal",
+                text);
         }
+
+
 
         [HttpPost]
         [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> SetInvoiceText(InvoiceText model)
+        public async Task<IActionResult> SetInvoiceText(
+            InvoiceText model)
         {
-            var existing = _context.InvoiceTexts
-                .FirstOrDefault(x =>
-                    x.CompanyId == _context.CurrentCompanyId.Value);
+            if (!_context.CurrentCompanyId.HasValue)
+                return Unauthorized();
+
+
+
+            var existing =
+                await _context.InvoiceTexts
+                .FirstOrDefaultAsync(x =>
+                    x.CompanyId ==
+                    _context.CurrentCompanyId.Value);
+
+
 
             if (existing == null)
             {
-                model.CompanyId = _context.CurrentCompanyId.Value;
+                model.CompanyId =
+                    _context.CurrentCompanyId.Value;
+
 
                 _context.InvoiceTexts.Add(model);
             }
             else
             {
-                existing.Text = model.Text ?? "";
+                existing.Text =
+                    model.Text ?? "";
             }
+
+
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(
+                nameof(Index));
         }
 
-        // GET: Invoices
+
+
+
+
+        // =====================
+        // INDEX
+        // =====================
+
         public async Task<IActionResult> Index()
         {
-            var invoices = await _context.Invoices
-                .Include(i => i.Customer)
-                .OrderByDescending(i => i.InvoiceDate)
+            var invoices =
+                await _context.Invoices
+                .Include(x => x.Customer)
+                .OrderByDescending(
+                    x => x.InvoiceDate)
                 .ToListAsync();
+
+
 
             return View(invoices);
         }
 
-        // GET: Invoices/Details/5
+
+
+
+        // =====================
+        // DETAILS
+        // =====================
+
         public async Task<IActionResult> Details(Guid id)
         {
-            var invoice = await _context.Invoices
-                .Include(i => i.Customer)
-                .Include(i => i.Company)
-                .Include(i => i.Items)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var invoice =
+                await _context.Invoices
+
+                .Include(x => x.Customer)
+
+                .Include(x => x.Company)
+
+                .Include(x => x.Items)
+
+                .FirstOrDefaultAsync(
+                    x => x.Id == id);
+
+
 
             if (invoice == null)
                 return NotFound();
 
+
+
             return View(invoice);
         }
+        // =====================
+        // CREATE GET
+        // =====================
 
-        // GET: Invoices/Create
         public IActionResult Create()
         {
-            ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            }).ToList();
-            ViewBag.TaxRates = GetTaxRates(); // 🔥 NEU
-            var existing = _context.InvoiceTexts
-               .FirstOrDefault(x =>
-                   x.CompanyId == _context.CurrentCompanyId.Value);
+            if (!_context.CurrentCompanyId.HasValue)
+                return Unauthorized();
+
+
+            ViewBag.CustomerId =
+                _context.Customers
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToList();
+
+
+            ViewBag.TaxRates = GetTaxRates();
+
+
+            var existing =
+                _context.InvoiceTexts
+                .FirstOrDefault(x =>
+                    x.CompanyId ==
+                    _context.CurrentCompanyId.Value);
+
+
+
             return View(new Invoice
             {
                 TaxRate = 0,
-                Description = existing?.Text ?? "",
-                DueDate = DateTime.UtcNow.AddDays(7)
+
+                Description =
+                    existing?.Text ?? "",
+
+                DueDate =
+                    DateTime.UtcNow.AddDays(7)
             });
         }
-        public async Task<IActionResult> CreateFromQuote(Guid quoteId)
+
+
+
+
+        // =====================
+        // CREATE POST
+        // =====================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            Invoice invoice)
         {
-            var quote = await _context.Quotes
+            try
+            {
+                if (!_context.CurrentCompanyId.HasValue)
+                    return Unauthorized();
+
+
+
+                invoice.Items ??=
+                    new List<InvoiceItem>();
+
+
+
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.CustomerId =
+                        _context.Customers
+                        .Select(c => new SelectListItem
+                        {
+                            Value = c.Id.ToString(),
+                            Text = c.Name
+                        })
+                        .ToList();
+
+
+                    ViewBag.TaxRates =
+                        GetTaxRates();
+
+
+                    return View(invoice);
+                }
+
+
+
+                invoice.Id =
+                    Guid.NewGuid();
+
+
+                invoice.InvoiceNumber =
+                    await _numberService
+                    .GetNextInvoiceNumber(
+                        _context.CurrentCompanyId.Value);
+
+
+
+                invoice.InvoiceDate =
+                    DateTime.UtcNow;
+
+
+
+                invoice.Status =
+                    InvoiceStatus.Draft;
+
+
+
+                foreach (var item in invoice.Items)
+                {
+                    item.Id = Guid.NewGuid();
+
+                    item.InvoiceId =
+                        invoice.Id;
+
+                    item.TotalPrice =
+                        item.Quantity *
+                        item.UnitPrice;
+                }
+
+
+
+                invoice.NetAmount =
+                    invoice.Items.Sum(
+                        x => x.TotalPrice);
+
+
+
+                invoice.TaxAmount =
+                    invoice.NetAmount *
+                    (invoice.TaxRate / 100m);
+
+
+
+                invoice.GrossAmount =
+                    Math.Round(
+                        invoice.NetAmount +
+                        invoice.TaxAmount,
+                        0,
+                        MidpointRounding.AwayFromZero);
+
+
+
+                _context.Invoices.Add(invoice);
+
+
+                await _context.SaveChangesAsync();
+
+
+
+                return RedirectToAction(
+                    nameof(Index));
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    ex.GetBaseException().Message;
+
+
+                return View(invoice);
+            }
+        }
+
+
+
+
+
+
+
+        // =====================
+        // CREATE FROM QUOTE
+        // =====================
+
+        public async Task<IActionResult> CreateFromQuote(
+            Guid quoteId)
+        {
+            if (!_context.CurrentCompanyId.HasValue)
+                return Unauthorized();
+
+
+
+            var quote =
+                await _context.Quotes
+
                 .Include(x => x.Items)
-                .FirstOrDefaultAsync(x => x.Id == quoteId);
+
+                .FirstOrDefaultAsync(
+                    x => x.Id == quoteId);
+
+
 
             if (quote == null)
                 return NotFound();
 
+
+
+
             var invoice = new Invoice
             {
-                Id = Guid.NewGuid(),
-                CustomerId = quote.CustomerId,
-                QuoteId = quote.Id,
-                InvoiceDate = DateTime.UtcNow,
-                DueDate = DateTime.UtcNow.AddDays(14),
-                Status = InvoiceStatus.Draft
+                Id =
+                    Guid.NewGuid(),
+
+
+                CustomerId =
+                    quote.CustomerId,
+
+
+                QuoteId =
+                    quote.Id,
+
+
+                InvoiceDate =
+                    DateTime.UtcNow,
+
+
+                DueDate =
+                    DateTime.UtcNow.AddDays(14),
+
+
+                Status =
+                    InvoiceStatus.Draft,
+
+
+                TaxRate =
+                    quote.TaxRate
             };
 
-            invoice.Items = quote.Items.Select(x => new InvoiceItem
-            {
-                Id = Guid.NewGuid(),
-                InvoiceId = invoice.Id,
-                Description = x.Description,
-                Quantity = x.Quantity,
-                Unit = x.Unit,
-                UnitPrice = x.UnitPrice,
-                TotalPrice = x.TotalPrice
-            }).ToList();
 
-            invoice.TaxRate = quote.TaxRate; // oder default
 
-            invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
-            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount =Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
+            invoice.Items =
+                (quote.Items ?? new List<QuoteItem>())
+
+                .Select(x => new InvoiceItem
+                {
+                    Id =
+                        Guid.NewGuid(),
+
+
+                    InvoiceId =
+                        invoice.Id,
+
+
+                    Description =
+                        x.Description,
+
+
+                    Quantity =
+                        x.Quantity,
+
+
+                    Unit =
+                        x.Unit,
+
+
+                    UnitPrice =
+                        x.UnitPrice,
+
+
+                    TotalPrice =
+                        x.TotalPrice
+
+                }).ToList();
+
+
+
+
+            invoice.NetAmount =
+                invoice.Items.Sum(
+                    x => x.TotalPrice);
+
+
+
+            invoice.TaxAmount =
+                invoice.NetAmount *
+                (invoice.TaxRate / 100m);
+
+
+
+            invoice.GrossAmount =
+                Math.Round(
+                    invoice.NetAmount +
+                    invoice.TaxAmount,
+                    0,
+                    MidpointRounding.AwayFromZero);
+
+
 
             invoice.InvoiceNumber =
-                await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
+                await _numberService
+                .GetNextInvoiceNumber(
+                    _context.CurrentCompanyId.Value);
+
+
+
 
             _context.Invoices.Add(invoice);
 
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Edit", "Invoices", new { id = invoice.Id });
-        }
-        // POST: Invoices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Invoice invoice)
-        {
-            
-            if (!ModelState.IsValid)
-            {
-                ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                }).ToList();
-                return View(invoice);
-            }
-
-            invoice.Id = Guid.NewGuid();
-            invoice.InvoiceNumber = await _numberService.GetNextInvoiceNumber(_context.CurrentCompanyId.Value);
-            invoice.InvoiceDate = DateTime.UtcNow;
-            invoice.Status = InvoiceStatus.Draft;
-            invoice.NetAmount = invoice.Items.Sum(x => x.TotalPrice);
-            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount = Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
-
-            _context.Invoices.Add(invoice);
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
-        }
+
+
+
+            return RedirectToAction(
+                "Edit",
+                new { id = invoice.Id });
+        }        // =====================
+        // SEND INVOICE
+        // =====================
 
         public async Task<IActionResult> SendInvoice(
-        Guid invoiceId,
-        bool sendToAccountant = false)
+            Guid invoiceId,
+            bool sendToAccountant = false)
         {
             try
             {
                 var invoice = await _context.Invoices
+
                     .Include(x => x.Customer)
+
                     .Include(x => x.Company)
+
                     .Include(x => x.Items)
-                    .FirstOrDefaultAsync(x => x.Id == invoiceId);
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == invoiceId);
+
 
 
                 if (invoice == null)
                 {
-                    TempData["Error"] = "Фактурата не е пронајдена";
-                    return RedirectToAction("Index");
+                    TempData["Error"] =
+                        "Фактурата не е пронајдена";
+
+                    return RedirectToAction(nameof(Index));
                 }
+
 
 
                 var company = invoice.Company;
 
+
                 if (company == null)
                 {
-                    TempData["Error"] = "Компанијата не е пронајдена";
-                    return RedirectToAction("Details", new { id = invoiceId });
+                    TempData["Error"] =
+                        "Компанијата не е пронајдена";
+
+                    return RedirectToAction(
+                        nameof(Details),
+                        new { id = invoiceId });
                 }
 
 
-                // ===============================
-                // SMTP CHECK
-                // ===============================
+
 
                 if (string.IsNullOrWhiteSpace(company.EmailHost) ||
                     string.IsNullOrWhiteSpace(company.EmailUser) ||
@@ -228,26 +529,47 @@ namespace BauFlow.Controllers
                     TempData["Error"] =
                         "SMTP податоците не се внесени";
 
+
                     return RedirectToAction(
-                        "Details",
+                        nameof(Details),
                         new { id = invoiceId });
                 }
 
 
+
+
                 string password = "";
+
 
                 if (!string.IsNullOrWhiteSpace(company.EmailPassword))
                 {
-                    password =
-                        _encryptionService.Decrypt(
-                            company.EmailPassword);
+                    try
+                    {
+                        password =
+                            _encryptionService.Decrypt(
+                                company.EmailPassword);
+                    }
+                    catch
+                    {
+                        TempData["Error"] =
+                            "Внесете ја е-маил лозинката повторно";
+
+
+                        return RedirectToAction(
+                            nameof(Details),
+                            new { id = invoiceId });
+                    }
                 }
 
 
 
-                var receiver = sendToAccountant
+
+                var receiver =
+                    sendToAccountant
                     ? company.Accountant
                     : invoice.Customer?.Email;
+
+
 
 
                 if (string.IsNullOrWhiteSpace(receiver))
@@ -255,31 +577,47 @@ namespace BauFlow.Controllers
                     TempData["Error"] =
                         "Нема внесено е-маил адреса";
 
+
                     return RedirectToAction(
-                        "Details",
+                        nameof(Details),
                         new { id = invoiceId });
                 }
 
 
 
+
                 var settings = new EmailSettings
                 {
-                    Host = company.EmailHost,
+                    Host =
+                        company.EmailHost,
 
-                    Port = company.EmailPort,
 
-                    UserName = company.EmailUser,
+                    Port =
+                        company.EmailPort,
 
-                    Password = password,
 
-                    EnableSSL = company.EmailSSL,
+                    UserName =
+                        company.EmailUser,
 
-                    From = company.EmailFrom,
 
-                    FromName = string.IsNullOrWhiteSpace(company.EmailFromName)
+                    Password =
+                        password,
+
+
+                    EnableSSL =
+                        company.EmailSSL,
+
+
+                    From =
+                        company.EmailFrom,
+
+
+                    FromName =
+                        string.IsNullOrWhiteSpace(company.EmailFromName)
                         ? company.Name
                         : company.EmailFromName
                 };
+
 
 
 
@@ -293,11 +631,12 @@ namespace BauFlow.Controllers
 
 
                 TempData["Success"] =
-                    $"Е-маилот е успешно испратен до {receiver}";
+                    $"Е-маилот е испратен до {receiver}";
+
 
 
                 return RedirectToAction(
-                    "Details",
+                    nameof(Details),
                     new { id = invoiceId });
             }
             catch (Exception ex)
@@ -307,155 +646,370 @@ namespace BauFlow.Controllers
 
 
                 return RedirectToAction(
-                    "Details",
+                    nameof(Details),
                     new { id = invoiceId });
             }
         }
+
+
+
+
+
+
+
+        // =====================
+        // PDF
+        // =====================
+
         public async Task<IActionResult> Pdf(Guid id)
         {
-            var invoice = await _context.Invoices
-                .Include(x => x.Customer)
-                .Include(x => x.Items)
-                .FirstOrDefaultAsync(x => x.Id == id);
-            var company = _context.Companies
-           .FirstOrDefault(x => x.Id == invoice.CompanyId);
+            try
+            {
+                var invoice =
+                    await _context.Invoices
 
-            if (company == null)
-                throw new Exception("Company fehlt für PDF");
+                    .Include(x => x.Customer)
+
+                    .Include(x => x.Items)
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == id);
 
 
-            var document = new InvoiceDocument(
-                invoice,
-                company);
 
-            var pdf = document.GeneratePdf();
+                if (invoice == null)
+                    return NotFound();
 
-            return File(pdf, "application/pdf",
-                $"Фактура-{invoice.InvoiceNumber}.pdf");
+
+
+
+                var company =
+                    await _context.Companies
+
+                    .FirstOrDefaultAsync(
+                        x => x.Id == invoice.CompanyId);
+
+
+
+                if (company == null)
+                    return NotFound();
+
+
+
+
+                var document =
+                    new InvoiceDocument(
+                        invoice,
+                        company);
+
+
+
+                var pdf =
+                    document.GeneratePdf();
+
+
+
+                return File(
+                    pdf,
+                    "application/pdf",
+                    $"Invoice-{invoice.InvoiceNumber}.pdf");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] =
+                    ex.GetBaseException().Message;
+
+
+                return RedirectToAction(
+                    nameof(Index));
+            }
         }
-        // GET: Invoices/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+
+
+
+
+
+
+
+
+        // =====================
+        // EDIT GET
+        // =====================
+
+        public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            ModelState.Clear(); // 💥 DAS IST DER FIX
-            var invoice = await _context.Invoices
-                .Include(i => i.Items)
-                .Include(i => i.Customer)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var invoice =
+                await _context.Invoices
+
+                .Include(x => x.Items)
+
+                .Include(x => x.Customer)
+
+                .FirstOrDefaultAsync(
+                    x => x.Id == id);
+
+
+
             if (invoice == null)
-            {
                 return NotFound();
-            }
 
-            ViewBag.TaxRates = GetTaxRates();
 
-            ViewBag.CustomerId = _context.Customers.Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            }).ToList();
+
+
+            ViewBag.CustomerId =
+                _context.Customers
+
+                .Select(c => new SelectListItem
+                {
+                    Value =
+                        c.Id.ToString(),
+
+                    Text =
+                        c.Name
+
+                }).ToList();
+
+
+
+            ViewBag.TaxRates =
+                GetTaxRates();
+
+
+
             return View(invoice);
         }
 
-        // POST: Invoices/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
+
+
+
+
+        // =====================
+        // EDIT POST
+        // =====================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Invoice model)
+        public async Task<IActionResult> Edit(
+            Guid id,
+            Invoice model)
         {
-            var invoice = await _context.Invoices
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var invoice =
+                await _context.Invoices
+
+                .FirstOrDefaultAsync(
+                    x => x.Id == id);
+
+
 
             if (invoice == null)
                 return NotFound();
 
-            // ========= Stammdaten =========
-            invoice.CustomerId = model.CustomerId;
-            invoice.InvoiceNumber = model.InvoiceNumber;
-            invoice.InvoiceDate = model.InvoiceDate;
-            invoice.DueDate = model.DueDate;
-            invoice.Status = model.Status;
-            invoice.TaxRate = model.TaxRate;
 
-            // ========= Items SAFE =========
-            var existingItems = await _context.InvoiceItems
-                .Where(x => x.InvoiceId == invoice.Id)
+
+
+            invoice.CustomerId =
+                model.CustomerId;
+
+
+            invoice.InvoiceNumber =
+                model.InvoiceNumber;
+
+
+            invoice.InvoiceDate =
+                model.InvoiceDate;
+
+
+            invoice.DueDate =
+                model.DueDate;
+
+
+            invoice.Status =
+                model.Status;
+
+
+            invoice.TaxRate =
+                model.TaxRate;
+
+
+
+
+            var oldItems =
+                await _context.InvoiceItems
+
+                .Where(x =>
+                    x.InvoiceId == invoice.Id)
+
                 .ToListAsync();
 
-            _context.InvoiceItems.RemoveRange(existingItems);
 
-            var newItems = model.Items.Select(x => new InvoiceItem
-            {
-                Id = Guid.NewGuid(),
-                InvoiceId = invoice.Id,
-                Description = x.Description,
-                Quantity = x.Quantity,
-                Unit = x.Unit,
-                UnitPrice = x.UnitPrice,
-                TotalPrice = x.TotalPrice
-            }).ToList();
 
-            await _context.InvoiceItems.AddRangeAsync(newItems);
+            _context.InvoiceItems
+                .RemoveRange(oldItems);
 
-            // ========= Totals =========
-            invoice.NetAmount = newItems.Sum(x => x.TotalPrice);
-            invoice.TaxAmount = invoice.NetAmount * (invoice.TaxRate / 100m);
-            invoice.GrossAmount = Math.Round(invoice.NetAmount + invoice.TaxAmount, 0, MidpointRounding.AwayFromZero);
+
+
+
+            var newItems =
+                (model.Items ?? new List<InvoiceItem>())
+
+                .Select(x => new InvoiceItem
+                {
+                    Id =
+                        Guid.NewGuid(),
+
+                    InvoiceId =
+                        invoice.Id,
+
+                    Description =
+                        x.Description,
+
+                    Quantity =
+                        x.Quantity,
+
+                    Unit =
+                        x.Unit,
+
+                    UnitPrice =
+                        x.UnitPrice,
+
+                    TotalPrice =
+                        x.Quantity * x.UnitPrice
+
+                }).ToList();
+
+
+
+
+            await _context.InvoiceItems
+                .AddRangeAsync(newItems);
+
+
+
+
+            invoice.NetAmount =
+                newItems.Sum(
+                    x => x.TotalPrice);
+
+
+
+            invoice.TaxAmount =
+                invoice.NetAmount *
+                (invoice.TaxRate / 100m);
+
+
+
+            invoice.GrossAmount =
+                Math.Round(
+                    invoice.NetAmount +
+                    invoice.TaxAmount,
+                    0,
+                    MidpointRounding.AwayFromZero);
+
+
+
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+
+
+
+            return RedirectToAction(
+                nameof(Index));
         }
 
-        // GET: Invoices/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var invoice = await _context.Invoices
-                .Include(i => i.Customer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+
+
+
+
+
+        // =====================
+        // DELETE
+        // =====================
+
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var invoice =
+                await _context.Invoices
+
+                .Include(x => x.Customer)
+
+                .FirstOrDefaultAsync(
+                    x => x.Id == id);
+
+
+
             if (invoice == null)
-            {
                 return NotFound();
-            }
+
+
 
             return View(invoice);
         }
 
-        // POST: Invoices/Delete/5
+
+
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(
+            Guid id)
         {
-            var invoice = await _context.Invoices.FindAsync(id);
+            var invoice =
+                await _context.Invoices
+                .FindAsync(id);
+
+
+
             if (invoice != null)
             {
-                _context.Invoices.Remove(invoice);
+                _context.Invoices
+                    .Remove(invoice);
+
+
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+
+
+            return RedirectToAction(
+                nameof(Index));
         }
 
-        private bool InvoiceExists(Guid id)
-        {
-            return _context.Invoices.Any(e => e.Id == id);
-        }
+
+
+
+
+
+        // =====================
+        // HELPERS
+        // =====================
+
         private List<SelectListItem> GetTaxRates()
         {
             return new List<SelectListItem>
             {
-                new SelectListItem { Value = "0", Text = "0%" },
-                new SelectListItem { Value = "7", Text = "7%" },
-                new SelectListItem { Value = "19", Text = "19%" }
+                new SelectListItem
+                {
+                    Value="0",
+                    Text="0%"
+                },
+
+                new SelectListItem
+                {
+                    Value="7",
+                    Text="7%"
+                },
+
+                new SelectListItem
+                {
+                    Value="19",
+                    Text="19%"
+                }
             };
         }
     }
