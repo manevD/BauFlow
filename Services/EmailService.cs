@@ -50,8 +50,6 @@ public class EmailService : IEmailService
         await smtp.SendMailAsync(message);
     }
 
-
-
     public async Task SendInvoice(
         string toEmail,
         Invoice invoice,
