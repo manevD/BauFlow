@@ -203,10 +203,14 @@ namespace BauFlow.Controllers
             ViewBag.CustomerId = GetCustomers();
             ViewBag.TaxRates = GetTaxRates();
 
+            var existing = _context.InvoiceTexts
+               .FirstOrDefault(x =>
+                   x.CompanyId == _context.CurrentCompanyId.Value);
             return View(new Invoice
             {
                 TaxRate = 0,
-                DueDate = DateTime.Now.AddDays(7)
+                Description = existing?.Text ?? "",
+                DueDate = DateTime.UtcNow.AddDays(7)
             });
         }
 
