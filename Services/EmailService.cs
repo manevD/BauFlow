@@ -174,7 +174,7 @@ public class EmailService : IEmailService
         message.Attachments.Add(
             new Attachment(
                 stream,
-                $"Invoice-{invoice.InvoiceNumber}.pdf",
+                $"Фактура-{invoice.InvoiceNumber}.pdf",
                 "application/pdf"));
 
 

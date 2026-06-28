@@ -89,7 +89,7 @@ namespace BauFlow.Controllers
                 return File(
                     pdf,
                     "application/pdf",
-                    $"Invoice-{invoice.InvoiceNumber}.pdf");
+                    $"Фактура-{invoice.InvoiceNumber}.pdf");
             }
             catch (Exception ex)
             {
@@ -190,13 +190,11 @@ namespace BauFlow.Controllers
                 TempData["Error"] =
                     ex.GetBaseException().Message;
 
-
                 return RedirectToAction(
                     nameof(Details),
                     new { id = invoiceId });
             }
         }
-
 
         public IActionResult Create()
         {

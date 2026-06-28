@@ -344,25 +344,49 @@ namespace BauFlow.Services
                 .Padding(15)
                 .Column(column =>
                 {
-                    column.Item()
-                        .Text("Опис")
-                        .Bold();
+                    // Прв ред - наслови
+                    column.Item().Row(row =>
+                    {
+                        row.RelativeItem()
+                            .Text("Опис")
+                            .Bold();
 
+                        row.ConstantItem(220)
+                            .AlignCenter()
+                            .Text("Овластено лице")
+                            .Bold();
+                    });
 
-                    column.Item()
-                        .Text(_invoice.Description ?? "");
+                    // Празен ред
+                    column.Item().Height(15);
 
+                    // Втор ред
+                    column.Item().Row(row =>
+                    {
+                        // Лево - опис
+                        row.RelativeItem()
+                            .Text(_invoice.Description ?? "");
 
-                    column.Item()
-                        .PaddingTop(20)
-                        .AlignRight()
-                        .Text(_company.CEO ?? "")
-                        .Bold();
+                        // Десно - потпис
+                        row.ConstantItem(220)
+                            .Column(col =>
+                            {
+                                // Простор за потпис
+                                col.Item().Height(40);
+
+                                // Име
+                                col.Item()
+                                    .AlignCenter()
+                                    .Text(_company.CEO ?? "")
+                                    .Bold();
+
+                                // Линија
+                                col.Item()
+                                    .LineHorizontal(1);
+                            });
+                    });
                 });
         }
-
-
-
         static IContainer HeaderCellStyle(IContainer c)
         {
             return c
